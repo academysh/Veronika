@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modal Verbs</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Nunito:wght@600;700;800&display=swap');
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --brand: #16233F; --brand-dark: #0D1830;
+    --bg: #FFF8EE; --surface: #ffffff; --surface2: #FFF1DC;
+    --accent: #E86F0C; --accent-light: #FDE4C6; --accent-dark: #C25A00;
+    --gold: #F5B841; --gold-dark: #D69A1F;
+    --orange: #D97706;
+    --green: #2D9E6B; --green-bg: #E6F7EF;
+    --red: #D63B3B; --red-bg: #FDEAEA;
+    --text: #241C10; --muted: #7C6A54; --muted2: #C9B79B;
+    --border: #F0DFC2; --radius: 12px;
+    --shadow-card: 0 2px 10px rgba(120,80,20,0.08);
+  }
+  body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  header {
+    background: var(--brand); padding: 14px 32px;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 10px; position: sticky; top: 0; z-index: 20;
+    box-shadow: 0 3px 16px rgba(22,35,63,0.45);
+  }
+  .logo { font-family: 'Nunito', sans-serif; font-size: 17px; font-weight: 800; color: #fff; line-height: 1.2; }
+  .logo-sub { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.68); letter-spacing: 0.7px; text-transform: uppercase; display: block; margin-top: 2px; }
+  .chip { font-size: 13px; font-weight: 700; padding: 4px 12px; border-radius: 20px; background: rgba(255,255,255,0.18); color: #fff; border: 1px solid rgba(255,255,255,0.35); }
+  .chevrons { display: inline-flex; margin-left: 8px; vertical-align: middle; }
+  .chevrons span {
+    display: inline-block; width: 0; height: 0;
+    border-top: 7px solid transparent; border-bottom: 7px solid transparent;
+    border-left: 9px solid var(--accent); margin-left: -3px;
+  }
+  .chevrons span:last-child { border-left-color: var(--gold); }
+  .btn-reset-all {
+    font-family: 'Inter', sans-serif; font-size: 12.5px; font-weight: 700; padding: 7px 16px;
+    border-radius: 20px; cursor: pointer; border: 1.5px solid rgba(255,255,255,0.5);
+    background: rgba(0,0,0,0.15); color: #fff; transition: all .15s;
+  }
+  .btn-reset-all:hover { background: rgba(0,0,0,0.3); }
+  .back-link {
+    display: inline-flex; align-items: center; gap: 5px; font-family: 'Inter', sans-serif;
+    font-size: 12.5px; font-weight: 700; padding: 7px 14px; border-radius: 20px;
+    color: rgba(255,255,255,0.85); text-decoration: none; border: 1.5px solid rgba(255,255,255,0.3);
+    background: transparent; transition: all .15s; margin-right: 14px; flex-shrink: 0;
+  }
+  .back-link:hover { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.5); color: #fff; }
+
+
+  main { max-width: 900px; margin: 0 auto; padding: 24px 18px 60px; }
+
+  .block-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .block-badge {
+    font-family: 'Nunito', sans-serif; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px;
+    background: var(--accent); color: #fff; padding: 5px 14px; border-radius: 8px;
+  }
+  .block-title { font-family: 'Nunito', sans-serif; font-size: 19px; font-weight: 800; color: var(--brand-dark); }
+  .block-subtitle { font-size: 13px; color: var(--muted); margin-top: 4px; }
+
+  .cond-picker { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 18px; flex-wrap: wrap; }
+  .cond-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+  .cond-tab {
+    font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 800; padding: 8px 18px;
+    border-radius: 10px; background: var(--surface2); border: 2px solid transparent; color: var(--muted);
+    cursor: pointer; transition: all .15s; display: flex; align-items: center; gap: 6px;
+  }
+  .cond-tab .check-dot {
+    width: 14px; height: 14px; border-radius: 4px; border: 2px solid var(--muted2); background: #fff; flex-shrink: 0;
+    display: inline-flex; align-items: center; justify-content: center; font-size: 10px; color: transparent;
+  }
+  .cond-tab:hover { color: var(--brand); }
+  .cond-tab.active { background: var(--brand-dark); color: #fff; }
+  .cond-tab.active .check-dot { background: var(--gold); border-color: var(--gold); color: var(--brand-dark); }
+  .cond-quick { display: flex; gap: 6px; }
+  .quick-btn {
+    font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 700; padding: 7px 14px;
+    border-radius: 20px; cursor: pointer; border: 1.5px solid var(--border); background: var(--surface); color: var(--muted);
+    transition: all .15s;
+  }
+  .quick-btn:hover { border-color: var(--accent); color: var(--accent-dark); }
+
+  #rule-stack { display: flex; flex-direction: column; gap: 2px; margin-bottom: 10px; }
+
+  .bank-overview {
+    font-size: 13px; color: var(--muted); background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 10px 16px; margin-bottom: 16px;
+  }
+  .bank-overview b { color: var(--brand-dark); }
+
+  .stats-bar {
+    display: flex; align-items: center; gap: 22px; flex-wrap: wrap; background: var(--surface);
+    border: 1.5px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-card);
+    padding: 14px 20px; margin-bottom: 18px;
+    position: sticky; top: 66px; z-index: 15;
+  }
+  .cond-tab.mistakes-tab { background: var(--red-bg); color: var(--red); }
+  .cond-tab.mistakes-tab.active { background: var(--red); color: #fff; }
+  .cond-tab.mistakes-tab .check-dot { border-color: var(--red); }
+  .cond-tab.mistakes-tab.active .check-dot { background: #fff; border-color: #fff; color: var(--red); }
+  .stat { display: flex; align-items: baseline; gap: 5px; }
+  .stat-num { font-family: 'Nunito', sans-serif; font-size: 20px; font-weight: 800; color: var(--brand-dark); }
+  .stat-label { font-size: 12px; color: var(--muted); font-weight: 600; }
+  .stat-correct .stat-num { color: var(--green); }
+  .stat-wrong .stat-num { color: var(--red); }
+  .stats-actions { display: flex; gap: 8px; margin-left: auto; flex-wrap: wrap; }
+  .btn-newround { background: var(--gold); color: var(--brand-dark); }
+  .btn-newround:hover { background: var(--gold-dark); color: #fff; }
+
+  .empty-state { text-align: center; padding: 40px 20px; color: var(--muted); font-size: 14px; }
+
+  .rule-box { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-card); margin-bottom: 20px; overflow: hidden; }
+  .rule-toggle {
+    display: flex; align-items: center; justify-content: space-between; padding: 11px 18px; cursor: pointer;
+    font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 14.5px; color: var(--brand-dark);
+  }
+  .rule-toggle .chev { font-size: 12px; color: var(--muted); transition: transform .2s; }
+  .rule-toggle.open .chev { transform: rotate(180deg); }
+  .rule-content { display: none; padding: 0 20px 20px; font-size: 13.5px; line-height: 1.7; color: var(--text); }
+  .rule-content.open { display: block; }
+  .rule-content h4 { font-size: 13px; font-weight: 800; color: var(--brand-dark); margin: 14px 0 6px; }
+  .rule-content h4:first-child { margin-top: 0; }
+  .rule-content code { background: var(--accent-light); color: var(--accent-dark); padding: 1px 6px; border-radius: 5px; font-family: 'Inter', monospace; font-weight: 600; }
+  .rule-content ul { margin: 6px 0 6px 20px; }
+  .rule-content li { margin-bottom: 4px; }
+  .rule-note { background: var(--surface2); border-left: 3px solid var(--gold-dark); padding: 8px 12px; border-radius: 6px; margin: 10px 0; font-size: 13px; color: var(--muted); }
+  .verb-table { width: 100%; border-collapse: collapse; margin: 8px 0 14px; font-size: 13px; }
+  .verb-table td { padding: 6px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .verb-table tr:first-child td { border-top: 1px solid var(--border); }
+  .verb-table td:first-child { white-space: nowrap; width: 1%; padding-right: 16px; }
+  .verb-table td:last-child { color: var(--muted); }
+
+  .tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+  .tab {
+    font-family: 'Nunito', sans-serif; font-size: 13.5px; font-weight: 800; padding: 9px 20px;
+    border-radius: 12px; background: var(--surface); border: 2px solid var(--border); color: var(--muted); cursor: pointer; transition: all .15s;
+  }
+  .tab .tab-score { font-weight: 700; margin-left: 6px; opacity: .8; font-size: 12px; }
+  .tab:hover { border-color: var(--accent); color: var(--accent); }
+  .tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  .list-card { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-card); padding: 8px 20px; }
+  .item {
+    padding: 11px 0; border-bottom: 1px solid var(--border); font-size: 14px; line-height: 1.6;
+  }
+  .item:last-child { border-bottom: none; }
+  .item-row { display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; }
+  .item-num { font-weight: 700; color: var(--muted2); min-width: 30px; font-size: 13px; }
+  .item-text { color: var(--text); }
+  .item-ru { color: var(--muted); font-size: 12.5px; font-style: italic; margin-left: 36px; margin-top: 2px; }
+  .gapwrap { position: relative; display: inline-block; margin: 0 2px; }
+  .gap {
+    font-family: 'Inter', sans-serif; font-size: 13.5px; font-weight: 600;
+    border: none; border-bottom: 2px solid var(--accent); background: var(--accent-light);
+    border-radius: 5px 5px 0 0; padding: 2px 6px; width: 160px; text-align: center; color: var(--accent-dark);
+    outline: none; transition: all .15s;
+  }
+  .gap:focus { background: #fff; box-shadow: 0 0 0 2px var(--accent-light); }
+  .gap.correct { background: var(--green-bg); border-color: var(--green); color: #1e7a4d; }
+  .gap.wrong { background: var(--red-bg); border-color: var(--red); color: var(--red); }
+  .gap[readonly] { cursor: not-allowed; }
+  .hint { color: var(--muted2); font-size: 12.5px; font-style: italic; }
+  .correct-answer { display: none; font-size: 11px; color: var(--green); font-weight: 700; margin-left: 2px; }
+  .correct-answer.show { display: inline; }
+
+  .panel-actions { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 16px 0; flex-wrap: wrap; }
+  .btn {
+    font-family: 'Inter', sans-serif; font-size: 13.5px; font-weight: 700; padding: 10px 22px;
+    border-radius: 24px; cursor: pointer; border: none; transition: all .15s;
+  }
+  .btn-check { background: var(--accent); color: #fff; }
+  .btn-check:hover { background: var(--accent-dark); }
+  .btn-reset { background: var(--surface2); color: var(--muted); border: 1.5px solid var(--border); }
+  .btn-reset:hover { border-color: var(--muted); color: var(--text); }
+  .result-line { font-size: 13.5px; font-weight: 700; }
+  .result-line.ok { color: var(--green); }
+  .result-line.mid { color: var(--gold-dark); }
+  .result-line.poor { color: var(--red); }
+
+  footer { text-align: center; padding: 24px; font-size: 12px; color: var(--muted); }
+
+  @media (max-width: 600px) {
+    .gap { width: 130px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div style="display:flex;align-items:center;">
+    <a class="back-link" href="index.html">← Back</a>
+    <div class="logo">Headway Pre-Intermediate<span class="chevrons"><span></span><span></span></span> <span class="logo-sub">Veronika's Practice</span></div>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <button class="btn-reset-all" id="btn-reset-all">Reset All ↻</button>
+  </div>
+</header>
+
+<main>
+  <div class="block-header">
+    <div>
+      <div class="block-title">Modal Verbs</div>
+      <div class="block-subtitle" id="block-subtitle">Obligation, Advice, Permission &amp; Possibility — три категории модальных глаголов</div>
+    </div>
+  </div>
+
+  <div class="cond-picker">
+    <div class="cond-tabs" id="cond-tabs"></div>
+    <div class="cond-quick">
+      <button class="quick-btn" id="btn-select-all">All</button>
+      <button class="quick-btn" id="btn-select-none">None</button>
+    </div>
+  </div>
+
+  <div id="rule-stack"></div>
+
+  <div class="bank-overview" id="bank-overview"></div>
+
+  <div class="stats-bar" id="stats-bar">
+    <div class="stat"><span class="stat-num" id="stat-filled">0</span><span class="stat-label">/ 25 filled</span></div>
+    <div class="stat stat-correct"><span class="stat-num" id="stat-correct">0</span><span class="stat-label">correct</span></div>
+    <div class="stat stat-wrong"><span class="stat-num" id="stat-wrong">0</span><span class="stat-label">wrong</span></div>
+    <div class="stats-actions">
+      <button class="btn btn-check" id="btn-check-all">Check</button>
+      <button class="btn btn-reset" id="btn-reset-round">Reset</button>
+      <button class="btn btn-newround" id="btn-new-round">New Round ↻</button>
+    </div>
+  </div>
+
+  <div id="round-container"></div>
+</main>
+
+<footer>Headway Pre-Intermediate · Veronika's Practice · Block 4 · Conditionals</footer>
+
+<script>
+const ALL = {"obligation": {"affirmative": [{"n": 1, "prefix": "You ", "hint": "wear", "answer": "must wear", "answers": ["must wear"], "suffix": " a seatbelt in the car.", "ru": "Ты должен пристёгивать ремень безопасности в машине."}, {"n": 2, "prefix": "Students ", "hint": "hand", "answer": "have to hand", "answers": ["have to hand"], "suffix": " in their homework by Friday.", "ru": "Студенты должны сдать домашнее задание к пятнице."}, {"n": 3, "prefix": "I ", "hint": "leave", "answer": "have to leave", "answers": ["have to leave"], "suffix": " early tomorrow.", "ru": "Мне нужно уехать завтра рано."}, {"n": 4, "prefix": "She ", "hint": "finish", "answer": "must finish", "answers": ["must finish"], "suffix": " the report today.", "ru": "Она должна закончить отчёт сегодня."}, {"n": 5, "prefix": "We ", "hint": "check", "answer": "have to check", "answers": ["have to check"], "suffix": " in two hours before the flight.", "ru": "Нам нужно пройти регистрацию за два часа до вылета."}, {"n": 6, "prefix": "He ", "hint": "show", "answer": "must show", "answers": ["must show"], "suffix": " his passport at the border.", "ru": "Он должен показать паспорт на границе."}, {"n": 7, "prefix": "You ", "hint": "wash", "answer": "have to wash", "answers": ["have to wash"], "suffix": " your hands before eating.", "ru": "Тебе нужно мыть руки перед едой."}, {"n": 8, "prefix": "They ", "hint": "follow", "answer": "must follow", "answers": ["must follow"], "suffix": " the safety rules.", "ru": "Они должны соблюдать правила безопасности."}, {"n": 9, "prefix": "I ", "hint": "call", "answer": "have to call", "answers": ["have to call"], "suffix": " my mum tonight.", "ru": "Мне нужно позвонить маме сегодня вечером."}, {"n": 10, "prefix": "Drivers ", "hint": "stop", "answer": "must stop", "answers": ["must stop"], "suffix": " at a red light.", "ru": "Водители должны останавливаться на красный свет."}, {"n": 11, "prefix": "You ", "hint": "be", "answer": "have to be", "answers": ["have to be"], "suffix": " eighteen to buy alcohol here.", "ru": "Здесь нужно быть старше восемнадцати, чтобы купить алкоголь."}, {"n": 12, "prefix": "She ", "hint": "take", "answer": "has to take", "answers": ["has to take"], "suffix": " her medicine every morning.", "ru": "Ей нужно принимать лекарство каждое утро."}, {"n": 13, "prefix": "We ", "hint": "protect", "answer": "must protect", "answers": ["must protect"], "suffix": " the environment.", "ru": "Мы должны защищать окружающую среду."}, {"n": 14, "prefix": "Employees ", "hint": "wear", "answer": "have to wear", "answers": ["have to wear"], "suffix": " a uniform at work.", "ru": "Сотрудники должны носить форму на работе."}, {"n": 15, "prefix": "I ", "hint": "remember", "answer": "must remember", "answers": ["must remember"], "suffix": " to lock the door.", "ru": "Я должен не забыть запереть дверь."}, {"n": 16, "prefix": "He ", "hint": "finish", "answer": "has to finish", "answers": ["has to finish"], "suffix": " the project by Monday.", "ru": "Ему нужно закончить проект к понедельнику."}, {"n": 17, "prefix": "Passengers ", "hint": "fasten", "answer": "must fasten", "answers": ["must fasten"], "suffix": " their seatbelts during takeoff.", "ru": "Пассажиры должны пристегнуть ремни во время взлёта."}, {"n": 18, "prefix": "You ", "hint": "pay", "answer": "have to pay", "answers": ["have to pay"], "suffix": " the bill by the end of the month.", "ru": "Тебе нужно оплатить счёт до конца месяца."}, {"n": 19, "prefix": "Children ", "hint": "hold", "answer": "must hold", "answers": ["must hold"], "suffix": " an adult's hand near the road.", "ru": "Дети должны держать взрослого за руку рядом с дорогой."}, {"n": 20, "prefix": "We ", "hint": "leave", "answer": "have to leave", "answers": ["have to leave"], "suffix": " now if we want to catch the train.", "ru": "Нам нужно выходить сейчас, если хотим успеть на поезд."}, {"n": 21, "prefix": "She ", "hint": "apologise", "answer": "must apologise", "answers": ["must apologise"], "suffix": " to her friend.", "ru": "Она должна извиниться перед подругой."}, {"n": 22, "prefix": "Visitors ", "hint": "sign", "answer": "have to sign", "answers": ["have to sign"], "suffix": " in at reception.", "ru": "Посетителям нужно расписаться на ресепшене."}, {"n": 23, "prefix": "I ", "hint": "call", "answer": "must call", "answers": ["must call"], "suffix": " the doctor about my results.", "ru": "Я должен позвонить врачу насчёт результатов."}, {"n": 24, "prefix": "You ", "hint": "bring", "answer": "have to bring", "answers": ["have to bring"], "suffix": " your ID card to the exam.", "ru": "Тебе нужно принести удостоверение личности на экзамен."}, {"n": 25, "prefix": "He ", "hint": "practise", "answer": "must practise", "answers": ["must practise"], "suffix": " every day to improve.", "ru": "Ему нужно тренироваться каждый день, чтобы улучшить результат."}, {"n": 26, "prefix": "We ", "hint": "recycle", "answer": "have to recycle", "answers": ["have to recycle"], "suffix": " more to help the planet.", "ru": "Нам нужно больше перерабатывать отходов, чтобы помочь планете."}, {"n": 27, "prefix": "Students ", "hint": "arrive", "answer": "must arrive", "answers": ["must arrive"], "suffix": " on time for the exam.", "ru": "Студенты должны прийти вовремя на экзамен."}, {"n": 28, "prefix": "I ", "hint": "finish", "answer": "have to finish", "answers": ["have to finish"], "suffix": " this by tonight, no matter what.", "ru": "Мне нужно закончить это к вечеру, что бы ни случилось."}, {"n": 29, "prefix": "You ", "hint": "be", "answer": "must be", "answers": ["must be"], "suffix": " careful with that knife.", "ru": "Тебе нужно быть осторожным с этим ножом."}, {"n": 30, "prefix": "She ", "hint": "renew", "answer": "has to renew", "answers": ["has to renew"], "suffix": " her passport this year.", "ru": "Ей нужно продлить паспорт в этом году."}], "negative": [{"n": 1, "prefix": "You ", "hint": "touch", "answer": "mustn't touch", "answers": ["mustn't touch"], "suffix": " the paintings in the museum.", "ru": "Тебе нельзя трогать картины в музее."}, {"n": 2, "prefix": "Passengers ", "hint": "smoke", "answer": "mustn't smoke", "answers": ["mustn't smoke"], "suffix": " on the plane.", "ru": "Пассажирам нельзя курить в самолёте."}, {"n": 3, "prefix": "Students ", "hint": "use", "answer": "mustn't use", "answers": ["mustn't use"], "suffix": " their phones during the exam.", "ru": "Студентам нельзя пользоваться телефонами во время экзамена."}, {"n": 4, "prefix": "You ", "hint": "tell", "answer": "mustn't tell", "answers": ["mustn't tell"], "suffix": " anyone this secret.", "ru": "Тебе нельзя никому рассказывать этот секрет."}, {"n": 5, "prefix": "Drivers ", "hint": "use", "answer": "mustn't use", "answers": ["mustn't use"], "suffix": " their phones while driving.", "ru": "Водителям нельзя пользоваться телефоном за рулём."}, {"n": 6, "prefix": "Visitors ", "hint": "feed", "answer": "mustn't feed", "answers": ["mustn't feed"], "suffix": " the animals at the zoo.", "ru": "Посетителям нельзя кормить животных в зоопарке."}, {"n": 7, "prefix": "You ", "hint": "be", "answer": "mustn't be", "answers": ["mustn't be"], "suffix": " late for the interview.", "ru": "Тебе нельзя опаздывать на собеседование."}, {"n": 8, "prefix": "Employees ", "hint": "share", "answer": "mustn't share", "answers": ["mustn't share"], "suffix": " confidential information.", "ru": "Сотрудникам нельзя разглашать конфиденциальную информацию."}, {"n": 9, "prefix": "Children ", "hint": "play", "answer": "mustn't play", "answers": ["mustn't play"], "suffix": " near the road.", "ru": "Детям нельзя играть рядом с дорогой."}, {"n": 10, "prefix": "You ", "hint": "leave", "answer": "mustn't leave", "answers": ["mustn't leave"], "suffix": " the door unlocked at night.", "ru": "Тебе нельзя оставлять дверь незапертой на ночь."}, {"n": 11, "prefix": "We ", "hint": "waste", "answer": "mustn't waste", "answers": ["mustn't waste"], "suffix": " water during the drought.", "ru": "Нам нельзя тратить воду впустую во время засухи."}, {"n": 12, "prefix": "Guests ", "hint": "bring", "answer": "mustn't bring", "answers": ["mustn't bring"], "suffix": " outside food into the cinema.", "ru": "Гостям нельзя проносить еду с собой в кинотеатр."}, {"n": 13, "prefix": "You ", "hint": "forget", "answer": "mustn't forget", "answers": ["mustn't forget"], "suffix": " your keys again.", "ru": "Тебе нельзя снова забывать ключи."}, {"n": 14, "prefix": "Soldiers ", "hint": "reveal", "answer": "mustn't reveal", "answers": ["mustn't reveal"], "suffix": " military secrets.", "ru": "Солдатам нельзя раскрывать военные тайны."}, {"n": 15, "prefix": "You ", "hint": "park", "answer": "mustn't park", "answers": ["mustn't park"], "suffix": " here on weekdays.", "ru": "Тебе нельзя парковаться здесь по будням."}, {"n": 16, "prefix": "You ", "hint": "bring", "answer": "don't have to bring", "answers": ["don't have to bring"], "suffix": " anything, we have everything ready.", "ru": "Тебе не обязательно ничего приносить, у нас всё готово."}, {"n": 17, "prefix": "She ", "hint": "work", "answer": "doesn't have to work", "answers": ["doesn't have to work"], "suffix": " on Saturdays.", "ru": "Ей не обязательно работать по субботам."}, {"n": 18, "prefix": "We ", "hint": "wear", "answer": "don't have to wear", "answers": ["don't have to wear"], "suffix": " a uniform at this school.", "ru": "Нам не обязательно носить форму в этой школе."}, {"n": 19, "prefix": "He ", "hint": "attend", "answer": "doesn't have to attend", "answers": ["doesn't have to attend"], "suffix": " the meeting if he's busy.", "ru": "Ему не обязательно приходить на встречу, если он занят."}, {"n": 20, "prefix": "You ", "hint": "answer", "answer": "don't have to answer", "answers": ["don't have to answer"], "suffix": " that question if you don't want to.", "ru": "Тебе не обязательно отвечать на этот вопрос, если не хочешь."}, {"n": 21, "prefix": "I ", "hint": "get", "answer": "don't have to get", "answers": ["don't have to get"], "suffix": " up early tomorrow, it's a holiday.", "ru": "Мне не обязательно вставать рано завтра, это выходной."}, {"n": 22, "prefix": "They ", "hint": "pay", "answer": "don't have to pay", "answers": ["don't have to pay"], "suffix": " for parking on Sundays.", "ru": "Им не обязательно платить за парковку по воскресеньям."}, {"n": 23, "prefix": "She ", "hint": "cook", "answer": "doesn't have to cook", "answers": ["doesn't have to cook"], "suffix": " tonight, we're ordering food.", "ru": "Ей не обязательно готовить сегодня вечером, мы закажем еду."}, {"n": 24, "prefix": "You ", "hint": "finish", "answer": "don't have to finish", "answers": ["don't have to finish"], "suffix": " it today, there's no rush.", "ru": "Тебе не обязательно заканчивать это сегодня, спешить некуда."}, {"n": 25, "prefix": "We ", "hint": "book", "answer": "don't have to book", "answers": ["don't have to book"], "suffix": " in advance, the restaurant is quiet.", "ru": "Нам не обязательно бронировать заранее, в ресторане тихо."}, {"n": 26, "prefix": "He ", "hint": "explain", "answer": "doesn't have to explain", "answers": ["doesn't have to explain"], "suffix": " himself to anyone.", "ru": "Ему не обязательно ни перед кем оправдываться."}, {"n": 27, "prefix": "You ", "hint": "whisper", "answer": "don't have to whisper", "answers": ["don't have to whisper"], "suffix": ", nobody's sleeping.", "ru": "Тебе не обязательно шептать, никто не спит."}, {"n": 28, "prefix": "I ", "hint": "go", "answer": "don't have to go", "answers": ["don't have to go"], "suffix": " to the gym today, I already exercised.", "ru": "Мне не обязательно идти в зал сегодня, я уже позанимался."}, {"n": 29, "prefix": "She ", "hint": "ask", "answer": "doesn't have to ask", "answers": ["doesn't have to ask"], "suffix": " permission every time.", "ru": "Ей не обязательно спрашивать разрешения каждый раз."}, {"n": 30, "prefix": "They ", "hint": "worry", "answer": "don't have to worry", "answers": ["don't have to worry"], "suffix": " about the weather, the event is indoors.", "ru": "Им не нужно беспокоиться о погоде, мероприятие в помещении."}], "interrogative": [{"n": 1, "prefix": "", "hint": "work", "answer": "Do you have to work", "answers": ["Do you have to work"], "suffix": " this weekend?", "ru": "Тебе нужно работать в эти выходные?"}, {"n": 2, "prefix": "", "hint": "finish", "answer": "Does she have to finish", "answers": ["Does she have to finish"], "suffix": " it by Friday?", "ru": "Ей нужно закончить это к пятнице?"}, {"n": 3, "prefix": "", "hint": "bring", "answer": "Do we have to bring", "answers": ["Do we have to bring"], "suffix": " our own food?", "ru": "Нам нужно приносить свою еду?"}, {"n": 4, "prefix": "", "hint": "wear", "answer": "Does he have to wear", "answers": ["Does he have to wear"], "suffix": " a suit to the interview?", "ru": "Ему нужно надевать костюм на собеседование?"}, {"n": 5, "prefix": "", "hint": "sign", "answer": "Do I have to sign", "answers": ["Do I have to sign"], "suffix": " anything?", "ru": "Мне нужно что-то подписывать?"}, {"n": 6, "prefix": "", "hint": "pay", "answer": "Do they have to pay", "answers": ["Do they have to pay"], "suffix": " extra for luggage?", "ru": "Им нужно доплачивать за багаж?"}, {"n": 7, "prefix": "", "hint": "study", "answer": "Does your sister have to study", "answers": ["Does your sister have to study"], "suffix": " every evening?", "ru": "Твоей сестре нужно заниматься каждый вечер?"}, {"n": 8, "prefix": "", "hint": "ask", "answer": "Do you have to ask", "answers": ["Do you have to ask"], "suffix": " for permission first?", "ru": "Тебе сначала нужно спросить разрешения?"}, {"n": 9, "prefix": "", "hint": "close", "answer": "Does the shop have to close", "answers": ["Does the shop have to close"], "suffix": " early on Sundays?", "ru": "Магазину нужно закрываться рано по воскресеньям?"}, {"n": 10, "prefix": "", "hint": "change", "answer": "Do we have to change", "answers": ["Do we have to change"], "suffix": " trains?", "ru": "Нам нужно делать пересадку?"}, {"n": 11, "prefix": "", "hint": "attend", "answer": "Does he have to attend", "answers": ["Does he have to attend"], "suffix": " every lesson?", "ru": "Ему нужно посещать каждый урок?"}, {"n": 12, "prefix": "", "hint": "wear", "answer": "Do you have to wear", "answers": ["Do you have to wear"], "suffix": " a helmet on this bike path?", "ru": "Тебе нужно надевать шлем на этой велодорожке?"}, {"n": 13, "prefix": "", "hint": "bring", "answer": "Do I have to bring", "answers": ["Do I have to bring"], "suffix": " my passport?", "ru": "Мне нужно брать с собой паспорт?"}, {"n": 14, "prefix": "", "hint": "call", "answer": "Does she have to call", "answers": ["Does she have to call"], "suffix": " back today?", "ru": "Ей нужно перезвонить сегодня?"}, {"n": 15, "prefix": "", "hint": "queue", "answer": "Do we have to queue", "answers": ["Do we have to queue"], "suffix": " for a long time?", "ru": "Нам нужно долго стоять в очереди?"}, {"n": 16, "prefix": "", "hint": "submit", "answer": "Does the team have to submit", "answers": ["Does the team have to submit"], "suffix": " the report by Monday?", "ru": "Команде нужно сдать отчёт к понедельнику?"}, {"n": 17, "prefix": "", "hint": "leave", "answer": "Do you have to leave", "answers": ["Do you have to leave"], "suffix": " so early?", "ru": "Тебе нужно уходить так рано?"}, {"n": 18, "prefix": "", "hint": "renew", "answer": "Does he have to renew", "answers": ["Does he have to renew"], "suffix": " his licence this year?", "ru": "Ему нужно продлевать права в этом году?"}, {"n": 19, "prefix": "", "hint": "speak", "answer": "Do they have to speak", "answers": ["Do they have to speak"], "suffix": " English at work?", "ru": "Им нужно говорить по-английски на работе?"}, {"n": 20, "prefix": "", "hint": "remove", "answer": "Do I have to remove", "answers": ["Do I have to remove"], "suffix": " my shoes before entering?", "ru": "Мне нужно снимать обувь перед входом?"}, {"n": 21, "prefix": "", "hint": "leave", "answer": "Must you leave", "answers": ["Must you leave"], "suffix": " right now?", "ru": "Тебе обязательно уходить прямо сейчас?"}, {"n": 22, "prefix": "", "hint": "explain", "answer": "Must I explain", "answers": ["Must I explain"], "suffix": " everything again?", "ru": "Мне обязательно снова всё объяснять?"}, {"n": 23, "prefix": "", "hint": "decide", "answer": "Must we decide", "answers": ["Must we decide"], "suffix": " today?", "ru": "Нам обязательно решать сегодня?"}, {"n": 24, "prefix": "", "hint": "check", "answer": "Do you have to check", "answers": ["Do you have to check"], "suffix": " in online before the flight?", "ru": "Тебе нужно регистрироваться онлайн перед рейсом?"}, {"n": 25, "prefix": "", "hint": "travel", "answer": "Does she have to travel", "answers": ["Does she have to travel"], "suffix": " for work often?", "ru": "Ей часто нужно ездить в командировки?"}, {"n": 26, "prefix": "", "hint": "clean", "answer": "Do we have to clean", "answers": ["Do we have to clean"], "suffix": " up before we leave?", "ru": "Нам нужно убраться перед уходом?"}, {"n": 27, "prefix": "", "hint": "book", "answer": "Do they have to book", "answers": ["Do they have to book"], "suffix": " a table in advance?", "ru": "Им нужно бронировать столик заранее?"}, {"n": 28, "prefix": "", "hint": "finish", "answer": "Does he have to finish", "answers": ["Does he have to finish"], "suffix": " the whole exam?", "ru": "Ему нужно закончить весь экзамен?"}, {"n": 29, "prefix": "", "hint": "pay", "answer": "Do you have to pay", "answers": ["Do you have to pay"], "suffix": " in cash here?", "ru": "Тебе нужно платить здесь наличными?"}, {"n": 30, "prefix": "", "hint": "follow", "answer": "Does your school have to follow", "answers": ["Does your school have to follow"], "suffix": " that rule?", "ru": "Твоей школе нужно соблюдать это правило?"}]}, "advice": {"affirmative": [{"n": 1, "prefix": "You ", "hint": "drink", "answer": "should drink", "answers": ["should drink"], "suffix": " more water every day.", "ru": "Тебе стоит пить больше воды каждый день."}, {"n": 2, "prefix": "She ", "hint": "see", "answer": "should see", "answers": ["should see"], "suffix": " a doctor about that cough.", "ru": "Ей стоит показаться врачу из-за этого кашля."}, {"n": 3, "prefix": "We ", "hint": "leave", "answer": "should leave", "answers": ["should leave"], "suffix": " earlier to avoid the traffic.", "ru": "Нам стоит выехать пораньше, чтобы избежать пробок."}, {"n": 4, "prefix": "He ", "hint": "apologise", "answer": "should apologise", "answers": ["should apologise"], "suffix": " for what he said.", "ru": "Ему стоит извиниться за то, что сказал."}, {"n": 5, "prefix": "You ", "hint": "try", "answer": "should try", "answers": ["should try"], "suffix": " the new restaurant downtown.", "ru": "Тебе стоит попробовать новый ресторан в центре."}, {"n": 6, "prefix": "I ", "hint": "call", "answer": "should call", "answers": ["should call"], "suffix": " my grandmother more often.", "ru": "Мне стоит звонить бабушке чаще."}, {"n": 7, "prefix": "They ", "hint": "save", "answer": "should save", "answers": ["should save"], "suffix": " some money each month.", "ru": "Им стоит откладывать немного денег каждый месяц."}, {"n": 8, "prefix": "You ", "hint": "wear", "answer": "should wear", "answers": ["should wear"], "suffix": " sunscreen at the beach.", "ru": "Тебе стоит наносить солнцезащитный крем на пляже."}, {"n": 9, "prefix": "We ", "hint": "book", "answer": "should book", "answers": ["should book"], "suffix": " the tickets soon before they sell out.", "ru": "Нам стоит забронировать билеты поскорее, пока их не раскупили."}, {"n": 10, "prefix": "She ", "hint": "practise", "answer": "should practise", "answers": ["should practise"], "suffix": " the piano every day.", "ru": "Ей стоит заниматься на пианино каждый день."}, {"n": 11, "prefix": "He ", "hint": "get", "answer": "should get", "answers": ["should get"], "suffix": " more sleep before the exam.", "ru": "Ему стоит больше спать перед экзаменом."}, {"n": 12, "prefix": "You ", "hint": "read", "answer": "should read", "answers": ["should read"], "suffix": " the instructions carefully.", "ru": "Тебе стоит внимательно прочитать инструкцию."}, {"n": 13, "prefix": "I ", "hint": "exercise", "answer": "should exercise", "answers": ["should exercise"], "suffix": " more regularly.", "ru": "Мне стоит заниматься спортом более регулярно."}, {"n": 14, "prefix": "We ", "hint": "support", "answer": "should support", "answers": ["should support"], "suffix": " local businesses.", "ru": "Нам стоит поддерживать местный бизнес."}, {"n": 15, "prefix": "You ", "hint": "ask", "answer": "should ask", "answers": ["should ask"], "suffix": " for help if you're stuck.", "ru": "Тебе стоит попросить помощи, если застрял."}, {"n": 16, "prefix": "She ", "hint": "take", "answer": "should take", "answers": ["should take"], "suffix": " a break from work.", "ru": "Ей стоит взять перерыв в работе."}, {"n": 17, "prefix": "They ", "hint": "recycle", "answer": "should recycle", "answers": ["should recycle"], "suffix": " more at home.", "ru": "Им стоит больше перерабатывать отходов дома."}, {"n": 18, "prefix": "He ", "hint": "be", "answer": "should be", "answers": ["should be"], "suffix": " more patient with his brother.", "ru": "Ему стоит быть терпеливее со своим братом."}, {"n": 19, "prefix": "You ", "hint": "back", "answer": "should back", "answers": ["should back"], "suffix": " up your files regularly.", "ru": "Тебе стоит регулярно делать резервные копии файлов."}, {"n": 20, "prefix": "I ", "hint": "start", "answer": "should start", "answers": ["should start"], "suffix": " studying for the test now.", "ru": "Мне стоит начать готовиться к тесту прямо сейчас."}, {"n": 21, "prefix": "We ", "hint": "thank", "answer": "should thank", "answers": ["should thank"], "suffix": " her for her help.", "ru": "Нам стоит поблагодарить её за помощь."}, {"n": 22, "prefix": "You ", "hint": "trust", "answer": "should trust", "answers": ["should trust"], "suffix": " your instincts sometimes.", "ru": "Тебе стоит иногда доверять своей интуиции."}, {"n": 23, "prefix": "She ", "hint": "tell", "answer": "should tell", "answers": ["should tell"], "suffix": " him the truth.", "ru": "Ей стоит сказать ему правду."}, {"n": 24, "prefix": "He ", "hint": "listen", "answer": "should listen", "answers": ["should listen"], "suffix": " to his doctor's advice.", "ru": "Ему стоит прислушаться к совету врача."}, {"n": 25, "prefix": "You ", "hint": "check", "answer": "should check", "answers": ["should check"], "suffix": " the weather before you go out.", "ru": "Тебе стоит проверить погоду перед выходом."}, {"n": 26, "prefix": "We ", "hint": "plan", "answer": "should plan", "answers": ["should plan"], "suffix": " the trip together.", "ru": "Нам стоит спланировать поездку вместе."}, {"n": 27, "prefix": "I ", "hint": "finish", "answer": "should finish", "answers": ["should finish"], "suffix": " this report tonight.", "ru": "Мне стоит закончить этот отчёт сегодня вечером."}, {"n": 28, "prefix": "They ", "hint": "invest", "answer": "should invest", "answers": ["should invest"], "suffix": " in better equipment.", "ru": "Им стоит вложиться в оборудование получше."}, {"n": 29, "prefix": "You ", "hint": "relax", "answer": "should relax", "answers": ["should relax"], "suffix": " a little more.", "ru": "Тебе стоит немного больше расслабляться."}, {"n": 30, "prefix": "She ", "hint": "focus", "answer": "should focus", "answers": ["should focus"], "suffix": " on one thing at a time.", "ru": "Ей стоит сосредотачиваться на одном деле за раз."}], "negative": [{"n": 1, "prefix": "You ", "hint": "eat", "answer": "shouldn't eat", "answers": ["shouldn't eat"], "suffix": " so much sugar.", "ru": "Тебе не стоит есть так много сахара."}, {"n": 2, "prefix": "He ", "hint": "drive", "answer": "shouldn't drive", "answers": ["shouldn't drive"], "suffix": " when he's tired.", "ru": "Ему не стоит водить машину, когда он устал."}, {"n": 3, "prefix": "We ", "hint": "waste", "answer": "shouldn't waste", "answers": ["shouldn't waste"], "suffix": " so much food.", "ru": "Нам не стоит выбрасывать столько еды."}, {"n": 4, "prefix": "You ", "hint": "ignore", "answer": "shouldn't ignore", "answers": ["shouldn't ignore"], "suffix": " the warning signs.", "ru": "Тебе не стоит игнорировать предупреждающие знаки."}, {"n": 5, "prefix": "She ", "hint": "work", "answer": "shouldn't work", "answers": ["shouldn't work"], "suffix": " such long hours.", "ru": "Ей не стоит так много работать."}, {"n": 6, "prefix": "They ", "hint": "leave", "answer": "shouldn't leave", "answers": ["shouldn't leave"], "suffix": " the children alone.", "ru": "Им не стоит оставлять детей одних."}, {"n": 7, "prefix": "You ", "hint": "believe", "answer": "shouldn't believe", "answers": ["shouldn't believe"], "suffix": " everything you read online.", "ru": "Тебе не стоит верить всему, что читаешь в интернете."}, {"n": 8, "prefix": "I ", "hint": "have", "answer": "shouldn't have", "answers": ["shouldn't have"], "suffix": " another coffee today.", "ru": "Мне не стоит пить ещё один кофе сегодня."}, {"n": 9, "prefix": "We ", "hint": "rush", "answer": "shouldn't rush", "answers": ["shouldn't rush"], "suffix": " this decision.", "ru": "Нам не стоит торопиться с этим решением."}, {"n": 10, "prefix": "He ", "hint": "compare", "answer": "shouldn't compare", "answers": ["shouldn't compare"], "suffix": " himself to others.", "ru": "Ему не стоит сравнивать себя с другими."}, {"n": 11, "prefix": "You ", "hint": "skip", "answer": "shouldn't skip", "answers": ["shouldn't skip"], "suffix": " breakfast every morning.", "ru": "Тебе не стоит пропускать завтрак каждое утро."}, {"n": 12, "prefix": "She ", "hint": "take", "answer": "shouldn't take", "answers": ["shouldn't take"], "suffix": " on so much stress.", "ru": "Ей не стоит брать на себя столько стресса."}, {"n": 13, "prefix": "They ", "hint": "argue", "answer": "shouldn't argue", "answers": ["shouldn't argue"], "suffix": " in front of the kids.", "ru": "Им не стоит ссориться при детях."}, {"n": 14, "prefix": "You ", "hint": "spend", "answer": "shouldn't spend", "answers": ["shouldn't spend"], "suffix": " all your savings at once.", "ru": "Тебе не стоит тратить все сбережения сразу."}, {"n": 15, "prefix": "We ", "hint": "forget", "answer": "shouldn't forget", "answers": ["shouldn't forget"], "suffix": " to say thank you.", "ru": "Нам не стоит забывать говорить спасибо."}, {"n": 16, "prefix": "He ", "hint": "stay", "answer": "shouldn't stay", "answers": ["shouldn't stay"], "suffix": " up so late.", "ru": "Ему не стоит так поздно ложиться."}, {"n": 17, "prefix": "You ", "hint": "judge", "answer": "shouldn't judge", "answers": ["shouldn't judge"], "suffix": " people so quickly.", "ru": "Тебе не стоит так быстро судить людей."}, {"n": 18, "prefix": "She ", "hint": "cancel", "answer": "shouldn't cancel", "answers": ["shouldn't cancel"], "suffix": " the appointment again.", "ru": "Ей не стоит снова отменять встречу."}, {"n": 19, "prefix": "I ", "hint": "say", "answer": "shouldn't say", "answers": ["shouldn't say"], "suffix": " that.", "ru": "Мне не стоило это говорить."}, {"n": 20, "prefix": "We ", "hint": "ignore", "answer": "shouldn't ignore", "answers": ["shouldn't ignore"], "suffix": " the problem any longer.", "ru": "Нам не стоит больше игнорировать проблему."}, {"n": 21, "prefix": "You ", "hint": "drive", "answer": "shouldn't drive", "answers": ["shouldn't drive"], "suffix": " without checking the mirrors.", "ru": "Тебе не стоит ехать, не проверив зеркала."}, {"n": 22, "prefix": "They ", "hint": "rely", "answer": "shouldn't rely", "answers": ["shouldn't rely"], "suffix": " on luck alone.", "ru": "Им не стоит полагаться только на удачу."}, {"n": 23, "prefix": "He ", "hint": "blame", "answer": "shouldn't blame", "answers": ["shouldn't blame"], "suffix": " himself for the mistake.", "ru": "Ему не стоит винить себя за эту ошибку."}, {"n": 24, "prefix": "You ", "hint": "touch", "answer": "shouldn't touch", "answers": ["shouldn't touch"], "suffix": " a hot pan without gloves.", "ru": "Тебе не стоит трогать горячую сковороду без перчаток."}, {"n": 25, "prefix": "She ", "hint": "worry", "answer": "shouldn't worry", "answers": ["shouldn't worry"], "suffix": " so much about the exam.", "ru": "Ей не стоит так сильно переживать из-за экзамена."}, {"n": 26, "prefix": "We ", "hint": "leave", "answer": "shouldn't leave", "answers": ["shouldn't leave"], "suffix": " the lights on all night.", "ru": "Нам не стоит оставлять свет включённым на всю ночь."}, {"n": 27, "prefix": "You ", "hint": "share", "answer": "shouldn't share", "answers": ["shouldn't share"], "suffix": " your password with anyone.", "ru": "Тебе не стоит делиться паролем ни с кем."}, {"n": 28, "prefix": "He ", "hint": "miss", "answer": "shouldn't miss", "answers": ["shouldn't miss"], "suffix": " any more classes.", "ru": "Ему не стоит больше пропускать занятия."}, {"n": 29, "prefix": "I ", "hint": "procrastinate", "answer": "shouldn't procrastinate", "answers": ["shouldn't procrastinate"], "suffix": " so much.", "ru": "Мне не стоит так много откладывать дела."}, {"n": 30, "prefix": "They ", "hint": "underestimate", "answer": "shouldn't underestimate", "answers": ["shouldn't underestimate"], "suffix": " the challenge.", "ru": "Им не стоит недооценивать эту сложность."}], "interrogative": [{"n": 1, "prefix": "", "hint": "call", "answer": "Should I call", "answers": ["Should I call"], "suffix": " her now or wait until tomorrow?", "ru": "Мне позвонить ей сейчас или подождать до завтра?"}, {"n": 2, "prefix": "", "hint": "book", "answer": "Should we book", "answers": ["Should we book"], "suffix": " a table in advance?", "ru": "Нам стоит забронировать столик заранее?"}, {"n": 3, "prefix": "", "hint": "apologise", "answer": "Should he apologise", "answers": ["Should he apologise"], "suffix": " first?", "ru": "Ему стоит извиниться первым?"}, {"n": 4, "prefix": "", "hint": "tell", "answer": "Should you tell", "answers": ["Should you tell"], "suffix": " your boss about the mistake?", "ru": "Тебе стоит рассказать начальнику об ошибке?"}, {"n": 5, "prefix": "", "hint": "bring", "answer": "Should I bring", "answers": ["Should I bring"], "suffix": " an umbrella today?", "ru": "Мне взять зонт сегодня?"}, {"n": 6, "prefix": "", "hint": "invite", "answer": "Should we invite", "answers": ["Should we invite"], "suffix": " everyone from the office?", "ru": "Нам стоит пригласить всех из офиса?"}, {"n": 7, "prefix": "", "hint": "take", "answer": "Should she take", "answers": ["Should she take"], "suffix": " the job offer?", "ru": "Ей стоит принять предложение о работе?"}, {"n": 8, "prefix": "", "hint": "wear", "answer": "Should I wear", "answers": ["Should I wear"], "suffix": " something formal to the event?", "ru": "Мне надеть что-то официальное на мероприятие?"}, {"n": 9, "prefix": "", "hint": "start", "answer": "Should we start", "answers": ["Should we start"], "suffix": " without him?", "ru": "Нам стоит начать без него?"}, {"n": 10, "prefix": "", "hint": "see", "answer": "Should he see", "answers": ["Should he see"], "suffix": " a specialist about the pain?", "ru": "Ему стоит показаться специалисту из-за боли?"}, {"n": 11, "prefix": "", "hint": "save", "answer": "Should I save", "answers": ["Should I save"], "suffix": " this file before closing it?", "ru": "Мне сохранить этот файл перед закрытием?"}, {"n": 12, "prefix": "", "hint": "cancel", "answer": "Should we cancel", "answers": ["Should we cancel"], "suffix": " the trip because of the weather?", "ru": "Нам стоит отменить поездку из-за погоды?"}, {"n": 13, "prefix": "", "hint": "ask", "answer": "Should you ask", "answers": ["Should you ask"], "suffix": " for a second opinion?", "ru": "Тебе стоит спросить второе мнение?"}, {"n": 14, "prefix": "", "hint": "mention", "answer": "Should I mention", "answers": ["Should I mention"], "suffix": " this in the meeting?", "ru": "Мне упомянуть это на встрече?"}, {"n": 15, "prefix": "", "hint": "wait", "answer": "Should we wait", "answers": ["Should we wait"], "suffix": " for the others to arrive?", "ru": "Нам стоит подождать, пока остальные придут?"}, {"n": 16, "prefix": "", "hint": "practise", "answer": "Should he practise", "answers": ["Should he practise"], "suffix": " more before the audition?", "ru": "Ему стоит больше тренироваться перед прослушиванием?"}, {"n": 17, "prefix": "", "hint": "trust", "answer": "Should I trust", "answers": ["Should I trust"], "suffix": " what he's telling me?", "ru": "Мне верить тому, что он говорит?"}, {"n": 18, "prefix": "", "hint": "spend", "answer": "Should we spend", "answers": ["Should we spend"], "suffix": " more on quality ingredients?", "ru": "Нам стоит тратить больше на качественные продукты?"}, {"n": 19, "prefix": "", "hint": "change", "answer": "Should she change", "answers": ["Should she change"], "suffix": " her password after that?", "ru": "Ей стоит сменить пароль после этого?"}, {"n": 20, "prefix": "", "hint": "take", "answer": "Should I take", "answers": ["Should I take"], "suffix": " the earlier train instead?", "ru": "Мне лучше сесть на более ранний поезд?"}, {"n": 21, "prefix": "", "hint": "tell", "answer": "Should we tell", "answers": ["Should we tell"], "suffix": " them the truth now?", "ru": "Нам стоит сказать им правду сейчас?"}, {"n": 22, "prefix": "", "hint": "rest", "answer": "Should he rest", "answers": ["Should he rest"], "suffix": " for a few more days?", "ru": "Ему стоит отдохнуть ещё несколько дней?"}, {"n": 23, "prefix": "", "hint": "keep", "answer": "Should I keep", "answers": ["Should I keep"], "suffix": " trying or give up?", "ru": "Мне продолжать пытаться или сдаться?"}, {"n": 24, "prefix": "", "hint": "invest", "answer": "Should we invest", "answers": ["Should we invest"], "suffix": " in new equipment this year?", "ru": "Нам стоит вложиться в новое оборудование в этом году?"}, {"n": 25, "prefix": "", "hint": "talk", "answer": "Should she talk", "answers": ["Should she talk"], "suffix": " to a lawyer first?", "ru": "Ей стоит сначала поговорить с юристом?"}, {"n": 26, "prefix": "", "hint": "finish", "answer": "Should I finish", "answers": ["Should I finish"], "suffix": " this today or tomorrow?", "ru": "Мне закончить это сегодня или завтра?"}, {"n": 27, "prefix": "", "hint": "check", "answer": "Should we check", "answers": ["Should we check"], "suffix": " the reviews before booking?", "ru": "Нам стоит проверить отзывы перед бронированием?"}, {"n": 28, "prefix": "", "hint": "apply", "answer": "Should he apply", "answers": ["Should he apply"], "suffix": " for that scholarship?", "ru": "Ему стоит подать заявку на эту стипендию?"}, {"n": 29, "prefix": "", "hint": "say", "answer": "Should I say", "answers": ["Should I say"], "suffix": " something or stay quiet?", "ru": "Мне что-то сказать или промолчать?"}, {"n": 30, "prefix": "", "hint": "plan", "answer": "Should we plan", "answers": ["Should we plan"], "suffix": " this more carefully?", "ru": "Нам стоит спланировать это тщательнее?"}]}, "permission": {"affirmative": [{"n": 1, "prefix": "You ", "hint": "borrow", "answer": "can borrow", "answers": ["can borrow"], "suffix": " my umbrella if you need it.", "ru": "Ты можешь взять мой зонт, если он тебе нужен."}, {"n": 2, "prefix": "Students ", "hint": "use", "answer": "can use", "answers": ["can use"], "suffix": " the library until 9pm.", "ru": "Студенты могут пользоваться библиотекой до 21:00."}, {"n": 3, "prefix": "It ", "hint": "rain", "answer": "could rain", "answers": ["could rain", "may rain", "might rain"], "suffix": " later this afternoon.", "ru": "Возможно, позже сегодня пойдёт дождь."}, {"n": 4, "prefix": "She ", "hint": "join", "answer": "could join", "answers": ["could join", "may join", "might join"], "suffix": " us for dinner tonight.", "ru": "Возможно, она присоединится к нам на ужин сегодня."}, {"n": 5, "prefix": "You ", "hint": "park", "answer": "can park", "answers": ["can park"], "suffix": " here after 6pm for free.", "ru": "Здесь можно парковаться бесплатно после 18:00."}, {"n": 6, "prefix": "He ", "hint": "be", "answer": "could be", "answers": ["could be", "may be", "might be"], "suffix": " at home already.", "ru": "Возможно, он уже дома."}, {"n": 7, "prefix": "It ", "hint": "take", "answer": "could take", "answers": ["could take", "may take", "might take"], "suffix": " a few days to arrive.", "ru": "Это может занять несколько дней, чтобы дойти."}, {"n": 8, "prefix": "You ", "hint": "leave", "answer": "can leave", "answers": ["can leave"], "suffix": " early if you finish your work.", "ru": "Ты можешь уйти пораньше, если закончишь работу."}, {"n": 9, "prefix": "We ", "hint": "visit", "answer": "could visit", "answers": ["could visit", "may visit", "might visit"], "suffix": " my parents this weekend.", "ru": "Возможно, мы навестим моих родителей в эти выходные."}, {"n": 10, "prefix": "Visitors ", "hint": "take", "answer": "can take", "answers": ["can take"], "suffix": " photos in the main hall.", "ru": "Посетители могут фотографировать в главном зале."}, {"n": 11, "prefix": "She ", "hint": "be", "answer": "could be", "answers": ["could be", "may be", "might be"], "suffix": " right about the schedule.", "ru": "Возможно, она права насчёт расписания."}, {"n": 12, "prefix": "You ", "hint": "ask", "answer": "can ask", "answers": ["can ask"], "suffix": " me anything, I don't mind.", "ru": "Ты можешь спросить меня о чём угодно, я не против."}, {"n": 13, "prefix": "It ", "hint": "get", "answer": "could get", "answers": ["could get", "may get", "might get"], "suffix": " colder tonight, take a jacket.", "ru": "Возможно, сегодня вечером станет холоднее, возьми куртку."}, {"n": 14, "prefix": "He ", "hint": "know", "answer": "could know", "answers": ["could know", "may know", "might know"], "suffix": " the answer to that question.", "ru": "Возможно, он знает ответ на этот вопрос."}, {"n": 15, "prefix": "You ", "hint": "sit", "answer": "can sit", "answers": ["can sit"], "suffix": " anywhere you like.", "ru": "Ты можешь сесть куда захочешь."}, {"n": 16, "prefix": "They ", "hint": "arrive", "answer": "could arrive", "answers": ["could arrive", "may arrive", "might arrive"], "suffix": " earlier than expected.", "ru": "Возможно, они приедут раньше, чем ожидалось."}, {"n": 17, "prefix": "You ", "hint": "use", "answer": "can use", "answers": ["can use"], "suffix": " my computer while yours is being fixed.", "ru": "Ты можешь пользоваться моим компьютером, пока твой чинят."}, {"n": 18, "prefix": "It ", "hint": "be", "answer": "could be", "answers": ["could be", "may be", "might be"], "suffix": " too late to change the booking.", "ru": "Возможно, уже слишком поздно менять бронирование."}, {"n": 19, "prefix": "She ", "hint": "know", "answer": "could know", "answers": ["could know", "may know", "might know"], "suffix": " about the surprise already.", "ru": "Возможно, она уже знает про сюрприз."}, {"n": 20, "prefix": "You ", "hint": "call", "answer": "can call", "answers": ["can call"], "suffix": " me anytime you need help.", "ru": "Ты можешь звонить мне в любое время, когда нужна помощь."}, {"n": 21, "prefix": "He ", "hint": "be", "answer": "could be", "answers": ["could be", "may be", "might be"], "suffix": " telling the truth this time.", "ru": "Возможно, на этот раз он говорит правду."}, {"n": 22, "prefix": "Guests ", "hint": "help", "answer": "can help", "answers": ["can help"], "suffix": " themselves to drinks.", "ru": "Гости могут сами угощаться напитками."}, {"n": 23, "prefix": "It ", "hint": "take", "answer": "could take", "answers": ["could take", "may take", "might take"], "suffix": " longer than we thought.", "ru": "Возможно, это займёт больше времени, чем мы думали."}, {"n": 24, "prefix": "You ", "hint": "choose", "answer": "can choose", "answers": ["can choose"], "suffix": " whichever colour you prefer.", "ru": "Ты можешь выбрать любой цвет, какой предпочитаешь."}, {"n": 25, "prefix": "She ", "hint": "have", "answer": "could have", "answers": ["could have", "may have", "might have"], "suffix": " forgotten about the meeting.", "ru": "Возможно, она забыла про встречу."}, {"n": 26, "prefix": "We ", "hint": "try", "answer": "could try", "answers": ["could try", "may try", "might try"], "suffix": " a different approach.", "ru": "Мы могли бы попробовать другой подход."}, {"n": 27, "prefix": "You ", "hint": "stay", "answer": "can stay", "answers": ["can stay"], "suffix": " as long as you want.", "ru": "Ты можешь оставаться сколько захочешь."}, {"n": 28, "prefix": "It ", "hint": "be", "answer": "could be", "answers": ["could be", "may be", "might be"], "suffix": " a good idea to double-check.", "ru": "Возможно, стоит перепроверить."}, {"n": 29, "prefix": "He ", "hint": "be", "answer": "could be", "answers": ["could be", "may be", "might be"], "suffix": " running a little late.", "ru": "Возможно, он немного опаздывает."}, {"n": 30, "prefix": "You ", "hint": "pay", "answer": "can pay", "answers": ["can pay"], "suffix": " by card or cash here.", "ru": "Здесь можно платить картой или наличными."}], "negative": [{"n": 1, "prefix": "You ", "hint": "smoke", "answer": "can't smoke", "answers": ["can't smoke"], "suffix": " inside the building.", "ru": "Внутри здания нельзя курить."}, {"n": 2, "prefix": "Visitors ", "hint": "enter", "answer": "can't enter", "answers": ["can't enter"], "suffix": " after 5pm.", "ru": "Посетителям нельзя входить после 17:00."}, {"n": 3, "prefix": "It ", "hint": "be", "answer": "can't be", "answers": ["can't be"], "suffix": " true, I don't believe it.", "ru": "Не может быть, чтобы это было правдой, я не верю."}, {"n": 4, "prefix": "Students ", "hint": "bring", "answer": "can't bring", "answers": ["can't bring"], "suffix": " food into the exam room.", "ru": "Студентам нельзя приносить еду в аудиторию для экзамена."}, {"n": 5, "prefix": "He ", "hint": "be", "answer": "can't be", "answers": ["can't be"], "suffix": " at the office, he's on holiday.", "ru": "Он не может быть в офисе, он в отпуске."}, {"n": 6, "prefix": "You ", "hint": "park", "answer": "can't park", "answers": ["can't park"], "suffix": " here on weekdays.", "ru": "Здесь нельзя парковаться по будням."}, {"n": 7, "prefix": "She ", "hint": "have", "answer": "can't have", "answers": ["can't have"], "suffix": " finished already, it's too soon.", "ru": "Не может быть, чтобы она уже закончила, слишком рано."}, {"n": 8, "prefix": "You ", "hint": "use", "answer": "can't use", "answers": ["can't use"], "suffix": " your phone during the flight.", "ru": "Нельзя пользоваться телефоном во время полёта."}, {"n": 9, "prefix": "They ", "hint": "come", "answer": "might not come", "answers": ["might not come", "may not come"], "suffix": " to the party after all.", "ru": "Возможно, они в итоге не придут на вечеринку."}, {"n": 10, "prefix": "It ", "hint": "be", "answer": "might not be", "answers": ["might not be", "may not be"], "suffix": " ready until next week.", "ru": "Возможно, это не будет готово до следующей недели."}, {"n": 11, "prefix": "You ", "hint": "leave", "answer": "can't leave", "answers": ["can't leave"], "suffix": " your bag unattended here.", "ru": "Здесь нельзя оставлять сумку без присмотра."}, {"n": 12, "prefix": "He ", "hint": "have", "answer": "can't have", "answers": ["can't have"], "suffix": " seen the message yet.", "ru": "Не может быть, чтобы он уже видел сообщение."}, {"n": 13, "prefix": "Guests ", "hint": "bring", "answer": "can't bring", "answers": ["can't bring"], "suffix": " pets into the restaurant.", "ru": "Гостям нельзя приводить питомцев в ресторан."}, {"n": 14, "prefix": "She ", "hint": "remember", "answer": "might not remember", "answers": ["might not remember", "may not remember"], "suffix": " the details.", "ru": "Возможно, она не помнит подробностей."}, {"n": 15, "prefix": "You ", "hint": "take", "answer": "can't take", "answers": ["can't take"], "suffix": " photos inside the museum.", "ru": "Внутри музея нельзя фотографировать."}, {"n": 16, "prefix": "It ", "hint": "have", "answer": "can't have", "answers": ["can't have"], "suffix": " been him, he wasn't there.", "ru": "Не может быть, чтобы это был он, его там не было."}, {"n": 17, "prefix": "Children ", "hint": "watch", "answer": "can't watch", "answers": ["can't watch"], "suffix": " that film alone.", "ru": "Детям нельзя смотреть этот фильм одним."}, {"n": 18, "prefix": "You ", "hint": "cross", "answer": "can't cross", "answers": ["can't cross"], "suffix": " here, use the bridge instead.", "ru": "Здесь нельзя переходить, используй мост."}, {"n": 19, "prefix": "He ", "hint": "agree", "answer": "might not agree", "answers": ["might not agree", "may not agree"], "suffix": " with the plan.", "ru": "Возможно, он не согласится с планом."}, {"n": 20, "prefix": "You ", "hint": "borrow", "answer": "can't borrow", "answers": ["can't borrow"], "suffix": " the car this weekend, sorry.", "ru": "Извини, машину нельзя взять в эти выходные."}, {"n": 21, "prefix": "It ", "hint": "work", "answer": "might not work", "answers": ["might not work", "may not work"], "suffix": " the first time, try again.", "ru": "Возможно, с первого раза не получится, попробуй снова."}, {"n": 22, "prefix": "She ", "hint": "be", "answer": "can't be", "answers": ["can't be"], "suffix": " serious about quitting.", "ru": "Не может быть, чтобы она серьёзно решила уволиться."}, {"n": 23, "prefix": "You ", "hint": "skip", "answer": "can't skip", "answers": ["can't skip"], "suffix": " this step, it's important.", "ru": "Нельзя пропускать этот шаг, он важен."}, {"n": 24, "prefix": "They ", "hint": "have", "answer": "can't have", "answers": ["can't have"], "suffix": " left already, it's too early.", "ru": "Не может быть, чтобы они уже уехали, слишком рано."}, {"n": 25, "prefix": "You ", "hint": "touch", "answer": "can't touch", "answers": ["can't touch"], "suffix": " the exhibits in this gallery.", "ru": "В этой галерее нельзя трогать экспонаты."}, {"n": 26, "prefix": "He ", "hint": "be", "answer": "might not be", "answers": ["might not be", "may not be"], "suffix": " able to come after all.", "ru": "Возможно, он в итоге не сможет прийти."}, {"n": 27, "prefix": "You ", "hint": "return", "answer": "can't return", "answers": ["can't return"], "suffix": " the item without a receipt.", "ru": "Нельзя вернуть товар без чека."}, {"n": 28, "prefix": "It ", "hint": "be", "answer": "might not be", "answers": ["might not be", "may not be"], "suffix": " the best time to ask.", "ru": "Возможно, сейчас не лучшее время спрашивать."}, {"n": 29, "prefix": "Visitors ", "hint": "feed", "answer": "can't feed", "answers": ["can't feed"], "suffix": " the animals here.", "ru": "Посетителям нельзя кормить здесь животных."}, {"n": 30, "prefix": "You ", "hint": "be", "answer": "can't be", "answers": ["can't be"], "suffix": " serious right now.", "ru": "Не может быть, чтобы ты сейчас это серьёзно."}], "interrogative": [{"n": 1, "prefix": "", "hint": "open", "answer": "Can I open", "answers": ["Can I open", "Could I open", "May I open"], "suffix": " the window, please?", "ru": "Можно мне открыть окно, пожалуйста?"}, {"n": 2, "prefix": "", "hint": "help", "answer": "Could you help", "answers": ["Could you help", "Can you help", "May you help"], "suffix": " me carry this?", "ru": "Не могли бы вы помочь мне это донести?"}, {"n": 3, "prefix": "", "hint": "ask", "answer": "May I ask", "answers": ["May I ask", "Can I ask", "Could I ask"], "suffix": " you something personal?", "ru": "Могу я спросить вас кое-что личное?"}, {"n": 4, "prefix": "", "hint": "sit", "answer": "Can we sit", "answers": ["Can we sit", "Could we sit", "May we sit"], "suffix": " here?", "ru": "Можно нам сесть здесь?"}, {"n": 5, "prefix": "", "hint": "borrow", "answer": "Could I borrow", "answers": ["Could I borrow", "Can I borrow", "May I borrow"], "suffix": " your pen for a second?", "ru": "Можно мне на секунду одолжить вашу ручку?"}, {"n": 6, "prefix": "", "hint": "pass", "answer": "Can you pass", "answers": ["Can you pass", "Could you pass", "May you pass"], "suffix": " me the salt, please?", "ru": "Не могли бы вы передать мне соль, пожалуйста?"}, {"n": 7, "prefix": "", "hint": "leave", "answer": "May I leave", "answers": ["May I leave", "Can I leave", "Could I leave"], "suffix": " the room for a moment?", "ru": "Можно мне выйти на минуту?"}, {"n": 8, "prefix": "", "hint": "reschedule", "answer": "Could we reschedule", "answers": ["Could we reschedule", "Can we reschedule", "May we reschedule"], "suffix": " the meeting?", "ru": "Не могли бы мы перенести встречу?"}, {"n": 9, "prefix": "", "hint": "try", "answer": "Can I try", "answers": ["Can I try", "Could I try", "May I try"], "suffix": " that dish before I order it?", "ru": "Можно мне попробовать это блюдо перед заказом?"}, {"n": 10, "prefix": "", "hint": "repeat", "answer": "Could you repeat", "answers": ["Could you repeat", "Can you repeat", "May you repeat"], "suffix": " that, please?", "ru": "Не могли бы вы повторить, пожалуйста?"}, {"n": 11, "prefix": "", "hint": "use", "answer": "May I use", "answers": ["May I use", "Can I use", "Could I use"], "suffix": " your phone quickly?", "ru": "Можно мне быстро воспользоваться вашим телефоном?"}, {"n": 12, "prefix": "", "hint": "start", "answer": "Can we start", "answers": ["Can we start", "Could we start", "May we start"], "suffix": " a bit earlier tomorrow?", "ru": "Можно нам начать чуть раньше завтра?"}, {"n": 13, "prefix": "", "hint": "have", "answer": "Could I have", "answers": ["Could I have", "Can I have", "May I have"], "suffix": " a glass of water?", "ru": "Можно мне стакан воды?"}, {"n": 14, "prefix": "", "hint": "explain", "answer": "Can you explain", "answers": ["Can you explain", "Could you explain", "May you explain"], "suffix": " that again?", "ru": "Не могли бы вы объяснить это ещё раз?"}, {"n": 15, "prefix": "", "hint": "come", "answer": "May I come", "answers": ["May I come", "Can I come", "Could I come"], "suffix": " in?", "ru": "Можно войти?"}, {"n": 16, "prefix": "", "hint": "get", "answer": "Could we get", "answers": ["Could we get", "Can we get", "May we get"], "suffix": " the bill, please?", "ru": "Можно нам счёт, пожалуйста?"}, {"n": 17, "prefix": "", "hint": "take", "answer": "Can I take", "answers": ["Can I take", "Could I take", "May I take"], "suffix": " this seat?", "ru": "Можно мне занять это место?"}, {"n": 18, "prefix": "", "hint": "turn", "answer": "Could you turn", "answers": ["Could you turn", "Can you turn", "May you turn"], "suffix": " the music down a little?", "ru": "Не могли бы вы немного убавить музыку?"}, {"n": 19, "prefix": "", "hint": "see", "answer": "May I see", "answers": ["May I see", "Can I see", "Could I see"], "suffix": " your ticket, please?", "ru": "Могу я увидеть ваш билет, пожалуйста?"}, {"n": 20, "prefix": "", "hint": "change", "answer": "Can we change", "answers": ["Can we change", "Could we change", "May we change"], "suffix": " the date of the appointment?", "ru": "Можно нам перенести дату встречи?"}, {"n": 21, "prefix": "", "hint": "speak", "answer": "Could I speak", "answers": ["Could I speak", "Can I speak", "May I speak"], "suffix": " to the manager, please?", "ru": "Могу я поговорить с менеджером, пожалуйста?"}, {"n": 22, "prefix": "", "hint": "show", "answer": "Can you show", "answers": ["Can you show", "Could you show", "May you show"], "suffix": " me how this works?", "ru": "Не могли бы вы показать мне, как это работает?"}, {"n": 23, "prefix": "", "hint": "ask", "answer": "May I ask", "answers": ["May I ask", "Can I ask", "Could I ask"], "suffix": " why you're leaving early?", "ru": "Могу я спросить, почему вы уходите рано?"}, {"n": 24, "prefix": "", "hint": "take", "answer": "Could we take", "answers": ["Could we take", "Can we take", "May we take"], "suffix": " a short break?", "ru": "Можно нам сделать небольшой перерыв?"}, {"n": 25, "prefix": "", "hint": "get", "answer": "Can I get", "answers": ["Can I get", "Could I get", "May I get"], "suffix": " a refund for this?", "ru": "Можно мне получить возврат за это?"}, {"n": 26, "prefix": "", "hint": "lower", "answer": "Could you lower", "answers": ["Could you lower", "Can you lower", "May you lower"], "suffix": " your voice, please?", "ru": "Не могли бы вы говорить потише, пожалуйста?"}, {"n": 27, "prefix": "", "hint": "join", "answer": "May I join", "answers": ["May I join", "Can I join", "Could I join"], "suffix": " you for lunch?", "ru": "Можно мне присоединиться к вам на обед?"}, {"n": 28, "prefix": "", "hint": "postpone", "answer": "Can we postpone", "answers": ["Can we postpone", "Could we postpone", "May we postpone"], "suffix": " the call until tomorrow?", "ru": "Можно нам перенести звонок на завтра?"}, {"n": 29, "prefix": "", "hint": "get", "answer": "Could I get", "answers": ["Could I get", "Can I get", "May I get"], "suffix": " a receipt, please?", "ru": "Можно мне получить чек, пожалуйста?"}, {"n": 30, "prefix": "", "hint": "check", "answer": "Can you check", "answers": ["Can you check", "Could you check", "May you check"], "suffix": " that for me, please?", "ru": "Не могли бы вы это для меня проверить, пожалуйста?"}]}}
+;
+
+
+function confirmResetPassword(){
+  const pw = prompt('This will erase ALL saved progress on this page.\nEnter the reset password to confirm:');
+  if (pw === null) return false; // cancelled
+  if (pw !== 'thebest') { alert('Incorrect password. Progress was not reset.'); return false; }
+  return true;
+}
+
+const SUPABASE_URL = 'https://zhzhamxgfornfvwckfyf.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_LoyWwbsXHBb4l_k1FnmAog_yZO0uPrn';
+const TRACK_BLOCK = 'block5';
+
+const SESSION_ID = (function(){
+  try {
+    let sid = sessionStorage.getItem('hw_session_id');
+    if (!sid) { sid = 'sess_' + Date.now() + '_' + Math.random().toString(36).slice(2,10); sessionStorage.setItem('hw_session_id', sid); }
+    return sid;
+  } catch(e) { return 'sess_' + Date.now() + '_' + Math.random().toString(36).slice(2,10); }
+})();
+
+function trackEvent(topic, questionText, isCorrect){
+  if (!SUPABASE_URL || SUPABASE_URL.indexOf('__') === 0) return; // Supabase not configured yet
+  try {
+    fetch(SUPABASE_URL + '/rest/v1/activity_events', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({
+        session_id: SESSION_ID,
+        block: TRACK_BLOCK,
+        topic: topic,
+        question_text: questionText,
+        is_correct: isCorrect,
+        event_type: 'answer'
+      }),
+      keepalive: true
+    }).catch(function(){});
+  } catch(e) { /* ignore -- never let tracking break the UI */ }
+}
+
+function normVal(s){
+  return s.trim().toLowerCase().replace(/’/g,"'").replace(/\s+/g,' ');
+}
+
+function shuffleArr(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+const COND_DEFS = [
+  { key: 'obligation', label: 'Obligation', badge: 'Obligation & Prohibition',
+    ruleTitle: '📖 Obligation & Prohibition — правило и тонкости живой речи',
+    rule: `
+      <h4>Форма</h4>
+      <p><code>must / have to + base verb</code> для обязанности. Оба варианта переводятся как "должен", но источник обязанности разный.</p>
+      <ul>
+        <li><b>must</b> — обязанность, которую говорящий считает важной сам (личное мнение, внутреннее давление): <i>I must call my mum, I haven't spoken to her in weeks.</i></li>
+        <li><b>have to</b> — обязанность, идущая извне: правило, закон, чужое требование: <i>You have to wear a uniform at this school.</i></li>
+      </ul>
+      <div class="rule-note"><b>Главная ловушка — отрицание:</b> <code>mustn't</code> и <code>don't have to</code> означают СОВЕРШЕННО РАЗНЫЕ вещи, хотя оба выглядят как "отрицание обязанности".
+        <ul>
+          <li><code>mustn't</code> = запрещено, нельзя: <i>You mustn't smoke here.</i> (это запрет)</li>
+          <li><code>don't have to</code> = не обязан, но можно: <i>You don't have to come, it's optional.</i> (обязанности просто нет)</li>
+        </ul>
+      </div>
+      <h4>Вопросы</h4>
+      <p>С <code>have to</code> вопрос строится через <code>do/does</code>: <i>Do you have to leave already?</i> С <code>must</code> — простая инверсия (реже в живой речи, звучит официально): <i>Must you leave already?</i></p>
+      <h4>Глаголы этой категории</h4>
+      <table class="verb-table">
+        <tr><td><code>must</code></td><td>должен (обязанность по мнению говорящего)</td></tr>
+        <tr><td><code>have to / has to</code></td><td>должен (обязанность извне — правило, закон)</td></tr>
+        <tr><td><code>mustn't</code></td><td>нельзя, запрещено</td></tr>
+        <tr><td><code>don't have to / doesn't have to</code></td><td>не обязан (но можно, по желанию)</td></tr>
+      </table>
+      <h4>Живая речь</h4>
+      <ul>
+        <li>В разговорном английском <code>have to</code> используется гораздо чаще, чем <code>must</code> — <code>must</code> звучит формальнее и иногда как приказ.</li>
+        <li>Носители часто говорят <code>have got to</code> или сокращают до <code>gotta</code> в неформальной речи: <i>I gotta go.</i></li>
+        <li><code>need to</code> — ещё один способ выразить необходимость, чуть мягче, чем <code>have to</code>: <i>I need to check my email.</i></li>
+      </ul>` },
+  { key: 'advice', label: 'Advice', badge: 'Advice',
+    ruleTitle: '📖 Advice — правило и тонкости живой речи',
+    rule: `
+      <h4>Форма</h4>
+      <p><code>should / shouldn't + base verb</code> — совет, рекомендация, мнение о том, что правильно сделать. Не обязанность (как <code>must</code>), а именно совет — можно не послушаться, ничего страшного не будет.</p>
+      <ul>
+        <li><b>You should see a doctor.</b> — совет (в отличие от <i>You must see a doctor</i>, что звучит гораздо строже и настойчивее).</li>
+        <li><b>You shouldn't eat so much sugar.</b> — совет не делать что-то, а не запрет.</li>
+      </ul>
+      <div class="rule-note"><b>Should vs Must:</b> сравни — <i>You should wear a helmet</i> (совет, безопаснее) vs <i>You must wear a helmet</i> (обязательно по закону/правилам). Одна и та же ситуация, разная степень категоричности.</div>
+      <h4>Вопросы</h4>
+      <p>Простая инверсия, без <code>do/does</code>: <i>Should I call her now?</i> Часто используется, чтобы спросить совета или мнения собеседника.</p>
+      <h4>Глаголы этой категории</h4>
+      <table class="verb-table">
+        <tr><td><code>should</code></td><td>следует, стоит (совет)</td></tr>
+        <tr><td><code>shouldn't</code></td><td>не следует, не стоит</td></tr>
+      </table>
+      <h4>Живая речь</h4>
+      <ul>
+        <li>В прошедшем времени для сожаления об упущенном совете используется <code>should have + participle</code>: <i>You should have told me earlier.</i> — это уже отдельная тема (Third Conditional по духу), но полезно узнавать в тексте.</li>
+      </ul>` },
+  { key: 'permission', label: 'Permission', badge: 'Permission & Possibility',
+    ruleTitle: '📖 Permission & Possibility — правило и тонкости живой речи',
+    rule: `
+      <h4>Форма</h4>
+      <p><code>can / could / may / might + base verb</code> — разрешение (можно ли) и возможность (может случиться). Один и тот же модальный глагол <code>can</code> используется для обоих смыслов, различить помогает контекст.</p>
+      <ul>
+        <li><b>Разрешение:</b> <i>Can I open the window?</i> — прошу разрешения. <i>You can leave early today.</i> — разрешаю.</li>
+        <li><b>Возможность:</b> <i>It might rain later.</i> — возможно, будет дождь. <i>She could be at home.</i> — возможно, она дома.</li>
+      </ul>
+      <div class="rule-note"><b>Could vs Can:</b> <code>could</code> звучит вежливее, чем <code>can</code>, при просьбе разрешения: <i>Could I ask you something?</i> мягче, чем <i>Can I ask you something?</i> При этом <code>could</code> в значении возможности (не разрешения) — это просто "возможно, менее уверенно", чем <code>can</code>.</div>
+      <h4>May vs Might — в чём разница</h4>
+      <p>Для возможности <code>may</code> и <code>might</code> означают почти одно и то же — "возможно, случится". Разница тонкая, но есть три практических ориентира:</p>
+      <ul>
+        <li><b>Уверенность:</b> <code>might</code> обычно звучит чуть менее уверенно, чем <code>may</code> — как "может быть, а может и нет" против "вполне вероятно". Сравни: <i>She may come to the party.</i> (довольно вероятно) vs <i>She might come to the party.</i> (не факт, скорее сомнение).</li>
+        <li><b>Стиль:</b> <code>may</code> чаще встречается в письменной и более официальной речи, <code>might</code> — стандартный выбор в разговорной речи. В быстрой устной речи носители часто используют <code>might</code> даже там, где формально подошло бы <code>may</code>.</li>
+        <li><b>Разрешение — только may:</b> для просьбы разрешения используется именно <code>may</code> (<i>May I leave early?</i>), а не <code>might</code> — <code>might</code> для разрешения практически не используется.</li>
+      </ul>
+      <div class="rule-note"><b>Если сомневаешься — используй <code>might</code>.</b> Для возможности это самый безопасный, нейтральный вариант, который не режет слух ни в устной, ни в письменной речи. <code>may</code> стоит использовать осознанно — либо для формального разрешения (<i>May I...?</i>), либо когда действительно хочешь показать бóльшую уверенность в возможности.</div>
+      <div class="rule-note">✓ <b>В заданиях этой категории</b> can/could/may/might засчитываются как верные везде, где разница между ними — это только оттенок уверенности или вежливости, а не грамматическая ошибка. Единственное исключение — <code>can</code> для разрешения (в утверждениях) и <code>can't</code> для уверенного отрицания: они несут отдельный смысл, поэтому их не путаем с остальными.</div>
+      <h4>Отрицание</h4>
+      <p><code>can't</code> — и невозможность разрешения (нельзя), и уверенность в невозможности чего-либо: <i>You can't park here</i> (нельзя) vs <i>That can't be true</i> (не может быть правдой — говорящий уверен, что это не так). <code>might not / may not</code> — менее уверенное отрицание возможности: <i>She might not come.</i></p>
+      <h4>Глаголы этой категории</h4>
+      <table class="verb-table">
+        <tr><td><code>can</code></td><td>можно (разрешение) / может (возможность)</td></tr>
+        <tr><td><code>could</code></td><td>не могли бы (вежливая просьба) / возможно (менее уверенно)</td></tr>
+        <tr><td><code>may</code></td><td>можно (формальное разрешение) / возможно (увереннее)</td></tr>
+        <tr><td><code>might</code></td><td>возможно (менее уверенно — нейтральный выбор по умолчанию)</td></tr>
+        <tr><td><code>can't</code></td><td>нельзя / не может быть (уверенность в обратном)</td></tr>
+        <tr><td><code>may not / might not</code></td><td>возможно, не... (неуверенное отрицание)</td></tr>
+      </table>
+      <h4>Живая речь</h4>
+      <ul>
+        <li><code>May I...?</code> — самый вежливый/формальный способ попросить разрешения, часто используется с незнакомыми людьми или в официальной обстановке.</li>
+        <li>В быстрой разговорной речи разница между <code>can't have</code> и <code>couldn't have</code> (в контексте прошлого) стирается — оба звучат как уверенное "не мог".</li>
+      </ul>` },
+];
+
+const CATS = ['affirmative', 'negative', 'interrogative'];
+const ROUND_SIZE = 25;
+const BANK_SIZE_PER_COND = 90; // 30 x 3 categories (affirmative/negative/interrogative)
+
+const STORAGE_KEY = 'hwProgress_block5';
+
+function loadRoundState(){
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch(e) { return null; }
+}
+
+function saveRoundState(){
+  try {
+    const inputsState = {};
+    roundContainerEl.querySelectorAll('.gap').forEach(inp => {
+      const rid = inp.dataset.rid;
+      let c = null;
+      if (inp.classList.contains('correct')) c = 'correct';
+      else if (inp.classList.contains('wrong')) c = 'wrong';
+      if (inp.value || c) inputsState[rid] = { v: inp.value, c: c, ro: inp.readOnly };
+    });
+    const state = {
+      selectedConds: [...selectedConds],
+      mistakesOnly: mistakesOnly,
+      mistakesBank: [...mistakesBank.entries()],
+      seenSet: [...seenSet],
+      currentRound: currentRound,
+      inputs: inputsState,
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  } catch(e) { /* storage unavailable -- fail silently */ }
+}
+
+const __saved = loadRoundState();
+let selectedConds = new Set((__saved && __saved.selectedConds && __saved.selectedConds.length) ? __saved.selectedConds : ['obligation']);
+let mistakesOnly = __saved ? !!__saved.mistakesOnly : false;
+let currentRound = [];
+let mistakesBank = new Map((__saved && __saved.mistakesBank) ? __saved.mistakesBank : []);
+let seenSet = new Set((__saved && __saved.seenSet) ? __saved.seenSet : []);
+
+function itemKey(item){
+  return item.condKey + '|' + item.cat + '|' + item.n;
+}
+
+const condTabsEl = document.getElementById('cond-tabs');
+const ruleStackEl = document.getElementById('rule-stack');
+const bankOverviewEl = document.getElementById('bank-overview');
+const roundContainerEl = document.getElementById('round-container');
+const statFilledEl = document.getElementById('stat-filled');
+const statCorrectEl = document.getElementById('stat-correct');
+const statWrongEl = document.getElementById('stat-wrong');
+
+function renderCondTabs(){
+  condTabsEl.innerHTML = '';
+  COND_DEFS.forEach(cd => {
+    const tab = document.createElement('div');
+    tab.className = 'cond-tab' + (selectedConds.has(cd.key) ? ' active' : '');
+    tab.id = 'condtab-' + cd.key;
+    tab.innerHTML = '<span class="check-dot">' + (selectedConds.has(cd.key) ? '✓' : '') + '</span>' + cd.label;
+    tab.onclick = () => toggleCond(cd.key);
+    condTabsEl.appendChild(tab);
+  });
+  const mtab = document.createElement('div');
+  mtab.className = 'cond-tab mistakes-tab' + (mistakesOnly ? ' active' : '');
+  mtab.id = 'mistakes-tab';
+  mtab.innerHTML = '<span class="check-dot">' + (mistakesOnly ? '✓' : '') + '</span>⚠ Mistakes Bank (' + mistakesBank.size + ')';
+  mtab.onclick = () => { mistakesOnly = !mistakesOnly; onSelectionChanged(); };
+  condTabsEl.appendChild(mtab);
+}
+
+function toggleCond(key){
+  if (selectedConds.has(key)) selectedConds.delete(key);
+  else selectedConds.add(key);
+  onSelectionChanged();
+}
+
+function onSelectionChanged(){
+  seenSet = new Set();
+  renderCondTabs();
+  renderRuleStack();
+  buildRound();
+  renderRound();
+  updateBankOverview();
+  saveRoundState();
+}
+
+function renderRuleStack(){
+  ruleStackEl.innerHTML = '';
+  COND_DEFS.forEach(cd => {
+    if (!selectedConds.has(cd.key)) return;
+    const box = document.createElement('div');
+    box.className = 'rule-box';
+    box.innerHTML = `
+      <div class="rule-toggle" id="ruletoggle-${cd.key}">
+        <span>${cd.ruleTitle}</span>
+        <span class="chev">▾</span>
+      </div>
+      <div class="rule-content" id="rulecontent-${cd.key}">${cd.rule}</div>
+    `;
+    ruleStackEl.appendChild(box);
+    const toggle = box.querySelector('.rule-toggle');
+    const contentEl = box.querySelector('.rule-content');
+    toggle.addEventListener('click', () => {
+      toggle.classList.toggle('open');
+      contentEl.classList.toggle('open');
+    });
+  });
+}
+
+function currentPoolSize(){
+  if (mistakesOnly) return mistakesBank.size;
+  return selectedConds.size * BANK_SIZE_PER_COND;
+}
+
+function updateBankOverview(){
+  const total = currentPoolSize();
+  const seen = seenSet.size;
+  if (total === 0) {
+    bankOverviewEl.innerHTML = mistakesOnly
+      ? 'Mistakes Bank is empty — nice work! Answer questions elsewhere and mistakes will collect here.'
+      : 'Select at least one conditional type to see the question bank.';
+  } else {
+    bankOverviewEl.innerHTML = `Bank: <b>${total}</b> question${total===1?'':'s'} ${mistakesOnly ? '(Mistakes Bank)' : 'across selected filters'} &nbsp;·&nbsp; Completed so far: <b>${seen}</b> / ${total}`;
+  }
+}
+
+function buildRound(){
+  if (mistakesOnly) {
+    const pool = [...mistakesBank.values()];
+    if (pool.length === 0) { currentRound = []; return; }
+    const roundSize = Math.min(ROUND_SIZE, pool.length); // don't pad with repeats -- show only real mistakes
+    const shuffled = shuffleArr(pool);
+    const items = shuffled.slice(0, roundSize);
+    currentRound = shuffleArr(items).map((item, i) => Object.assign({}, item, { rid: i }));
+    return;
+  }
+
+  const conds = [...selectedConds];
+  if (conds.length === 0) { currentRound = []; return; }
+
+  const base = Math.floor(ROUND_SIZE / CATS.length);
+  const rem = ROUND_SIZE - base * CATS.length;
+  const counts = CATS.map((c, i) => base + (i < rem ? 1 : 0));
+
+  let items = [];
+  CATS.forEach((cat, idx) => {
+    let pool = [];
+    conds.forEach(condKey => {
+      ALL[condKey][cat].forEach(it => pool.push(Object.assign({}, it, { condKey, cat })));
+    });
+    const shuffled = shuffleArr(pool);
+    const need = counts[idx];
+    for (let i = 0; i < need; i++) {
+      items.push(Object.assign({}, shuffled[i % shuffled.length]));
+    }
+  });
+  items = shuffleArr(items);
+  currentRound = items.map((item, i) => Object.assign({}, item, { rid: i }));
+}
+
+function renderRound(){
+  roundContainerEl.innerHTML = '';
+  if (currentRound.length === 0) {
+    roundContainerEl.innerHTML = mistakesOnly
+      ? '<div class="empty-state">No mistakes recorded yet for the current filters. Answer some questions elsewhere first!</div>'
+      : '<div class="empty-state">Select at least one conditional type above to start a round.</div>';
+    updateStats();
+    return;
+  }
+  const listCard = document.createElement('div');
+  listCard.className = 'list-card';
+  currentRound.forEach((item, i) => {
+    const row = document.createElement('div');
+    row.className = 'item';
+    row.innerHTML = `
+      <div class="item-row">
+        <span class="item-num">${i + 1}.</span>
+        <span class="item-text">${item.prefix}</span>
+        <span class="gapwrap">
+          <input type="text" class="gap" data-rid="${item.rid}" autocomplete="off" spellcheck="false">
+        </span>
+        <span class="hint">(${item.hint})</span>
+        <span class="item-text">${item.suffix}</span>
+        <span class="correct-answer"></span>
+      </div>
+      <div class="item-ru">${item.ru || ''}</div>
+    `;
+    listCard.appendChild(row);
+  });
+  roundContainerEl.appendChild(listCard);
+
+  roundContainerEl.querySelectorAll('.gap').forEach(inp => {
+    inp.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        checkSingle(inp);
+        focusNext(inp);
+      }
+    });
+    inp.addEventListener('blur', () => {
+      checkSingle(inp);
+    });
+  });
+
+  updateStats();
+}
+
+function focusNext(inp){
+  const all = [...roundContainerEl.querySelectorAll('.gap')];
+  const idx = all.indexOf(inp);
+  for (let i = idx + 1; i < all.length; i++) {
+    if (!all[i].readOnly) { all[i].focus(); return; }
+  }
+}
+
+// note element is the 3rd sibling after the gapwrap: gapwrap -> hint -> suffix(item-text) -> correct-answer
+function getNoteEl(inp){
+  return inp.parentElement.nextElementSibling.nextElementSibling.nextElementSibling;
+}
+
+function checkSingle(inp){
+  if (inp.readOnly) return;
+  const rid = inp.dataset.rid;
+  const item = currentRound.find(x => String(x.rid) === String(rid));
+  if (!item) return;
+  const note = getNoteEl(inp);
+  const val = normVal(inp.value);
+  const acceptedList = (item.answers || [item.answer]).map(normVal);
+  const key = itemKey(item);
+  const isCorrect = val.length && acceptedList.includes(val);
+
+  if (isCorrect) {
+    inp.classList.add('correct'); inp.classList.remove('wrong');
+    note.classList.remove('show');
+    if (mistakesBank.has(key)) mistakesBank.delete(key); // graduate out of mistakes
+  } else {
+    inp.classList.add('wrong'); inp.classList.remove('correct');
+    const shown = (item.answers && item.answers.length > 1) ? item.answers.join(' / ') : item.answer;
+    note.textContent = '→ ' + shown;
+    note.classList.add('show');
+    mistakesBank.set(key, item);
+  }
+  inp.readOnly = true;
+  seenSet.add(key);
+  trackEvent(item.condKey + ' \u00b7 ' + item.cat, item.prefix + item.answer + item.suffix, isCorrect);
+  updateStats();
+  updateBankOverview();
+  updateMistakesTabLabel();
+  saveRoundState();
+}
+
+function updateMistakesTabLabel(){
+  const tab = document.getElementById('mistakes-tab');
+  if (tab) tab.innerHTML = '<span class="check-dot">' + (mistakesOnly ? '✓' : '') + '</span>⚠ Mistakes Bank (' + mistakesBank.size + ')';
+}
+
+function checkAll(){
+  roundContainerEl.querySelectorAll('.gap').forEach(inp => {
+    if (!inp.readOnly) checkSingle(inp);
+  });
+}
+
+function resetRound(){
+  roundContainerEl.querySelectorAll('.gap').forEach(inp => {
+    inp.value = '';
+    inp.readOnly = false;
+    inp.classList.remove('correct', 'wrong');
+    getNoteEl(inp).classList.remove('show');
+  });
+  updateStats();
+  saveRoundState();
+}
+
+function newRound(){
+  buildRound();
+  renderRound();
+  saveRoundState();
+}
+
+function updateStats(){
+  const inputs = [...roundContainerEl.querySelectorAll('.gap')];
+  const filled = inputs.filter(i => i.readOnly).length;
+  const correct = inputs.filter(i => i.classList.contains('correct')).length;
+  const wrong = inputs.filter(i => i.classList.contains('wrong')).length;
+  statFilledEl.textContent = filled;
+  statCorrectEl.textContent = correct;
+  statWrongEl.textContent = wrong;
+}
+
+document.getElementById('btn-select-all').addEventListener('click', () => {
+  COND_DEFS.forEach(cd => selectedConds.add(cd.key));
+  mistakesOnly = false;
+  onSelectionChanged();
+});
+document.getElementById('btn-select-none').addEventListener('click', () => {
+  selectedConds.clear();
+  onSelectionChanged();
+});
+document.getElementById('btn-check-all').addEventListener('click', checkAll);
+document.getElementById('btn-reset-round').addEventListener('click', resetRound);
+document.getElementById('btn-new-round').addEventListener('click', newRound);
+document.getElementById('btn-reset-all').addEventListener('click', () => {
+  if (!confirmResetPassword()) return;
+  selectedConds = new Set(['obligation']);
+  mistakesOnly = false;
+  mistakesBank = new Map();
+  onSelectionChanged();
+});
+
+renderCondTabs();
+renderRuleStack();
+if (__saved && __saved.currentRound && __saved.currentRound.length) {
+  currentRound = __saved.currentRound;
+} else {
+  buildRound();
+}
+renderRound();
+if (__saved && __saved.inputs) {
+  roundContainerEl.querySelectorAll('.gap').forEach(inp => {
+    const saved = __saved.inputs[inp.dataset.rid];
+    if (!saved) return;
+    inp.value = saved.v || '';
+    if (saved.c === 'correct') {
+      inp.classList.add('correct');
+    } else if (saved.c === 'wrong') {
+      inp.classList.add('wrong');
+      const item = currentRound.find(x => String(x.rid) === inp.dataset.rid);
+      if (item) {
+        const note = getNoteEl(inp);
+        note.textContent = '→ ' + item.answer;
+        note.classList.add('show');
+      }
+    }
+    if (saved.ro) inp.readOnly = true;
+  });
+  updateStats();
+}
+updateBankOverview();
+</script>
+</body>
+</html>
