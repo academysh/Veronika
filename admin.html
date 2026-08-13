@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Nunito:wght@600;700;800&display=swap');
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --brand: #16233F; --brand-dark: #0D1830;
+    --bg: #FFF8EE; --surface: #ffffff; --surface2: #FFF1DC;
+    --accent: #E86F0C; --accent-light: #FDE4C6; --accent-dark: #C25A00;
+    --gold: #F5B841; --gold-dark: #D69A1F;
+    --green: #2D9E6B; --green-bg: #E6F7EF;
+    --red: #D63B3B; --red-bg: #FDEAEA;
+    --text: #241C10; --muted: #7C6A54; --muted2: #C9B79B;
+    --border: #F0DFC2; --radius: 14px;
+    --shadow-card: 0 4px 16px rgba(120,80,20,0.09);
+  }
+  body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  header {
+    background: var(--brand); padding: 18px 32px;
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+    box-shadow: 0 3px 16px rgba(22,35,63,0.45);
+  }
+  .back-link {
+    display: inline-flex; align-items: center; gap: 5px; font-family: 'Inter', sans-serif;
+    font-size: 12.5px; font-weight: 700; padding: 7px 14px; border-radius: 20px;
+    color: rgba(255,255,255,0.85); text-decoration: none; border: 1.5px solid rgba(255,255,255,0.3);
+    background: transparent; transition: all .15s; margin-right: 14px;
+  }
+  .back-link:hover { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.5); color: #fff; }
+  .logo { font-family: 'Nunito', sans-serif; font-size: 18px; font-weight: 800; color: #fff; display: flex; align-items: center; }
+  .header-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .btn-refresh {
+    font-family: 'Inter', sans-serif; font-size: 12.5px; font-weight: 700; padding: 7px 16px;
+    border-radius: 20px; cursor: pointer; border: 1.5px solid rgba(255,255,255,0.5);
+    background: rgba(0,0,0,0.15); color: #fff; transition: all .15s;
+  }
+  .btn-refresh:hover { background: rgba(0,0,0,0.3); }
+  .teacher-toggle {
+    display: flex; align-items: center; gap: 7px; font-size: 12.5px; font-weight: 700; color: rgba(255,255,255,0.85);
+    padding: 6px 12px; border-radius: 20px; border: 1.5px solid rgba(255,255,255,0.3); cursor: pointer; user-select: none;
+  }
+  .teacher-toggle.on { background: var(--gold); color: var(--brand-dark); border-color: var(--gold); }
+  .switch { width: 30px; height: 16px; border-radius: 10px; background: rgba(255,255,255,0.3); position: relative; flex-shrink: 0; transition: background .15s; }
+  .switch::after { content: ''; position: absolute; top: 2px; left: 2px; width: 12px; height: 12px; border-radius: 50%; background: #fff; transition: left .15s; }
+  .teacher-toggle.on .switch { background: var(--brand-dark); }
+  .teacher-toggle.on .switch::after { left: 16px; }
+
+  main { max-width: 1000px; margin: 0 auto; padding: 32px 20px 70px; }
+
+  .lock-screen { text-align: center; padding: 100px 20px; }
+  .lock-screen h2 { font-family: 'Nunito', sans-serif; font-size: 22px; color: var(--brand-dark); margin-bottom: 10px; }
+  .lock-screen p { color: var(--muted); margin-bottom: 20px; }
+  .btn-unlock {
+    font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 700; padding: 10px 26px;
+    border-radius: 24px; cursor: pointer; border: none; background: var(--accent); color: #fff;
+  }
+  .btn-unlock:hover { background: var(--accent-dark); }
+
+  .teacher-banner {
+    background: var(--gold); color: var(--brand-dark); text-align: center; font-size: 13px; font-weight: 700;
+    padding: 10px; border-radius: 10px; margin-bottom: 18px;
+  }
+
+  .overview { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
+  @media (max-width: 700px) { .overview { grid-template-columns: repeat(2, 1fr); } }
+  .stat-card {
+    background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius);
+    box-shadow: var(--shadow-card); padding: 18px; text-align: center;
+  }
+  .stat-card .num { font-family: 'Nunito', sans-serif; font-size: 26px; font-weight: 800; color: var(--brand-dark); }
+  .stat-card .label { font-size: 12px; color: var(--muted); margin-top: 4px; font-weight: 600; }
+
+  .section {
+    background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius);
+    box-shadow: var(--shadow-card); padding: 20px 24px; margin-bottom: 20px;
+  }
+  .section h3 { font-family: 'Nunito', sans-serif; font-size: 15px; font-weight: 800; color: var(--brand-dark); margin-bottom: 14px; }
+  .section h3 .sub { font-size: 11.5px; color: var(--muted); font-weight: 600; text-transform: none; margin-left: 6px; }
+
+  .bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 13px; }
+  .bar-label { width: 170px; flex-shrink: 0; color: var(--text); font-weight: 600; }
+  .bar-track { flex-grow: 1; background: var(--surface2); border-radius: 6px; height: 18px; overflow: hidden; position: relative; }
+  .bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--gold)); border-radius: 6px; }
+  .bar-fill.red { background: linear-gradient(90deg, var(--red), #f08a8a); }
+  .bar-pct { width: 80px; flex-shrink: 0; text-align: right; color: var(--muted); font-weight: 700; font-size: 12.5px; }
+
+  /* ---- correct/wrong donut-ish split bar ---- */
+  .split-bar { display: flex; height: 26px; border-radius: 8px; overflow: hidden; margin-bottom: 8px; }
+  .split-bar .seg-ok { background: var(--green); }
+  .split-bar .seg-bad { background: var(--red); }
+  .split-legend { display: flex; gap: 18px; font-size: 12.5px; color: var(--muted); }
+  .split-legend span::before { content: '\25CF'; margin-right: 5px; }
+  .split-legend .ok::before { color: var(--green); }
+  .split-legend .bad::before { color: var(--red); }
+
+  /* ---- daily volume mini bar chart ---- */
+  .daily-chart { display: flex; align-items: flex-end; gap: 4px; height: 90px; margin-bottom: 6px; }
+  .daily-bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; }
+  .daily-bar { width: 100%; border-radius: 4px 4px 0 0; background: var(--accent); min-height: 2px; }
+  .daily-bar.zero { background: var(--surface2); }
+  .daily-label { font-size: 9.5px; color: var(--muted2); margin-top: 4px; writing-mode: vertical-rl; text-orientation: mixed; height: 34px; }
+
+  .weak-list { display: flex; flex-direction: column; gap: 8px; }
+  .weak-item {
+    display: flex; justify-content: space-between; align-items: center; gap: 10px;
+    padding: 8px 12px; background: var(--red-bg); border-radius: 8px; font-size: 13px;
+  }
+  .weak-item .q { color: var(--text); flex-grow: 1; }
+  .weak-item .n { color: var(--red); font-weight: 700; flex-shrink: 0; font-size: 12px; }
+
+  .calendar { display: flex; gap: 3px; flex-wrap: wrap; }
+  .cal-day {
+    width: 14px; height: 14px; border-radius: 3px; background: var(--surface2); cursor: pointer; border: 1.5px solid transparent;
+  }
+  .cal-day[data-level="1"] { background: var(--accent-light); }
+  .cal-day[data-level="2"] { background: var(--gold); }
+  .cal-day[data-level="3"] { background: var(--accent); }
+  .cal-day[data-level="4"] { background: var(--accent-dark); }
+  .cal-day.selected { border-color: var(--brand-dark); }
+  .cal-day:hover { border-color: var(--muted2); }
+  .day-detail {
+    margin-top: 14px; padding: 12px 14px; background: var(--surface2); border-radius: 10px; font-size: 12.5px; display: none;
+  }
+  .day-detail.show { display: block; }
+  .day-detail .dd-title { font-weight: 800; color: var(--brand-dark); margin-bottom: 8px; }
+  .day-detail .dd-session { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid var(--border); }
+  .day-detail .dd-session:last-child { border-bottom: none; }
+
+  /* ---- nested browser: block > topic > session > Q&A ---- */
+  details.block-group { margin-bottom: 10px; border: 1.5px solid var(--border); border-radius: 10px; overflow: hidden; }
+  details.block-group > summary {
+    padding: 12px 16px; cursor: pointer; font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 14px;
+    color: var(--brand-dark); background: var(--surface2); list-style: none; display: flex; justify-content: space-between; align-items: center;
+  }
+  details.block-group > summary::-webkit-details-marker { display: none; }
+  details.block-group > summary::after { content: '\25BE'; color: var(--muted); font-size: 12px; }
+  details.block-group[open] > summary::after { content: '\25B4'; }
+  .block-body { padding: 10px 14px; }
+
+  details.topic-group { margin: 8px 0; border: 1px solid var(--border); border-radius: 8px; }
+  details.topic-group > summary {
+    padding: 9px 12px; cursor: pointer; font-weight: 700; font-size: 13px; color: var(--text);
+    list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 10px;
+  }
+  details.topic-group > summary::-webkit-details-marker { display: none; }
+  details.topic-group > summary::after { content: '\25BE'; color: var(--muted); font-size: 11px; }
+  details.topic-group[open] > summary::after { content: '\25B4'; }
+  .topic-meta { font-size: 11.5px; color: var(--muted); font-weight: 600; }
+  .topic-body { padding: 6px 12px 10px; }
+
+  details.session-group { margin: 6px 0; padding-left: 4px; border-left: 3px solid var(--accent-light); }
+  details.session-group > summary {
+    padding: 6px 8px; cursor: pointer; font-size: 12.5px; color: var(--muted); font-weight: 600;
+    list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 10px;
+  }
+  details.session-group > summary::-webkit-details-marker { display: none; }
+  details.session-group > summary::after { content: '\25BE'; font-size: 10px; }
+  details.session-group[open] > summary::after { content: '\25B4'; }
+  .session-body { padding: 4px 8px 8px; }
+  .session-ok { color: var(--green); font-weight: 700; }
+
+  .qa-pair { background: var(--surface2); border-radius: 8px; padding: 8px 12px; margin-bottom: 6px; font-size: 12.5px; line-height: 1.6; }
+  .qa-line { padding: 2px 0; }
+  .qa-line .tag { font-weight: 800; margin-right: 4px; }
+  .qa-line.qa-wrong .tag { color: var(--red); }
+  .qa-line.qa-right .tag { color: var(--green); }
+  mark.mark-wrong { background: var(--red-bg); color: var(--red); font-weight: 700; padding: 1px 5px; border-radius: 4px; text-decoration: line-through; }
+  mark.mark-right { background: var(--green-bg); color: var(--green); font-weight: 700; padding: 1px 5px; border-radius: 4px; }
+  .no-mistakes { color: var(--muted); font-size: 12.5px; font-style: italic; padding: 4px 8px; }
+
+  .log-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  .log-table th { text-align: left; color: var(--muted); font-weight: 700; padding: 6px 8px; border-bottom: 1.5px solid var(--border); }
+  .log-table td { padding: 6px 8px; border-bottom: 1px solid var(--border); }
+  .log-table .ok { color: var(--green); font-weight: 700; }
+  .log-table .bad { color: var(--red); font-weight: 700; }
+
+  .empty-note { color: var(--muted); font-size: 13.5px; text-align: center; padding: 20px; }
+  .loading { text-align: center; padding: 60px; color: var(--muted); }
+
+  footer { text-align: center; padding: 24px; font-size: 12px; color: var(--muted); }
+</style>
+</head>
+<body>
+
+<header>
+  <div style="display:flex;align-items:center;">
+    <a class="back-link" href="index.html">← Back</a>
+    <div class="logo">📊 Admin Dashboard</div>
+  </div>
+  <div class="header-actions">
+    <div class="teacher-toggle" id="teacher-toggle"><span class="switch"></span><span id="teacher-toggle-label">Teacher mode: off</span></div>
+    <button class="btn-refresh" id="btn-refresh" style="display:none;">Refresh ↻</button>
+  </div>
+</header>
+
+<main>
+  <div id="lock-screen" class="lock-screen">
+    <h2>🔒 Admin access</h2>
+    <p>Enter the admin password to view activity data.</p>
+    <button class="btn-unlock" id="btn-unlock">Unlock</button>
+  </div>
+  <div id="dashboard" style="display:none;"></div>
+</main>
+
+<footer>Headway Pre-Intermediate · Veronika's Practice · Admin</footer>
+
+<script>
+const SUPABASE_URL = 'https://zhzhamxgfornfvwckfyf.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_LoyWwbsXHBb4l_k1FnmAog_yZO0uPrn';
+const ADMIN_PASSWORD = 'thebest';
+
+const BLOCK_LABELS = {
+  block1: 'Present & Past Tenses',
+  block2: 'Past Narrative Tenses',
+  block3: 'Future Forms',
+  block4: 'Conditionals',
+  block5: 'Modal Verbs',
+};
+const BLOCK_ORDER = ['block1','block2','block3','block4','block5'];
+
+const ADMIN_SESSION_KEY = 'hw_admin_session';
+const ADMIN_SESSION_MS = 30 * 60 * 1000;
+
+function isAdminSessionValid(){
+  try {
+    const ts = parseInt(localStorage.getItem(ADMIN_SESSION_KEY), 10);
+    return !isNaN(ts) && (Date.now() - ts) < ADMIN_SESSION_MS;
+  } catch(e) { return false; }
+}
+function markAdminSession(){
+  try { localStorage.setItem(ADMIN_SESSION_KEY, String(Date.now())); } catch(e) {}
+}
+function checkAdminPassword(){
+  const pw = prompt('Enter admin password:');
+  if (pw === null) return false;
+  if (pw !== ADMIN_PASSWORD) { alert('Incorrect password.'); return false; }
+  return true;
+}
+function unlockDashboard(){
+  markAdminSession();
+  document.getElementById('lock-screen').style.display = 'none';
+  document.getElementById('dashboard').style.display = 'block';
+  document.getElementById('btn-refresh').style.display = 'inline-block';
+  loadAndRender();
+}
+
+/* ---- Teacher mode toggle (shared localStorage key with the practice pages -- when
+   ON, trackEvent() on every practice page silently skips sending, so testing here
+   doesn't pollute the student's real data) ---- */
+function isTeacherMode(){
+  try { return localStorage.getItem('hw_role') === 'teacher'; } catch(e) { return false; }
+}
+function setTeacherMode(on){
+  try { localStorage.setItem('hw_role', on ? 'teacher' : 'student'); } catch(e) {}
+  renderTeacherToggle();
+}
+function renderTeacherToggle(){
+  const on = isTeacherMode();
+  const el = document.getElementById('teacher-toggle');
+  el.classList.toggle('on', on);
+  document.getElementById('teacher-toggle-label').textContent = 'Teacher mode: ' + (on ? 'ON' : 'off');
+}
+document.getElementById('teacher-toggle').addEventListener('click', () => setTeacherMode(!isTeacherMode()));
+
+function safeDate(str){
+  if (!str) return null;
+  let d = new Date(str);
+  if (!isNaN(d.getTime())) return d;
+  const fixed = String(str).replace(/(\.\d{3})\d+/, '$1');
+  d = new Date(fixed);
+  if (!isNaN(d.getTime())) return d;
+  return null;
+}
+function dayKey(d){ return (d && !isNaN(d.getTime())) ? d.toISOString().slice(0,10) : 'unknown'; }
+
+async function fetchEvents(){
+  if (!SUPABASE_URL || SUPABASE_URL.indexOf('__') === 0) {
+    throw new Error('Supabase is not configured yet -- SUPABASE_URL/SUPABASE_ANON_KEY are still placeholders.');
+  }
+  const cutoff = new Date();
+  cutoff.setDate(cutoff.getDate() - 90);
+  const url = SUPABASE_URL + '/rest/v1/activity_events'
+    + '?select=*'
+    + '&created_at=gte.' + encodeURIComponent(cutoff.toISOString())
+    + '&order=created_at.desc'
+    + '&limit=3000';
+  const res = await fetch(url, {
+    headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY },
+    signal: AbortSignal.timeout ? AbortSignal.timeout(15000) : undefined,
+  });
+  if (!res.ok) throw new Error('Supabase request failed: ' + res.status + ' ' + (await res.text()));
+  const data = await res.json();
+  if (!Array.isArray(data)) throw new Error('Unexpected response from Supabase (not a list): ' + JSON.stringify(data).slice(0, 200));
+  return data;
+}
+
+function escapeHtml(s){
+  const div = document.createElement('div');
+  div.textContent = s == null ? '' : String(s);
+  return div.innerHTML;
+}
+
+function fmtTime(d){
+  return d ? d.toLocaleString('en-GB', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }) : '—';
+}
+
+/* =============================== RENDER =============================== */
+
+function renderDashboard(rawEvents){
+  const dash = document.getElementById('dashboard');
+  // safety net: only ever show student data here, even if some teacher-tagged
+  // rows exist from before this feature was added
+  const events = rawEvents.filter(e => e.role !== 'teacher' && safeDate(e.created_at) !== null);
+  const skipped = rawEvents.length - events.length;
+  if (skipped > 0) console.warn('[admin] skipped', skipped, 'event(s) (unparseable date or teacher-tagged)');
+
+  if (!events.length) {
+    dash.innerHTML = '<div class="empty-note">No student activity recorded yet. Once the student starts answering questions, data will show up here.</div>';
+    return;
+  }
+
+  const total = events.length;
+  const correct = events.filter(e => e.is_correct).length;
+  const wrong = total - correct;
+  const pct = Math.round(correct / total * 100);
+  const days = new Set(events.map(e => dayKey(safeDate(e.created_at))));
+
+  const todayKey = dayKey(new Date());
+  let streak = 0;
+  let cursor = new Date();
+  cursor.setHours(0,0,0,0);
+  if (!days.has(todayKey)) cursor.setDate(cursor.getDate() - 1);
+  let guard = 0;
+  while (days.has(dayKey(cursor)) && guard < 3660) { streak++; cursor.setDate(cursor.getDate() - 1); guard++; }
+
+  /* ---- accuracy by block ---- */
+  const byBlock = {};
+  events.forEach(e => {
+    if (!byBlock[e.block]) byBlock[e.block] = { correct: 0, total: 0 };
+    byBlock[e.block].total++;
+    if (e.is_correct) byBlock[e.block].correct++;
+  });
+
+  /* ---- last 14 days volume ---- */
+  const countsByDay = {};
+  events.forEach(e => { const k = dayKey(safeDate(e.created_at)); countsByDay[k] = (countsByDay[k]||0) + 1; });
+  const today0 = new Date(); today0.setHours(0,0,0,0);
+  const last14 = [];
+  for (let i = 13; i >= 0; i--) {
+    const d = new Date(today0); d.setDate(d.getDate() - i);
+    const k = dayKey(d);
+    last14.push({ k, c: countsByDay[k] || 0, label: d.toLocaleDateString('en-GB',{day:'numeric',month:'short'}) });
+  }
+  const maxDaily = Math.max(1, ...last14.map(d => d.c));
+
+  /* ---- sessions: group by session_id, collect start time + which block/topics touched ---- */
+  const sessionsMeta = {};
+  events.forEach(e => {
+    if (!sessionsMeta[e.session_id]) sessionsMeta[e.session_id] = { times: [], blocks: new Set() };
+    const d = safeDate(e.created_at);
+    if (d) sessionsMeta[e.session_id].times.push(d.getTime());
+    sessionsMeta[e.session_id].blocks.add(e.block);
+  });
+  const sessionsByDay = {};
+  Object.entries(sessionsMeta).forEach(([sid, meta]) => {
+    if (!meta.times.length) return;
+    const start = new Date(Math.min(...meta.times));
+    const k = dayKey(start);
+    if (!sessionsByDay[k]) sessionsByDay[k] = [];
+    sessionsByDay[k].push({ id: sid, start, blocks: [...meta.blocks] });
+  });
+  Object.values(sessionsByDay).forEach(list => list.sort((a,b) => a.start - b.start));
+
+  /* ---- calendar cells (90 days) ---- */
+  const calDays = [];
+  for (let i = 89; i >= 0; i--) {
+    const d = new Date(today0); d.setDate(d.getDate() - i);
+    const k = dayKey(d);
+    const c = countsByDay[k] || 0;
+    let level = 0;
+    if (c > 0) level = 1;
+    if (c >= 10) level = 2;
+    if (c >= 25) level = 3;
+    if (c >= 50) level = 4;
+    calDays.push({ k, c, level, sessions: (sessionsByDay[k]||[]).length });
+  }
+
+  /* ---- nested browser: block -> topic -> session -> items ---- */
+  const tree = {};
+  events.forEach(e => {
+    if (!tree[e.block]) tree[e.block] = {};
+    const topicKey = e.topic || '(untitled)';
+    if (!tree[e.block][topicKey]) tree[e.block][topicKey] = {};
+    if (!tree[e.block][topicKey][e.session_id]) tree[e.block][topicKey][e.session_id] = [];
+    tree[e.block][topicKey][e.session_id].push(e);
+  });
+
+  const blockKeysPresent = BLOCK_ORDER.filter(b => tree[b]);
+  Object.keys(tree).forEach(b => { if (!blockKeysPresent.includes(b)) blockKeysPresent.push(b); });
+
+  const treeHtml = blockKeysPresent.map(blockKey => {
+    const topics = tree[blockKey];
+    const topicKeys = Object.keys(topics).sort();
+    const blockTotal = Object.values(topics).reduce((s,sessions) => s + Object.values(sessions).reduce((s2,items)=>s2+items.length,0), 0);
+    const blockCorrect = Object.values(topics).reduce((s,sessions) => s + Object.values(sessions).reduce((s2,items)=>s2+items.filter(i=>i.is_correct).length,0), 0);
+    const blockPct = blockTotal ? Math.round(blockCorrect/blockTotal*100) : 0;
+
+    const topicsHtml = topicKeys.map(topicKey => {
+      const sessions = topics[topicKey];
+      const sessionIds = Object.keys(sessions).sort((a,b) => {
+        const ta = Math.min(...sessions[a].map(i => (safeDate(i.created_at)||new Date(0)).getTime()));
+        const tb = Math.min(...sessions[b].map(i => (safeDate(i.created_at)||new Date(0)).getTime()));
+        return tb - ta;
+      });
+      const topicTotal = Object.values(sessions).reduce((s,items)=>s+items.length,0);
+      const topicCorrect = Object.values(sessions).reduce((s,items)=>s+items.filter(i=>i.is_correct).length,0);
+      const topicPct = topicTotal ? Math.round(topicCorrect/topicTotal*100) : 0;
+      const multiSession = sessionIds.length > 1;
+
+      const sessionsHtml = sessionIds.map(sid => {
+        const items = sessions[sid].slice().sort((a,b) => (safeDate(a.created_at)||0) - (safeDate(b.created_at)||0));
+        const start = safeDate(items[0].created_at);
+        const sCorrect = items.filter(i=>i.is_correct).length;
+        const sWrong = items.length - sCorrect;
+        const wrongItems = items.filter(i => !i.is_correct);
+
+        const wrongHtml = wrongItems.length ? wrongItems.map(item => {
+          const prefix = escapeHtml(item.prefix || '');
+          const suffix = escapeHtml(item.suffix || '');
+          const hasCtx = item.prefix != null && item.correct_answer;
+          if (!hasCtx) {
+            return `<div class="qa-pair"><div class="qa-line qa-wrong"><span class="tag">✗</span>${escapeHtml(item.question_text || item.topic || '')}</div></div>`;
+          }
+          const studentAns = escapeHtml(item.student_answer || '(empty)');
+          const correctAns = escapeHtml(item.correct_answer || '?');
+          return `<div class="qa-pair">
+            <div class="qa-line qa-wrong"><span class="tag">✗</span>${prefix} <mark class="mark-wrong">${studentAns}</mark> ${suffix}</div>
+            <div class="qa-line qa-right"><span class="tag">✓</span>${prefix} <mark class="mark-right">${correctAns}</mark> ${suffix}</div>
+          </div>`;
+        }).join('') : '<div class="no-mistakes">No mistakes in this session — perfect run! 🎉</div>';
+
+        return `<details class="session-group">
+          <summary><span>🕒 ${fmtTime(start)}</span><span>${sCorrect}/${items.length} correct${sWrong ? ', ' + sWrong + ' mistake' + (sWrong>1?'s':'') : ''}</span></summary>
+          <div class="session-body">${wrongHtml}</div>
+        </details>`;
+      }).join('');
+
+      return `<details class="topic-group">
+        <summary><span>${escapeHtml(topicKey)}${multiSession ? ' <span class="topic-meta">(' + sessionIds.length + ' sessions)</span>' : ''}</span><span class="topic-meta">${topicCorrect}/${topicTotal} · ${topicPct}%</span></summary>
+        <div class="topic-body">${sessionsHtml}</div>
+      </details>`;
+    }).join('');
+
+    return `<details class="block-group">
+      <summary><span>${BLOCK_LABELS[blockKey] || blockKey}</span><span class="topic-meta" style="color:rgba(13,24,48,0.6)">${blockCorrect}/${blockTotal} · ${blockPct}%</span></summary>
+      <div class="block-body">${topicsHtml}</div>
+    </details>`;
+  }).join('');
+
+  /* ---- recent log (compact) ---- */
+  const recent = events.slice(0, 15);
+
+  dash.innerHTML = `
+    ${isTeacherMode() ? '<div class="teacher-banner">🧪 Teacher mode is ON — your own answers on the practice pages are NOT being recorded right now.</div>' : ''}
+
+    <div class="overview">
+      <div class="stat-card"><div class="num">${total}</div><div class="label">Total answers</div></div>
+      <div class="stat-card"><div class="num">${pct}%</div><div class="label">Overall accuracy</div></div>
+      <div class="stat-card"><div class="num">${days.size}</div><div class="label">Days practiced</div></div>
+      <div class="stat-card"><div class="num">${streak}</div><div class="label">Day streak</div></div>
+    </div>
+
+    <div class="section">
+      <h3>Correct vs wrong</h3>
+      <div class="split-bar">
+        <div class="seg-ok" style="width:${pct}%"></div>
+        <div class="seg-bad" style="width:${100-pct}%"></div>
+      </div>
+      <div class="split-legend">
+        <span class="ok">${correct} correct</span>
+        <span class="bad">${wrong} wrong</span>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3>Answers per day <span class="sub">last 14 days</span></h3>
+      <div class="daily-chart">
+        ${last14.map(d => `<div class="daily-bar-wrap" title="${d.k}: ${d.c} answers">
+          <div class="daily-bar${d.c===0?' zero':''}" style="height:${d.c ? Math.max(4, d.c/maxDaily*100) : 2}%"></div>
+        </div>`).join('')}
+      </div>
+      <div style="display:flex;gap:4px;">${last14.map(d => `<div style="flex:1;text-align:center;font-size:9.5px;color:var(--muted2);">${d.label}</div>`).join('')}</div>
+    </div>
+
+    <div class="section">
+      <h3>Accuracy by block</h3>
+      ${Object.keys(byBlock).sort().map(b => {
+        const s = byBlock[b];
+        const p = Math.round(s.correct / s.total * 100);
+        return `<div class="bar-row">
+          <div class="bar-label">${BLOCK_LABELS[b] || b}</div>
+          <div class="bar-track"><div class="bar-fill${p<60?' red':''}" style="width:${p}%"></div></div>
+          <div class="bar-pct">${p}% (${s.correct}/${s.total})</div>
+        </div>`;
+      }).join('')}
+    </div>
+
+    <div class="section">
+      <h3>Activity — last 90 days <span class="sub">click a day for session times</span></h3>
+      <div class="calendar" id="calendar">
+        ${calDays.map(d => `<div class="cal-day" data-level="${d.level}" data-key="${d.k}" title="${d.k}: ${d.c} answers, ${d.sessions} session(s)"></div>`).join('')}
+      </div>
+      <div class="day-detail" id="day-detail"></div>
+    </div>
+
+    <div class="section">
+      <h3>Browse by block → text/topic → session</h3>
+      ${treeHtml || '<div class="empty-note">Nothing to show.</div>'}
+    </div>
+
+    <div class="section">
+      <h3>Recent activity</h3>
+      <table class="log-table">
+        <tr><th>Time</th><th>Block</th><th>Topic</th><th>Result</th></tr>
+        ${recent.map(e => `<tr>
+          <td>${fmtTime(safeDate(e.created_at))}</td>
+          <td>${BLOCK_LABELS[e.block] || e.block}</td>
+          <td>${escapeHtml(e.topic || '')}</td>
+          <td class="${e.is_correct ? 'ok' : 'bad'}">${e.is_correct ? '✓ correct' : '✗ wrong'}</td>
+        </tr>`).join('')}
+      </table>
+    </div>
+  `;
+
+  document.querySelectorAll('.cal-day').forEach(cell => {
+    cell.addEventListener('click', () => {
+      document.querySelectorAll('.cal-day').forEach(c => c.classList.remove('selected'));
+      cell.classList.add('selected');
+      const k = cell.dataset.key;
+      const list = sessionsByDay[k] || [];
+      const detail = document.getElementById('day-detail');
+      if (!list.length) {
+        detail.innerHTML = `<div class="dd-title">${k}</div><div style="color:var(--muted);">No activity this day.</div>`;
+      } else {
+        detail.innerHTML = `<div class="dd-title">${k} — ${list.length} session${list.length>1?'s':''}</div>` +
+          list.map(s => `<div class="dd-session"><span>${s.start.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}</span><span>${s.blocks.map(b=>BLOCK_LABELS[b]||b).join(', ')}</span></div>`).join('');
+      }
+      detail.classList.add('show');
+    });
+  });
+}
+
+async function loadAndRender(){
+  const dash = document.getElementById('dashboard');
+  dash.innerHTML = '<div class="loading">Loading activity data…</div>';
+  try {
+    const events = await fetchEvents();
+    console.log('[admin] fetched', events.length, 'events; sample created_at:', events[0] && events[0].created_at);
+    renderDashboard(events);
+  } catch(e) {
+    console.error('[admin] load/render failed:', e);
+    const msg = (e.name === 'TimeoutError' || e.name === 'AbortError')
+      ? 'Request to Supabase timed out after 15s (slow network?). Try Refresh.'
+      : e.message;
+    dash.innerHTML = '<div class="empty-note">Could not load data: ' + escapeHtml(msg) + '<br><small>See browser console (F12) for full details.</small></div>';
+  }
+}
+
+document.getElementById('btn-unlock').addEventListener('click', () => {
+  if (!checkAdminPassword()) return;
+  unlockDashboard();
+});
+document.getElementById('btn-refresh').addEventListener('click', () => { markAdminSession(); loadAndRender(); });
+
+renderTeacherToggle();
+if (isAdminSessionValid()) unlockDashboard();
+</script>
+</body>
+</html>
