@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Present Perfect Simple vs Continuous</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Nunito:wght@600;700;800&display=swap');
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --brand: #16233F; --brand-dark: #0D1830;
+    --bg: #FFF8EE; --surface: #ffffff; --surface2: #FFF1DC;
+    --accent: #E86F0C; --accent-light: #FDE4C6; --accent-dark: #C25A00;
+    --gold: #F5B841; --gold-dark: #D69A1F;
+    --purple: #7c3aed; --orange: #D97706;
+    --green: #2D9E6B; --green-bg: #E6F7EF; --green-border: #A8DBBF;
+    --red: #D63B3B; --red-bg: #FDEAEA; --red-border: #F0AAAA;
+    --text: #241C10; --muted: #7C6A54; --muted2: #C9B79B;
+    --border: #F0DFC2; --radius: 12px;
+    --shadow-card: 0 2px 10px rgba(120,80,20,0.08);
+  }
+  body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  header {
+    background: var(--brand); padding: 14px 32px;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 10px; position: sticky; top: 0; z-index: 20;
+    box-shadow: 0 3px 16px rgba(22,35,63,0.45);
+  }
+  .logo { font-family: 'Nunito', sans-serif; font-size: 17px; font-weight: 800; color: #fff; line-height: 1.2; }
+  .logo-sub { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.68); letter-spacing: 0.7px; text-transform: uppercase; display: block; margin-top: 2px; }
+  .header-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .chip { font-size: 13px; font-weight: 700; padding: 4px 12px; border-radius: 20px; background: rgba(255,255,255,0.18); color: #fff; border: 1px solid rgba(255,255,255,0.35); }
+  .chevrons { display: inline-flex; margin-left: 8px; vertical-align: middle; }
+  .chevrons span {
+    display: inline-block; width: 0; height: 0;
+    border-top: 7px solid transparent; border-bottom: 7px solid transparent;
+    border-left: 9px solid var(--accent); margin-left: -3px;
+  }
+  .chevrons span:last-child { border-left-color: var(--gold); }
+  .btn-reset-all {
+    font-family: 'Inter', sans-serif; font-size: 12.5px; font-weight: 700; padding: 7px 16px;
+    border-radius: 20px; cursor: pointer; border: 1.5px solid rgba(255,255,255,0.5);
+    background: rgba(0,0,0,0.15); color: #fff; transition: all .15s;
+  }
+  .btn-reset-all:hover { background: rgba(0,0,0,0.3); }
+  .back-link {
+    display: inline-flex; align-items: center; gap: 5px; font-family: 'Inter', sans-serif;
+    font-size: 12.5px; font-weight: 700; padding: 7px 14px; border-radius: 20px;
+    color: rgba(255,255,255,0.85); text-decoration: none; border: 1.5px solid rgba(255,255,255,0.3);
+    background: transparent; transition: all .15s; margin-right: 14px; flex-shrink: 0;
+  }
+  .back-link:hover { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.5); color: #fff; }
+
+
+  main { max-width: 1180px; margin: 0 auto; padding: 24px 18px 60px; }
+
+
+  .block-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .block-badge {
+    font-family: 'Nunito', sans-serif; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px;
+    background: var(--accent); color: #fff; padding: 5px 14px; border-radius: 8px;
+  }
+  .block-title { font-family: 'Nunito', sans-serif; font-size: 19px; font-weight: 800; color: var(--brand-dark); }
+  .block-subtitle { font-size: 13px; color: var(--muted); margin-top: 4px; }
+
+  .category-tabs { display: flex; gap: 10px; margin-bottom: 16px; }
+  .category-tab {
+    font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 800; padding: 10px 22px;
+    border-radius: 14px; background: var(--surface); border: 2px solid var(--border); color: var(--muted);
+    cursor: pointer; transition: all .15s;
+  }
+  .category-tab:hover { border-color: var(--accent); color: var(--accent); }
+  .category-tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  /* ── COLLAPSIBLE TEXT PICKER ── */
+  .picker { position: relative; margin-bottom: 20px; max-width: 420px; }
+  .picker-trigger {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    background: var(--surface); border: 1.5px solid var(--border); border-radius: 12px;
+    padding: 10px 16px; cursor: pointer; transition: all .15s;
+  }
+  .picker-trigger:hover { border-color: var(--accent); }
+  .picker-trigger.open { border-color: var(--accent); border-radius: 12px 12px 0 0; }
+  .picker-trigger-label { font-size: 14px; font-weight: 700; color: var(--text); }
+  .picker-trigger-score { font-size: 12px; font-weight: 700; color: var(--muted); margin-left: 6px; }
+  .picker-chevron { font-size: 11px; color: var(--muted); transition: transform .15s; }
+  .picker-trigger.open .picker-chevron { transform: rotate(180deg); }
+
+  .picker-panel {
+    position: absolute; top: 100%; left: 0; right: 0; z-index: 15;
+    background: var(--surface); border: 1.5px solid var(--accent); border-top: none; border-radius: 0 0 12px 12px;
+    box-shadow: 0 8px 20px rgba(30,40,100,0.15);
+    max-height: 280px; overflow-y: auto; display: none;
+  }
+  .picker-panel.open { display: block; }
+  .picker-item {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    padding: 9px 16px; font-size: 13.5px; font-weight: 600; color: var(--text); cursor: pointer; transition: background .1s;
+  }
+  .picker-item:hover { background: var(--accent-light); }
+  .picker-item.active { background: var(--accent-light); color: var(--accent-dark); font-weight: 700; }
+  .picker-item-score { font-size: 11.5px; font-weight: 700; color: var(--muted); }
+  .picker-item.cat-hidden { display: none; }
+
+  .workspace { display: flex; align-items: flex-start; gap: 20px; }
+
+  .text-card {
+    background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius);
+    box-shadow: var(--shadow-card); padding: 24px 26px; flex: 1 1 auto; min-width: 0;
+  }
+  .text-card.hidden { display: none; }
+
+  .text-head { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 6px; margin-bottom: 4px; }
+  .text-name { font-family: 'Nunito', sans-serif; font-size: 20px; font-weight: 800; color: var(--brand-dark); }
+  .text-role { font-size: 12.5px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .4px; }
+  .text-score { font-size: 13px; font-weight: 700; color: var(--muted); }
+
+  .story p { font-size: 15px; line-height: 2.15; margin: 14px 0; color: var(--text); }
+  .story p:first-child { margin-top: 16px; }
+
+  .gapwrap { position: relative; display: inline-block; margin: 0 2px; }
+  .gap {
+    font-family: 'Inter', sans-serif; font-size: 14.5px; font-weight: 600;
+    border: none; border-bottom: 2px solid var(--accent); background: var(--accent-light);
+    border-radius: 5px 5px 0 0; padding: 2px 6px; width: 108px; text-align: center; color: var(--accent-dark);
+    outline: none; transition: all .15s;
+  }
+  .gap:focus { background: #fff; box-shadow: 0 0 0 2px var(--accent-light); }
+  .gap.correct { background: var(--green-bg); border-color: var(--green); color: #1e7a4d; }
+  .gap.wrong { background: var(--red-bg); border-color: var(--red); color: var(--red); }
+  .gapnum { position: absolute; top: -9px; left: 2px; font-size: 9px; font-weight: 700; color: var(--muted2); }
+  .correct-answer { display: none; font-size: 11.5px; color: var(--green); font-weight: 700; margin-left: 3px; }
+  .correct-answer.show { display: inline; }
+
+  .card-actions { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+  .btn {
+    font-family: 'Inter', sans-serif; font-size: 13.5px; font-weight: 700; padding: 9px 20px;
+    border-radius: 24px; cursor: pointer; border: none; transition: all .15s;
+  }
+  .btn-check { background: var(--accent); color: #fff; }
+  .btn-check:hover { background: var(--accent-dark); }
+  .btn-reset { background: var(--surface2); color: var(--muted); border: 1.5px solid var(--border); }
+  .btn-reset:hover { border-color: var(--muted); color: var(--text); }
+
+  .result-line { margin-top: 12px; font-size: 13.5px; font-weight: 700; display: none; }
+  .result-line.show { display: block; }
+  .result-line.ok { color: var(--green); }
+  .result-line.mid { color: var(--orange); }
+  .result-line.poor { color: var(--red); }
+
+  /* ── BANK SIDEBAR ── */
+  .bank-sidebar {
+    width: 240px; flex: 0 0 240px; position: sticky; top: 90px;
+    background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius);
+    box-shadow: var(--shadow-card); padding: 16px 16px 18px; max-height: calc(100vh - 110px); overflow-y: auto;
+  }
+  .bank-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: var(--muted); margin-bottom: 4px; }
+  .bank-sub { font-size: 11.5px; color: var(--muted2); margin-bottom: 12px; line-height: 1.4; }
+  .bank-list { display: flex; flex-direction: column; gap: 6px; }
+  .bank-chip {
+    background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 6px 10px;
+    font-size: 13px; font-weight: 600; color: var(--text); display: flex; justify-content: space-between; align-items: center;
+    transition: all .15s;
+  }
+  .bank-chip .bc-count { font-size: 11.5px; font-weight: 700; color: var(--accent-dark); background: var(--accent-light); border-radius: 10px; padding: 1px 7px; }
+  .bank-chip.used { background: transparent; border-color: var(--border); color: var(--muted2); text-decoration: line-through; opacity: .55; }
+  .bank-chip.used .bc-count { display: none; }
+
+  @media (max-width: 860px) {
+    .workspace { flex-direction: column; }
+    .bank-sidebar { width: 100%; flex: 1 1 auto; position: static; max-height: none; order: 2; }
+    .text-card { order: 1; }
+    .bank-list { flex-direction: row; flex-wrap: wrap; }
+    .bank-chip { flex: 0 0 auto; }
+  }
+
+  footer { text-align: center; padding: 24px; font-size: 12px; color: var(--muted); }
+
+  #teacher-banner {
+    display: none; align-items: center; justify-content: center; gap: 14px;
+    background: var(--gold); color: var(--brand-dark); text-align: center; font-weight: 700; font-size: 13px;
+    padding: 10px 16px; position: sticky; top: 0; z-index: 50; flex-wrap: wrap;
+  }
+  #teacher-banner button {
+    font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 800; padding: 5px 14px; border-radius: 16px;
+    border: 1.5px solid var(--brand-dark); background: transparent; color: var(--brand-dark); cursor: pointer; transition: all .15s;
+  }
+  #teacher-banner button:hover { background: var(--brand-dark); color: #fff; }
+</style>
+</head>
+<body>
+
+<header>
+  <div style="display:flex;align-items:center;">
+    <a class="back-link" href="index.html">← Back</a>
+    <div class="logo">Headway Pre-Intermediate<span class="chevrons"><span></span><span></span></span> <span class="logo-sub">Veronika's Practice</span></div>
+  </div>
+  <div class="header-right">
+    <span class="chip" id="global-score">✓ 0 / 0</span>
+    <button class="btn-reset-all" id="btn-reset-all">Reset All ↻</button>
+  </div>
+</header>
+
+<div id="teacher-banner">
+  <span>🧪 Teacher mode is ON — your answers on this page are NOT being recorded.</span>
+  <button id="teacher-banner-off">Turn off</button>
+</div>
+
+<main>
+  <div class="block-header">
+    <div>
+      <div class="block-title" id="block-title">Present Perfect Simple vs Continuous</div>
+      <div class="block-subtitle" id="block-subtitle">Achievement vs duration — for/since, already/yet/just, how long</div>
+    </div>
+  </div>
+
+  <div class="category-tabs" id="category-tabs"></div>
+
+  <div class="picker" id="picker">
+    <div class="picker-trigger" id="picker-trigger">
+      <span><span class="picker-trigger-label" id="picker-trigger-label"></span><span class="picker-trigger-score" id="picker-trigger-score"></span></span>
+      <span class="picker-chevron">▾</span>
+    </div>
+    <div class="picker-panel" id="nav-pills"></div>
+  </div>
+
+  <div class="workspace" id="workspace"></div>
+</main>
+
+<footer>Headway Pre-Intermediate · Veronika's Practice · банк слов взят из Wordlist Beginner + Elementary + Pre-Intermediate (Unit 1)</footer>
+
+<script>
+
+(function(){
+  try {
+    if (localStorage.getItem('hw_role') === 'teacher') {
+      document.getElementById('teacher-banner').style.display = 'flex';
+    }
+  } catch(e) {}
+})();
+var __teacherBannerOff = document.getElementById('teacher-banner-off');
+if (__teacherBannerOff) {
+  __teacherBannerOff.addEventListener('click', function(){
+    try { localStorage.setItem('hw_role', 'student'); } catch(e) {}
+    document.getElementById('teacher-banner').style.display = 'none';
+  });
+}
+const TEXTS = 
+[{"id": "p1", "name": "Marie Curie", "role": "physicist and chemist, from Poland/France (1867–1934)", "category": "people", "block": 7, "paragraphsHtml": ["Marie Curie <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"1\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">1</span></span> in Warsaw in 1867, and as a young woman she <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"2\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">2</span></span> to Paris to study physics and mathematics, at a time when almost no universities <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"3\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">3</span></span> women to study science. Together with her husband Pierre, she <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"4\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">4</span></span> two new elements, polonium and radium, and their research <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"5\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">5</span></span> how scientists understood the atom completely. She <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"6\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">6</span></span> the Nobel Prize twice, in two different sciences, and she remains the only person who ever <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"7\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">7</span></span> this.", "Curie <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"8\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">8</span></span> countless nights working with dangerous materials long before anyone understood the risks, and her health <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"9\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">9</span></span> badly as a result. During the First World War, she <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"10\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">10</span></span> mobile X-ray units and personally <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"11\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">11</span></span> them to the front lines, helping doctors treat wounded soldiers. She <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"12\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">12</span></span> in 1934, from an illness almost certainly caused by decades of exposure to radiation.", "Since her death, her research <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"13\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">13</span></span> generations of scientists, and the cancer treatments she pioneered <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"14\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">14</span></span> save countless lives around the world. Her name <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"15\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">15</span></span> synonymous with scientific dedication, and the element she discovered, curium, <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"16\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">16</span></span> named in her honour. Scientists <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"17\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">17</span></span> to build on her work for nearly a century, and laboratories everywhere <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"18\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">18</span></span> her methods ever since."], "answers": {"1": ["was born"], "2": ["moved"], "3": ["allowed"], "4": ["discovered"], "5": ["changed"], "6": ["won"], "7": ["achieved"], "8": ["spent"], "9": ["suffered"], "10": ["organised", "organized"], "11": ["drove", "took"], "12": ["died"], "13": ["has inspired"], "14": ["have helped"], "15": ["has become"], "16": ["has been"], "17": ["have continued"], "18": ["have used"]}, "bankItems": [{"lemma": "be born", "count": 1, "forms": ["be born", "am born", "is born", "are born", "was born", "were born", "being born", "been born", "have been born", "has been born"], "core": ["be born", "am born", "is born", "are born", "was born", "were born", "being born", "been born", "have been born", "has been born"], "neg": false}, {"lemma": "move", "count": 1, "forms": ["has been moving", "has moved", "hasn't been moving", "hasn't moved", "have been moving", "have moved", "haven't been moving", "haven't moved", "move", "moved", "moves", "moving", "was moving", "were moving"], "core": ["move", "moved", "moves", "moving"], "neg": false}, {"lemma": "allow", "count": 1, "forms": ["allow", "allowed", "allowing", "allows", "has allowed", "has been allowing", "hasn't allowed", "hasn't been allowing", "have allowed", "have been allowing", "haven't allowed", "haven't been allowing", "was allowing", "were allowing"], "core": ["allow", "allowed", "allowing", "allows"], "neg": false}, {"lemma": "discover", "count": 1, "forms": ["discover", "discovered", "discovering", "discovers", "has been discovering", "has discovered", "hasn't been discovering", "hasn't discovered", "have been discovering", "have discovered", "haven't been discovering", "haven't discovered", "was discovering", "were discovering"], "core": ["discover", "discovered", "discovering", "discovers"], "neg": false}, {"lemma": "change", "count": 1, "forms": ["change", "changed", "changes", "changing", "has been changing", "has changed", "hasn't been changing", "hasn't changed", "have been changing", "have changed", "haven't been changing", "haven't changed", "was changing", "were changing"], "core": ["change", "changed", "changes", "changing"], "neg": false}, {"lemma": "win", "count": 1, "forms": ["has been winning", "has won", "hasn't been winning", "hasn't won", "have been winning", "have won", "haven't been winning", "haven't won", "was winning", "were winning", "win", "winning", "wins", "won"], "core": ["win", "winning", "wins", "won"], "neg": false}, {"lemma": "achieve", "count": 1, "forms": ["achieve", "achieved", "achieves", "achieving", "has achieved", "has been achieving", "hasn't achieved", "hasn't been achieving", "have achieved", "have been achieving", "haven't achieved", "haven't been achieving", "was achieving", "were achieving"], "core": ["achieve", "achieved", "achieves", "achieving"], "neg": false}, {"lemma": "spend", "count": 1, "forms": ["has been spending", "has spent", "hasn't been spending", "hasn't spent", "have been spending", "have spent", "haven't been spending", "haven't spent", "spend", "spending", "spends", "spent", "was spending", "were spending"], "core": ["spend", "spending", "spends", "spent"], "neg": false}, {"lemma": "suffer", "count": 1, "forms": ["has been suffering", "has suffered", "hasn't been suffering", "hasn't suffered", "have been suffering", "have suffered", "haven't been suffering", "haven't suffered", "suffer", "suffered", "suffering", "suffers", "was suffering", "were suffering"], "core": ["suffer", "suffered", "suffering", "suffers"], "neg": false}, {"lemma": "organise", "count": 1, "forms": ["has been organising", "has organised", "hasn't been organising", "hasn't organised", "have been organising", "have organised", "haven't been organising", "haven't organised", "organise", "organised", "organises", "organising", "was organising", "were organising"], "core": ["organise", "organised", "organises", "organising"], "neg": false}, {"lemma": "drive", "count": 1, "forms": ["drive", "driven", "drives", "driving", "drove", "has been driving", "has driven", "hasn't been driving", "hasn't driven", "have been driving", "have driven", "haven't been driving", "haven't driven", "was driving", "were driving"], "core": ["drive", "driven", "drives", "driving", "drove"], "neg": false}, {"lemma": "die", "count": 1, "forms": ["die", "died", "dies", "dying", "has been dying", "has died", "hasn't been dying", "hasn't died", "have been dying", "have died", "haven't been dying", "haven't died", "was dying", "were dying"], "core": ["die", "died", "dies", "dying"], "neg": false}, {"lemma": "inspire", "count": 1, "forms": ["has been inspiring", "has inspired", "hasn't been inspiring", "hasn't inspired", "have been inspiring", "have inspired", "haven't been inspiring", "haven't inspired", "inspire", "inspired", "inspires", "inspiring", "was inspiring", "were inspiring"], "core": ["inspire", "inspired", "inspires", "inspiring"], "neg": false}, {"lemma": "help", "count": 1, "forms": ["has been helping", "has helped", "hasn't been helping", "hasn't helped", "have been helping", "have helped", "haven't been helping", "haven't helped", "help", "helped", "helping", "helps", "was helping", "were helping"], "core": ["help", "helped", "helping", "helps"], "neg": false}, {"lemma": "become", "count": 1, "forms": ["became", "become", "becomes", "becoming", "has become", "has been becoming", "hasn't become", "hasn't been becoming", "have become", "have been becoming", "haven't become", "haven't been becoming", "was becoming", "were becoming"], "core": ["became", "become", "becomes", "becoming"], "neg": false}, {"lemma": "be", "count": 1, "forms": ["be", "am", "is", "are", "was", "were", "been", "being", "'m", "'s", "'re", "has been", "have been"], "core": ["be", "am", "is", "are", "was", "were", "been", "being"], "neg": false}, {"lemma": "continue", "count": 1, "forms": ["continue", "continued", "continues", "continuing", "has been continuing", "has continued", "hasn't been continuing", "hasn't continued", "have been continuing", "have continued", "haven't been continuing", "haven't continued", "was continuing", "were continuing"], "core": ["continue", "continued", "continues", "continuing"], "neg": false}, {"lemma": "use", "count": 1, "forms": ["has been using", "has used", "hasn't been using", "hasn't used", "have been using", "have used", "haven't been using", "haven't used", "use", "used", "uses", "using", "was using", "were using"], "core": ["use", "used", "uses", "using"], "neg": false}], "totalBlanks": 18}, {"id": "p2", "name": "Alexander Fleming", "role": "biologist, from Scotland (1881–1955)", "category": "people", "block": 7, "paragraphsHtml": ["Alexander Fleming <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"1\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">1</span></span> in Scotland in 1881 and later <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"2\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">2</span></span> medicine in London, where he <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"3\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">3</span></span> bacteria for most of his career. Colleagues often joked that he <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"4\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">4</span></span> incredibly untidy, and that habit eventually <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"5\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">5</span></span> him to one of the greatest accidents in the history of medicine.", "Before he <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"6\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">6</span></span> on holiday one summer, he <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"7\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">7</span></span> some old bacteria dishes on his bench without cleaning them. When he <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"8\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">8</span></span>, he <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"9\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">9</span></span> that a strange mould <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"10\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">10</span></span> on one of the dishes, and the bacteria around it simply <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"11\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">11</span></span>. He <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"12\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">12</span></span> the mould penicillin, and he spent years trying to understand exactly how it worked.", "Since that discovery, penicillin <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"13\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">13</span></span> millions of lives around the world, and doctors <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"14\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">14</span></span> it to treat infections that once killed patients within days. Fleming's work <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"15\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">15</span></span> the entire field of antibiotics, and scientists <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"16\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">16</span></span> developing new versions of his discovery ever since. His name <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"17\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">17</span></span> one of the most recognised in medical history, and hospitals everywhere <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"18\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">18</span></span> his methods for decades."], "answers": {"1": ["was born"], "2": ["studied"], "3": ["studied", "researched"], "4": ["was"], "5": ["led"], "6": ["went"], "7": ["left"], "8": ["returned"], "9": ["noticed"], "10": ["had grown"], "11": ["disappeared", "had disappeared"], "12": ["named"], "13": ["has saved"], "14": ["have used"], "15": ["has shaped"], "16": ["have been"], "17": ["has become"], "18": ["have relied on"]}, "bankItems": [{"lemma": "be born", "count": 1, "forms": ["be born", "am born", "is born", "are born", "was born", "were born", "being born", "been born", "have been born", "has been born"], "core": ["be born", "am born", "is born", "are born", "was born", "were born", "being born", "been born", "have been born", "has been born"], "neg": false}, {"lemma": "study", "count": 2, "forms": ["has been studying", "has studied", "hasn't been studying", "hasn't studied", "have been studying", "have studied", "haven't been studying", "haven't studied", "studied", "studies", "study", "studying", "was studying", "were studying"], "core": ["studied", "studies", "study", "studying"], "neg": false}, {"lemma": "be", "count": 2, "forms": ["be", "am", "is", "are", "was", "were", "been", "being", "'m", "'s", "'re", "has been", "have been"], "core": ["be", "am", "is", "are", "was", "were", "been", "being"], "neg": false}, {"lemma": "lead", "count": 1, "forms": ["has been leading", "has led", "hasn't been leading", "hasn't led", "have been leading", "have led", "haven't been leading", "haven't led", "lead", "leading", "leads", "led", "was leading", "were leading"], "core": ["lead", "leading", "leads", "led"], "neg": false}, {"lemma": "go", "count": 1, "forms": ["go", "goes", "going", "gone", "has been going", "has gone", "hasn't been going", "hasn't gone", "have been going", "have gone", "haven't been going", "haven't gone", "was going", "went", "were going"], "core": ["go", "goes", "going", "gone", "went"], "neg": false}, {"lemma": "leave", "count": 1, "forms": ["has been leaving", "has left", "hasn't been leaving", "hasn't left", "have been leaving", "have left", "haven't been leaving", "haven't left", "leave", "leaves", "leaving", "left", "was leaving", "were leaving"], "core": ["leave", "leaves", "leaving", "left"], "neg": false}, {"lemma": "return", "count": 1, "forms": ["has been returning", "has returned", "hasn't been returning", "hasn't returned", "have been returning", "have returned", "haven't been returning", "haven't returned", "return", "returned", "returning", "returns", "was returning", "were returning"], "core": ["return", "returned", "returning", "returns"], "neg": false}, {"lemma": "notice", "count": 1, "forms": ["has been noticing", "has noticed", "hasn't been noticing", "hasn't noticed", "have been noticing", "have noticed", "haven't been noticing", "haven't noticed", "notice", "noticed", "notices", "noticing", "was noticing", "were noticing"], "core": ["notice", "noticed", "notices", "noticing"], "neg": false}, {"lemma": "grow", "count": 1, "forms": ["grew", "grow", "growing", "grown", "grows", "has been growing", "has grown", "hasn't been growing", "hasn't grown", "have been growing", "have grown", "haven't been growing", "haven't grown", "was growing", "were growing"], "core": ["grew", "grow", "growing", "grown", "grows"], "neg": false}, {"lemma": "disappear", "count": 1, "forms": ["disappear", "disappeared", "disappearing", "disappears", "has been disappearing", "has disappeared", "hasn't been disappearing", "hasn't disappeared", "have been disappearing", "have disappeared", "haven't been disappearing", "haven't disappeared", "was disappearing", "were disappearing"], "core": ["disappear", "disappeared", "disappearing", "disappears"], "neg": false}, {"lemma": "name", "count": 1, "forms": ["has been naming", "has named", "hasn't been naming", "hasn't named", "have been naming", "have named", "haven't been naming", "haven't named", "name", "named", "names", "naming", "was naming", "were naming"], "core": ["name", "named", "names", "naming"], "neg": false}, {"lemma": "save", "count": 1, "forms": ["has been saving", "has saved", "hasn't been saving", "hasn't saved", "have been saving", "have saved", "haven't been saving", "haven't saved", "save", "saved", "saves", "saving", "was saving", "were saving"], "core": ["save", "saved", "saves", "saving"], "neg": false}, {"lemma": "use", "count": 1, "forms": ["has been using", "has used", "hasn't been using", "hasn't used", "have been using", "have used", "haven't been using", "haven't used", "use", "used", "uses", "using", "was using", "were using"], "core": ["use", "used", "uses", "using"], "neg": false}, {"lemma": "shape", "count": 1, "forms": ["has been shaping", "has shaped", "hasn't been shaping", "hasn't shaped", "have been shaping", "have shaped", "haven't been shaping", "haven't shaped", "shape", "shaped", "shapes", "shaping", "was shaping", "were shaping"], "core": ["shape", "shaped", "shapes", "shaping"], "neg": false}, {"lemma": "become", "count": 1, "forms": ["became", "become", "becomes", "becoming", "has become", "has been becoming", "hasn't become", "hasn't been becoming", "have become", "have been becoming", "haven't become", "haven't been becoming", "was becoming", "were becoming"], "core": ["became", "become", "becomes", "becoming"], "neg": false}, {"lemma": "rely", "count": 1, "forms": ["has been relying", "has relied", "hasn't been relying", "hasn't relied", "have been relying", "have relied", "haven't been relying", "haven't relied", "relied", "relies", "rely", "relying", "was relying", "were relying"], "core": ["relied", "relies", "rely", "relying"], "neg": false}], "totalBlanks": 18}, {"id": "p3", "name": "Nikola Tesla", "role": "inventor and engineer, from Serbia/USA (1856–1943)", "category": "people", "block": 7, "paragraphsHtml": ["Nikola Tesla <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"1\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">1</span></span> in Serbia in 1856 and later <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"2\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">2</span></span> to the United States, where he <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"3\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">3</span></span> closely with Thomas Edison before the two men became rivals. Tesla <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"4\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">4</span></span> over three hundred patents during his lifetime, and he <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"5\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">5</span></span> most of his career working on alternating current.", "In his later years, Tesla <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"6\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">6</span></span> on a system that could send electricity through the air without wires, but he never <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"7\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">7</span></span> enough money to finish it. Investors gradually <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"8\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">8</span></span> interest, and he <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"9\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">9</span></span> the final years of his life largely alone and in poverty. He <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"10\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">10</span></span> in a New York hotel room in 1943.", "Since his death, engineers <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"11\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">11</span></span> to rely on his ideas about alternating current, and his inventions <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"12\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">12</span></span> how electricity reaches homes and factories all over the world. His name <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"13\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">13</span></span> a symbol of visionary genius, and scientists <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"14\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">14</span></span> many of his early predictions about wireless technology. Tesla <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"15\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">15</span></span> little recognition during his own lifetime, but his reputation <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"16\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">16</span></span> enormously since his death."], "answers": {"1": ["was born"], "2": ["moved"], "3": ["worked"], "4": ["filed"], "5": ["spent"], "6": ["worked"], "7": ["raised"], "8": ["lost"], "9": ["spent"], "10": ["died"], "11": ["have continued"], "12": ["have shaped"], "13": ["has become"], "14": ["have confirmed"], "15": ["received"], "16": ["has grown"]}, "bankItems": [{"lemma": "be born", "count": 1, "forms": ["be born", "am born", "is born", "are born", "was born", "were born", "being born", "been born", "have been born", "has been born"], "core": ["be born", "am born", "is born", "are born", "was born", "were born", "being born", "been born", "have been born", "has been born"], "neg": false}, {"lemma": "move", "count": 1, "forms": ["has been moving", "has moved", "hasn't been moving", "hasn't moved", "have been moving", "have moved", "haven't been moving", "haven't moved", "move", "moved", "moves", "moving", "was moving", "were moving"], "core": ["move", "moved", "moves", "moving"], "neg": false}, {"lemma": "work", "count": 2, "forms": ["has been working", "has worked", "hasn't been working", "hasn't worked", "have been working", "have worked", "haven't been working", "haven't worked", "was working", "were working", "work", "worked", "working", "works"], "core": ["work", "worked", "working", "works"], "neg": false}, {"lemma": "file", "count": 1, "forms": ["file", "filed", "files", "filing", "has been filing", "has filed", "hasn't been filing", "hasn't filed", "have been filing", "have filed", "haven't been filing", "haven't filed", "was filing", "were filing"], "core": ["file", "filed", "files", "filing"], "neg": false}, {"lemma": "spend", "count": 2, "forms": ["has been spending", "has spent", "hasn't been spending", "hasn't spent", "have been spending", "have spent", "haven't been spending", "haven't spent", "spend", "spending", "spends", "spent", "was spending", "were spending"], "core": ["spend", "spending", "spends", "spent"], "neg": false}, {"lemma": "raise", "count": 1, "forms": ["has been raising", "has raised", "hasn't been raising", "hasn't raised", "have been raising", "have raised", "haven't been raising", "haven't raised", "raise", "raised", "raises", "raising", "was raising", "were raising"], "core": ["raise", "raised", "raises", "raising"], "neg": false}, {"lemma": "lose", "count": 1, "forms": ["has been losing", "has lost", "hasn't been losing", "hasn't lost", "have been losing", "have lost", "haven't been losing", "haven't lost", "lose", "loses", "losing", "lost", "was losing", "were losing"], "core": ["lose", "loses", "losing", "lost"], "neg": false}, {"lemma": "die", "count": 1, "forms": ["die", "died", "dies", "dying", "has been dying", "has died", "hasn't been dying", "hasn't died", "have been dying", "have died", "haven't been dying", "haven't died", "was dying", "were dying"], "core": ["die", "died", "dies", "dying"], "neg": false}, {"lemma": "continue", "count": 1, "forms": ["continue", "continued", "continues", "continuing", "has been continuing", "has continued", "hasn't been continuing", "hasn't continued", "have been continuing", "have continued", "haven't been continuing", "haven't continued", "was continuing", "were continuing"], "core": ["continue", "continued", "continues", "continuing"], "neg": false}, {"lemma": "shape", "count": 1, "forms": ["has been shaping", "has shaped", "hasn't been shaping", "hasn't shaped", "have been shaping", "have shaped", "haven't been shaping", "haven't shaped", "shape", "shaped", "shapes", "shaping", "was shaping", "were shaping"], "core": ["shape", "shaped", "shapes", "shaping"], "neg": false}, {"lemma": "become", "count": 1, "forms": ["became", "become", "becomes", "becoming", "has become", "has been becoming", "hasn't become", "hasn't been becoming", "have become", "have been becoming", "haven't become", "haven't been becoming", "was becoming", "were becoming"], "core": ["became", "become", "becomes", "becoming"], "neg": false}, {"lemma": "confirm", "count": 1, "forms": ["confirm", "confirmed", "confirming", "confirms", "has been confirming", "has confirmed", "hasn't been confirming", "hasn't confirmed", "have been confirming", "have confirmed", "haven't been confirming", "haven't confirmed", "was confirming", "were confirming"], "core": ["confirm", "confirmed", "confirming", "confirms"], "neg": false}, {"lemma": "receive", "count": 1, "forms": ["has been receiving", "has received", "hasn't been receiving", "hasn't received", "have been receiving", "have received", "haven't been receiving", "haven't received", "receive", "received", "receives", "receiving", "was receiving", "were receiving"], "core": ["receive", "received", "receives", "receiving"], "neg": false}, {"lemma": "grow", "count": 1, "forms": ["grew", "grow", "growing", "grown", "grows", "has been growing", "has grown", "hasn't been growing", "hasn't grown", "have been growing", "have grown", "haven't been growing", "haven't grown", "was growing", "were growing"], "core": ["grew", "grow", "growing", "grown", "grows"], "neg": false}], "totalBlanks": 16}, {"id": "p4", "name": "Jennifer Doudna", "role": "biochemist, from the USA (living)", "category": "people", "block": 7, "paragraphsHtml": ["Jennifer Doudna <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"1\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">1</span></span> in Washington D.C. in 1964 and later <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"2\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">2</span></span> her PhD in biological chemistry at Harvard. For most of her career, she <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"3\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">3</span></span> on the structure and function of RNA, and in 2012, together with Emmanuelle Charpentier, she <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"4\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">4</span></span> a powerful new gene-editing tool based on a natural bacterial defence system called CRISPR.", "Since that discovery, Doudna <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"5\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">5</span></span> numerous major awards, including the Nobel Prize in Chemistry in 2020, and she <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"6\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">6</span></span> widely recognised as one of the most influential scientists of her generation. Her research <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"7\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">7</span></span> the door to treatments for genetic diseases that <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"8\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">8</span></span> previously untreatable, and doctors around the world <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"9\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">9</span></span> CRISPR to develop new therapies.", "In recent years, Doudna <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"10\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">10</span></span> much of her time thinking about the ethical questions raised by gene editing, and she <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"11\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">11</span></span> publicly for careful regulation of the technology. She <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"12\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">12</span></span> several books on the subject, and she <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"13\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">13</span></span> to run an active research laboratory at the University of California, Berkeley. Scientists everywhere <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"14\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">14</span></span> to watch her work closely, certain that her research <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"15\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">15</span></span> continue to shape the future of medicine for decades to come."], "answers": {"1": ["was born"], "2": ["completed"], "3": ["has focused"], "4": ["developed"], "5": ["has won"], "6": ["has become"], "7": ["has opened"], "8": ["were"], "9": ["have started using"], "10": ["has spent"], "11": ["has called"], "12": ["has written"], "13": ["has continued"], "14": ["continue"], "15": ["will"]}, "bankItems": [{"lemma": "be born", "count": 1, "forms": ["be born", "am born", "is born", "are born", "was born", "were born", "being born", "been born", "have been born", "has been born"], "core": ["be born", "am born", "is born", "are born", "was born", "were born", "being born", "been born", "have been born", "has been born"], "neg": false}, {"lemma": "complete", "count": 1, "forms": ["complete", "completed", "completes", "completing", "has been completing", "has completed", "hasn't been completing", "hasn't completed", "have been completing", "have completed", "haven't been completing", "haven't completed", "was completing", "were completing"], "core": ["complete", "completed", "completes", "completing"], "neg": false}, {"lemma": "focus", "count": 1, "forms": ["focus", "focused", "focuses", "focusing", "has been focusing", "has focused", "hasn't been focusing", "hasn't focused", "have been focusing", "have focused", "haven't been focusing", "haven't focused", "was focusing", "were focusing"], "core": ["focus", "focused", "focuses", "focusing"], "neg": false}, {"lemma": "develop", "count": 1, "forms": ["develop", "developed", "developing", "develops", "has been developing", "has developed", "hasn't been developing", "hasn't developed", "have been developing", "have developed", "haven't been developing", "haven't developed", "was developing", "were developing"], "core": ["develop", "developed", "developing", "develops"], "neg": false}, {"lemma": "win", "count": 1, "forms": ["has been winning", "has won", "hasn't been winning", "hasn't won", "have been winning", "have won", "haven't been winning", "haven't won", "was winning", "were winning", "win", "winning", "wins", "won"], "core": ["win", "winning", "wins", "won"], "neg": false}, {"lemma": "become", "count": 1, "forms": ["became", "become", "becomes", "becoming", "has become", "has been becoming", "hasn't become", "hasn't been becoming", "have become", "have been becoming", "haven't become", "haven't been becoming", "was becoming", "were becoming"], "core": ["became", "become", "becomes", "becoming"], "neg": false}, {"lemma": "open", "count": 1, "forms": ["has been opening", "has opened", "hasn't been opening", "hasn't opened", "have been opening", "have opened", "haven't been opening", "haven't opened", "open", "opened", "opening", "opens", "was opening", "were opening"], "core": ["open", "opened", "opening", "opens"], "neg": false}, {"lemma": "be", "count": 1, "forms": ["be", "am", "is", "are", "was", "were", "been", "being", "'m", "'s", "'re", "has been", "have been"], "core": ["be", "am", "is", "are", "was", "were", "been", "being"], "neg": false}, {"lemma": "start", "count": 1, "forms": ["has been starting", "has started", "hasn't been starting", "hasn't started", "have been starting", "have started", "haven't been starting", "haven't started", "start", "started", "starting", "starts", "was starting", "were starting"], "core": ["start", "started", "starting", "starts"], "neg": false}, {"lemma": "spend", "count": 1, "forms": ["has been spending", "has spent", "hasn't been spending", "hasn't spent", "have been spending", "have spent", "haven't been spending", "haven't spent", "spend", "spending", "spends", "spent", "was spending", "were spending"], "core": ["spend", "spending", "spends", "spent"], "neg": false}, {"lemma": "call", "count": 1, "forms": ["call", "called", "calling", "calls", "has been calling", "has called", "hasn't been calling", "hasn't called", "have been calling", "have called", "haven't been calling", "haven't called", "was calling", "were calling"], "core": ["call", "called", "calling", "calls"], "neg": false}, {"lemma": "write", "count": 1, "forms": ["has been writing", "has written", "hasn't been writing", "hasn't written", "have been writing", "have written", "haven't been writing", "haven't written", "was writing", "were writing", "write", "writes", "writing", "written", "wrote"], "core": ["write", "writes", "writing", "written", "wrote"], "neg": false}, {"lemma": "continue", "count": 2, "forms": ["continue", "continued", "continues", "continuing", "has been continuing", "has continued", "hasn't been continuing", "hasn't continued", "have been continuing", "have continued", "haven't been continuing", "haven't continued", "was continuing", "were continuing"], "core": ["continue", "continued", "continues", "continuing"], "neg": false}, {"lemma": "will", "count": 1, "forms": ["has been willing", "has willed", "hasn't been willing", "hasn't willed", "have been willing", "have willed", "haven't been willing", "haven't willed", "was willing", "were willing", "will", "willed", "willing", "wills"], "core": ["will", "willed", "willing", "wills"], "neg": false}], "totalBlanks": 15}, {"id": "p5", "name": "Tim Berners-Lee", "role": "computer scientist, from England (living)", "category": "people", "block": 7, "paragraphsHtml": ["Tim Berners-Lee <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"1\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">1</span></span> in London in 1955 and later <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"2\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">2</span></span> computer science at Oxford University. While working at CERN in Switzerland in 1989, he <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"3\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">3</span></span> a proposal for a new way of sharing information between scientists, an idea that eventually <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"4\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">4</span></span> the World Wide Web.", "Since that invention, the web <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"5\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">5</span></span> the way billions of people communicate, work and learn, and it <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"6\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">6</span></span> into one of the most important technologies in human history. Berners-Lee <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"7\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">7</span></span> that anyone should be able to access the web freely, and for decades he <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"8\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">8</span></span> against attempts to restrict or control it.", "Recently, Berners-Lee <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"9\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">9</span></span> increasingly concerned about how much personal data large companies <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"10\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">10</span></span> without users' permission, and he <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"11\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">11</span></span> on a new project designed to give people more control over their own information online. He <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"12\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">12</span></span> several major awards for his invention, including a knighthood, but he insists that his work is not finished yet. Millions of new websites <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"13\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">13</span></span> online since he first invented the web, and he <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"14\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">14</span></span> to imagine what the internet could become next."], "answers": {"1": ["was born"], "2": ["studied"], "3": ["wrote"], "4": ["became"], "5": ["has changed"], "6": ["has grown"], "7": ["has always believed"], "8": ["has campaigned"], "9": ["has become"], "10": ["have been collecting"], "11": ["has been working"], "12": ["has received"], "13": ["have gone"], "14": ["continues"]}, "bankItems": [{"lemma": "be born", "count": 1, "forms": ["be born", "am born", "is born", "are born", "was born", "were born", "being born", "been born", "have been born", "has been born"], "core": ["be born", "am born", "is born", "are born", "was born", "were born", "being born", "been born", "have been born", "has been born"], "neg": false}, {"lemma": "study", "count": 1, "forms": ["has been studying", "has studied", "hasn't been studying", "hasn't studied", "have been studying", "have studied", "haven't been studying", "haven't studied", "studied", "studies", "study", "studying", "was studying", "were studying"], "core": ["studied", "studies", "study", "studying"], "neg": false}, {"lemma": "write", "count": 1, "forms": ["has been writing", "has written", "hasn't been writing", "hasn't written", "have been writing", "have written", "haven't been writing", "haven't written", "was writing", "were writing", "write", "writes", "writing", "written", "wrote"], "core": ["write", "writes", "writing", "written", "wrote"], "neg": false}, {"lemma": "become", "count": 2, "forms": ["became", "become", "becomes", "becoming", "has become", "has been becoming", "hasn't become", "hasn't been becoming", "have become", "have been becoming", "haven't become", "haven't been becoming", "was becoming", "were becoming"], "core": ["became", "become", "becomes", "becoming"], "neg": false}, {"lemma": "change", "count": 1, "forms": ["change", "changed", "changes", "changing", "has been changing", "has changed", "hasn't been changing", "hasn't changed", "have been changing", "have changed", "haven't been changing", "haven't changed", "was changing", "were changing"], "core": ["change", "changed", "changes", "changing"], "neg": false}, {"lemma": "grow", "count": 1, "forms": ["grew", "grow", "growing", "grown", "grows", "has been growing", "has grown", "hasn't been growing", "hasn't grown", "have been growing", "have grown", "haven't been growing", "haven't grown", "was growing", "were growing"], "core": ["grew", "grow", "growing", "grown", "grows"], "neg": false}, {"lemma": "believe", "count": 1, "forms": ["believe", "believed", "believes", "believing", "has been believing", "has believed", "hasn't been believing", "hasn't believed", "have been believing", "have believed", "haven't been believing", "haven't believed", "was believing", "were believing"], "core": ["believe", "believed", "believes", "believing"], "neg": false}, {"lemma": "campaign", "count": 1, "forms": ["campaign", "campaigned", "campaigning", "campaigns", "has been campaigning", "has campaigned", "hasn't been campaigning", "hasn't campaigned", "have been campaigning", "have campaigned", "haven't been campaigning", "haven't campaigned", "was campaigning", "were campaigning"], "core": ["campaign", "campaigned", "campaigning", "campaigns"], "neg": false}, {"lemma": "collect", "count": 1, "forms": ["collect", "collected", "collecting", "collects", "has been collecting", "has collected", "hasn't been collecting", "hasn't collected", "have been collecting", "have collected", "haven't been collecting", "haven't collected", "was collecting", "were collecting"], "core": ["collect", "collected", "collecting", "collects"], "neg": false}, {"lemma": "work", "count": 1, "forms": ["has been working", "has worked", "hasn't been working", "hasn't worked", "have been working", "have worked", "haven't been working", "haven't worked", "was working", "were working", "work", "worked", "working", "works"], "core": ["work", "worked", "working", "works"], "neg": false}, {"lemma": "receive", "count": 1, "forms": ["has been receiving", "has received", "hasn't been receiving", "hasn't received", "have been receiving", "have received", "haven't been receiving", "haven't received", "receive", "received", "receives", "receiving", "was receiving", "were receiving"], "core": ["receive", "received", "receives", "receiving"], "neg": false}, {"lemma": "go", "count": 1, "forms": ["go", "goes", "going", "gone", "has been going", "has gone", "hasn't been going", "hasn't gone", "have been going", "have gone", "haven't been going", "haven't gone", "was going", "went", "were going"], "core": ["go", "goes", "going", "gone", "went"], "neg": false}, {"lemma": "continue", "count": 1, "forms": ["continue", "continued", "continues", "continuing", "has been continuing", "has continued", "hasn't been continuing", "hasn't continued", "have been continuing", "have continued", "haven't been continuing", "haven't continued", "was continuing", "were continuing"], "core": ["continue", "continued", "continues", "continuing"], "neg": false}], "totalBlanks": 14}, {"id": "g1", "name": "The Missing Ledger", "role": "detective mystery", "category": "stories", "block": 7, "paragraphsHtml": ["Detective Hale <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"1\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">1</span></span> the case of the missing ledger for three days now, and he still <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"2\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">2</span></span> no idea who took it. He <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"3\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">3</span></span> every member of staff at the bank, and he <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"4\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">4</span></span> through hundreds of old documents, but the ledger simply <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"5\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">5</span></span> vanished without a trace.", "This morning, a young clerk finally <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"6\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">6</span></span> something odd: a drawer in the manager's office <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"7\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">7</span></span> unlocked since Tuesday, though nobody <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"8\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">8</span></span> it in weeks. Hale <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"9\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">9</span></span> suspicious of the manager since the very beginning, and now he <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"10\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">10</span></span> enough evidence to justify a search of the man's home.", "As Hale <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"11\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">11</span></span> the manager's study, he noticed the man's hands were shaking. 'You <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"12\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">12</span></span> nervous since I arrived,' Hale said quietly. 'I <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"13\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">13</span></span> nothing wrong,' the manager insisted, though sweat <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"14\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">14</span></span> down his forehead for the last five minutes. Hale <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"15\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">15</span></span> liars before, and he knew exactly what one looked like."], "answers": {"1": ["has been investigating"], "2": ["has"], "3": ["has questioned"], "4": ["has gone"], "5": ["has"], "6": ["noticed"], "7": ["has been"], "8": ["has opened"], "9": ["has been"], "10": ["has"], "11": ["was searching", "searched"], "12": ["have been"], "13": ["have done"], "14": ["has been dripping"], "15": ["has met"]}, "bankItems": [{"lemma": "investigate", "count": 1, "forms": ["has been investigating", "has investigated", "hasn't been investigating", "hasn't investigated", "have been investigating", "have investigated", "haven't been investigating", "haven't investigated", "investigate", "investigated", "investigates", "investigating", "was investigating", "were investigating"], "core": ["investigate", "investigated", "investigates", "investigating"], "neg": false}, {"lemma": "have", "count": 3, "forms": ["had", "has", "has been having", "has had", "hasn't been having", "hasn't had", "have", "have been having", "have had", "haven't been having", "haven't had", "having", "was having", "were having"], "core": ["had", "has", "have", "having"], "neg": false}, {"lemma": "question", "count": 1, "forms": ["has been questioning", "has questioned", "hasn't been questioning", "hasn't questioned", "have been questioning", "have questioned", "haven't been questioning", "haven't questioned", "question", "questioned", "questioning", "questions", "was questioning", "were questioning"], "core": ["question", "questioned", "questioning", "questions"], "neg": false}, {"lemma": "go", "count": 1, "forms": ["go", "goes", "going", "gone", "has been going", "has gone", "hasn't been going", "hasn't gone", "have been going", "have gone", "haven't been going", "haven't gone", "was going", "went", "were going"], "core": ["go", "goes", "going", "gone", "went"], "neg": false}, {"lemma": "notice", "count": 1, "forms": ["has been noticing", "has noticed", "hasn't been noticing", "hasn't noticed", "have been noticing", "have noticed", "haven't been noticing", "haven't noticed", "notice", "noticed", "notices", "noticing", "was noticing", "were noticing"], "core": ["notice", "noticed", "notices", "noticing"], "neg": false}, {"lemma": "be", "count": 3, "forms": ["be", "am", "is", "are", "was", "were", "been", "being", "'m", "'s", "'re", "has been", "have been"], "core": ["be", "am", "is", "are", "was", "were", "been", "being"], "neg": false}, {"lemma": "open", "count": 1, "forms": ["has been opening", "has opened", "hasn't been opening", "hasn't opened", "have been opening", "have opened", "haven't been opening", "haven't opened", "open", "opened", "opening", "opens", "was opening", "were opening"], "core": ["open", "opened", "opening", "opens"], "neg": false}, {"lemma": "search", "count": 1, "forms": ["has been searching", "has searched", "hasn't been searching", "hasn't searched", "have been searching", "have searched", "haven't been searching", "haven't searched", "search", "searched", "searches", "searching", "was searching", "were searching"], "core": ["search", "searched", "searches", "searching"], "neg": false}, {"lemma": "do", "count": 1, "forms": ["do", "does", "did", "doing", "has done", "have done"], "core": ["do", "does", "did", "doing"], "neg": false}, {"lemma": "drip", "count": 1, "forms": ["drip", "driped", "driping", "drips", "has been driping", "has driped", "hasn't been driping", "hasn't driped", "have been driping", "have driped", "haven't been driping", "haven't driped", "was driping", "were driping"], "core": ["drip", "driped", "driping", "drips"], "neg": false}, {"lemma": "meet", "count": 1, "forms": ["has been meeting", "has met", "hasn't been meeting", "hasn't met", "have been meeting", "have met", "haven't been meeting", "haven't met", "meet", "meeting", "meets", "met", "was meeting", "were meeting"], "core": ["meet", "meeting", "meets", "met"], "neg": false}], "totalBlanks": 15}, {"id": "g2", "name": "Signal from Kepler", "role": "science fiction", "category": "stories", "block": 7, "paragraphsHtml": ["For six years, the crew of the Horizon <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"1\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">1</span></span> through empty space toward the strange signal first detected near Kepler-9. Engineer Reyes <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"2\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">2</span></span> the ship's ageing engines almost every night, and she <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"3\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">3</span></span> that they <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"4\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">4</span></span> much longer without a full repair.", "'We <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"5\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">5</span></span> that signal for over a decade now,' Captain Okoye said, staring at the screen. 'And in all that time, it <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"6\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">6</span></span> once.' The crew <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"7\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">7</span></span> thousands of theories about its source, but none of them <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"8\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">8</span></span> the strange pattern hidden inside it.", "Suddenly, the ship's computer <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"9\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">9</span></span> beeping wildly. 'Something <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"10\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">10</span></span> the signal,' Reyes shouted. The pattern <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"11\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">11</span></span> to shift, faster than anything they <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"12\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">12</span></span> before. Okoye <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"13\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">13</span></span> for this moment her entire career, and now that it <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"14\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">14</span></span> arrived, she <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"15\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">15</span></span> strangely calm."], "answers": {"1": ["has been travelling", "has been traveling"], "2": ["has been repairing"], "3": ["has warned", "has been warning"], "4": ["won't last"], "5": ["have been tracking"], "6": ["hasn't changed"], "7": ["have proposed"], "8": ["has explained"], "9": ["has started", "started"], "10": ["is changing"], "11": ["has begun"], "12": ["have seen"], "13": ["has been preparing"], "14": ["has"], "15": ["feels"]}, "bankItems": [{"lemma": "travel", "count": 1, "forms": ["has been travelling", "has travelled", "hasn't been travelling", "hasn't travelled", "have been travelling", "have travelled", "haven't been travelling", "haven't travelled", "travel", "travelled", "travelling", "travels", "was travelling", "were travelling"], "core": ["travel", "travelled", "travelling", "travels"], "neg": false}, {"lemma": "repair", "count": 1, "forms": ["has been repairing", "has repaired", "hasn't been repairing", "hasn't repaired", "have been repairing", "have repaired", "haven't been repairing", "haven't repaired", "repair", "repaired", "repairing", "repairs", "was repairing", "were repairing"], "core": ["repair", "repaired", "repairing", "repairs"], "neg": false}, {"lemma": "warn", "count": 1, "forms": ["has been warning", "has warned", "hasn't been warning", "hasn't warned", "have been warning", "have warned", "haven't been warning", "haven't warned", "warn", "warned", "warning", "warns", "was warning", "were warning"], "core": ["warn", "warned", "warning", "warns"], "neg": false}, {"lemma": "not last", "count": 1, "forms": ["did not last", "didn't last", "do not last", "does not last", "doesn't last", "don't last", "has not been lasting", "has not lasted", "hasn't been lasting", "hasn't lasted", "have not been lasting", "have not lasted", "haven't been lasting", "haven't lasted", "not last", "was not lasting", "wasn't lasting", "were not lasting", "weren't lasting", "will not last", "won't last"], "core": ["last", "lasted", "lasting", "lasts"], "neg": true}, {"lemma": "track", "count": 1, "forms": ["has been tracking", "has tracked", "hasn't been tracking", "hasn't tracked", "have been tracking", "have tracked", "haven't been tracking", "haven't tracked", "track", "tracked", "tracking", "tracks", "was tracking", "were tracking"], "core": ["track", "tracked", "tracking", "tracks"], "neg": false}, {"lemma": "not change", "count": 1, "forms": ["did not change", "didn't change", "do not change", "does not change", "doesn't change", "don't change", "has not been changing", "has not changed", "hasn't been changing", "hasn't changed", "have not been changing", "have not changed", "haven't been changing", "haven't changed", "not change", "was not changing", "wasn't changing", "were not changing", "weren't changing", "will not change", "won't change"], "core": ["change", "changed", "changes", "changing"], "neg": true}, {"lemma": "propose", "count": 1, "forms": ["has been proposing", "has proposed", "hasn't been proposing", "hasn't proposed", "have been proposing", "have proposed", "haven't been proposing", "haven't proposed", "propose", "proposed", "proposes", "proposing", "was proposing", "were proposing"], "core": ["propose", "proposed", "proposes", "proposing"], "neg": false}, {"lemma": "explain", "count": 1, "forms": ["explain", "explained", "explaining", "explains", "has been explaining", "has explained", "hasn't been explaining", "hasn't explained", "have been explaining", "have explained", "haven't been explaining", "haven't explained", "was explaining", "were explaining"], "core": ["explain", "explained", "explaining", "explains"], "neg": false}, {"lemma": "start", "count": 1, "forms": ["has been starting", "has started", "hasn't been starting", "hasn't started", "have been starting", "have started", "haven't been starting", "haven't started", "start", "started", "starting", "starts", "was starting", "were starting"], "core": ["start", "started", "starting", "starts"], "neg": false}, {"lemma": "change", "count": 1, "forms": ["change", "changed", "changes", "changing", "has been changing", "has changed", "hasn't been changing", "hasn't changed", "have been changing", "have changed", "haven't been changing", "haven't changed", "was changing", "were changing"], "core": ["change", "changed", "changes", "changing"], "neg": false}, {"lemma": "begin", "count": 1, "forms": ["began", "begin", "beginning", "begins", "begun", "has been beginning", "has begun", "hasn't been beginning", "hasn't begun", "have been beginning", "have begun", "haven't been beginning", "haven't begun", "was beginning", "were beginning"], "core": ["began", "begin", "beginning", "begins", "begun"], "neg": false}, {"lemma": "see", "count": 1, "forms": ["has been seeing", "has seen", "hasn't been seeing", "hasn't seen", "have been seeing", "have seen", "haven't been seeing", "haven't seen", "saw", "see", "seeing", "seen", "sees", "was seeing", "were seeing"], "core": ["saw", "see", "seeing", "seen", "sees"], "neg": false}, {"lemma": "prepare", "count": 1, "forms": ["has been preparing", "has prepared", "hasn't been preparing", "hasn't prepared", "have been preparing", "have prepared", "haven't been preparing", "haven't prepared", "prepare", "prepared", "prepares", "preparing", "was preparing", "were preparing"], "core": ["prepare", "prepared", "prepares", "preparing"], "neg": false}, {"lemma": "have", "count": 1, "forms": ["had", "has", "has been having", "has had", "hasn't been having", "hasn't had", "have", "have been having", "have had", "haven't been having", "haven't had", "having", "was having", "were having"], "core": ["had", "has", "have", "having"], "neg": false}, {"lemma": "feel", "count": 1, "forms": ["feel", "feeling", "feels", "felt", "has been feeling", "has felt", "hasn't been feeling", "hasn't felt", "have been feeling", "have felt", "haven't been feeling", "haven't felt", "was feeling", "were feeling"], "core": ["feel", "feeling", "feels", "felt"], "neg": false}], "totalBlanks": 15}, {"id": "g3", "name": "The Attic Door", "role": "gothic horror", "category": "stories", "block": 7, "paragraphsHtml": ["Since we moved into this house, a strange noise <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"1\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">1</span></span> from the attic every night, and neither of us <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"2\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">2</span></span> brave enough to open that door. My husband <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"3\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">3</span></span> that it's only the wind, but I <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"4\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">4</span></span> the same sound for three weeks now, and it <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"5\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">5</span></span> to sound less and less like wind.", "Tonight, the noise <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"6\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">6</span></span> louder than ever, and something <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"7\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">7</span></span> against the floorboards above our bedroom. I <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"8\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">8</span></span> awake for hours, listening, while my husband <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"9\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">9</span></span> soundly beside me, completely unaware. The old clock in the hallway <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"10\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">10</span></span> working properly since we arrived, yet tonight it <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"11\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">11</span></span> striking midnight, over and over.", "I finally <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"12\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">12</span></span> to climb the stairs myself. Something <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"13\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">13</span></span> me toward that door for weeks, and I <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"14\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">14</span></span> ignore the feeling any longer. As I <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"15\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">15</span></span> the handle, the noise above suddenly <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"16\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">16</span></span>, as though whatever waited up there <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"17\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">17</span></span> me coming all along."], "answers": {"1": ["has been coming"], "2": ["has been"], "3": ["insists"], "4": ["have heard", "have been hearing"], "5": ["has started", "has begun"], "6": ["has been"], "7": ["has been scraping", "has been dragging"], "8": ["have lain", "have been lying"], "9": ["has been sleeping"], "10": ["hasn't been"], "11": ["has been"], "12": ["have decided"], "13": ["has been pulling"], "14": ["can't"], "15": ["was turning", "turned"], "16": ["has stopped", "stopped"], "17": ["has heard"]}, "bankItems": [{"lemma": "come", "count": 1, "forms": ["came", "come", "comes", "coming", "has been coming", "has come", "hasn't been coming", "hasn't come", "have been coming", "have come", "haven't been coming", "haven't come", "was coming", "were coming"], "core": ["came", "come", "comes", "coming"], "neg": false}, {"lemma": "be", "count": 3, "forms": ["be", "am", "is", "are", "was", "were", "been", "being", "'m", "'s", "'re", "has been", "have been"], "core": ["be", "am", "is", "are", "was", "were", "been", "being"], "neg": false}, {"lemma": "insist", "count": 1, "forms": ["has been insisting", "has insisted", "hasn't been insisting", "hasn't insisted", "have been insisting", "have insisted", "haven't been insisting", "haven't insisted", "insist", "insisted", "insisting", "insists", "was insisting", "were insisting"], "core": ["insist", "insisted", "insisting", "insists"], "neg": false}, {"lemma": "hear", "count": 2, "forms": ["has been hearing", "has heard", "hasn't been hearing", "hasn't heard", "have been hearing", "have heard", "haven't been hearing", "haven't heard", "hear", "heard", "hearing", "hears", "was hearing", "were hearing"], "core": ["hear", "heard", "hearing", "hears"], "neg": false}, {"lemma": "start", "count": 1, "forms": ["has been starting", "has started", "hasn't been starting", "hasn't started", "have been starting", "have started", "haven't been starting", "haven't started", "start", "started", "starting", "starts", "was starting", "were starting"], "core": ["start", "started", "starting", "starts"], "neg": false}, {"lemma": "scrape", "count": 1, "forms": ["has been scraping", "has scraped", "hasn't been scraping", "hasn't scraped", "have been scraping", "have scraped", "haven't been scraping", "haven't scraped", "scrape", "scraped", "scrapes", "scraping", "was scraping", "were scraping"], "core": ["scrape", "scraped", "scrapes", "scraping"], "neg": false}, {"lemma": "lie", "count": 1, "forms": ["has been lying", "has lied", "hasn't been lying", "hasn't lied", "have been lying", "have lied", "haven't been lying", "haven't lied", "lie", "lied", "lies", "lying", "was lying", "were lying"], "core": ["lie", "lied", "lies", "lying"], "neg": false}, {"lemma": "sleep", "count": 1, "forms": ["has been sleeping", "has slept", "hasn't been sleeping", "hasn't slept", "have been sleeping", "have slept", "haven't been sleeping", "haven't slept", "sleep", "sleeping", "sleeps", "slept", "was sleeping", "were sleeping"], "core": ["sleep", "sleeping", "sleeps", "slept"], "neg": false}, {"lemma": "not be", "count": 1, "forms": ["isn't", "is not", "wasn't", "was not", "weren't", "were not", "aren't", "are not", "not be", "hasn't been", "haven't been", "has not been", "have not been"], "core": ["be", "am", "is", "are", "was", "were", "been", "being"], "neg": true}, {"lemma": "decide", "count": 1, "forms": ["decide", "decided", "decides", "deciding", "has been deciding", "has decided", "hasn't been deciding", "hasn't decided", "have been deciding", "have decided", "haven't been deciding", "haven't decided", "was deciding", "were deciding"], "core": ["decide", "decided", "decides", "deciding"], "neg": false}, {"lemma": "pull", "count": 1, "forms": ["has been pulling", "has pulled", "hasn't been pulling", "hasn't pulled", "have been pulling", "have pulled", "haven't been pulling", "haven't pulled", "pull", "pulled", "pulling", "pulls", "was pulling", "were pulling"], "core": ["pull", "pulled", "pulling", "pulls"], "neg": false}, {"lemma": "can't", "count": 1, "forms": ["can't", "cannot", "can not", "couldn't", "could not"], "core": ["can't", "cannot", "couldn't"], "neg": true}, {"lemma": "turn", "count": 1, "forms": ["has been turning", "has turned", "hasn't been turning", "hasn't turned", "have been turning", "have turned", "haven't been turning", "haven't turned", "turn", "turned", "turning", "turns", "was turning", "were turning"], "core": ["turn", "turned", "turning", "turns"], "neg": false}, {"lemma": "stop", "count": 1, "forms": ["has been stopping", "has stopped", "hasn't been stopping", "hasn't stopped", "have been stopping", "have stopped", "haven't been stopping", "haven't stopped", "stop", "stopped", "stopping", "stops", "was stopping", "were stopping"], "core": ["stop", "stopped", "stopping", "stops"], "neg": false}], "totalBlanks": 17}, {"id": "g4", "name": "The World's Worst Chef", "role": "comedy", "category": "stories", "block": 7, "paragraphsHtml": ["For the last twenty minutes, Gary <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"1\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">1</span></span> to light the oven, and so far he <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"2\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">2</span></span> nothing except three small fires and one very confused smoke alarm. His girlfriend <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"3\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">3</span></span> calmly on the sofa, watching, since she long ago <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"4\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">4</span></span> that helping him only makes things worse.", "'I <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"5\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">5</span></span> this exact recipe a hundred times,' Gary announced proudly, holding a spoon covered in something green. 'It <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"6\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">6</span></span> to work eventually.' The smoke alarm, which <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"7\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">7</span></span> beeping steadily for the last ten minutes, seemed to disagree rather loudly.", "By the time Gary finally <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"8\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">8</span></span> the mysterious dish onto two plates, the kitchen <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"9\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">9</span></span> more like a disaster zone than anywhere food should be made. 'I <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"10\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">10</span></span> this moment all week,' his girlfriend said, staring at her plate with genuine terror. Gary, meanwhile, <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"11\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">11</span></span> sweating buckets, <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"12\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">12</span></span> to look proud of a dish that <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"13\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">13</span></span> moving on its own."], "answers": {"1": ["has been trying"], "2": ["has achieved", "has managed"], "3": ["has been sitting"], "4": ["has learned", "has learnt"], "5": ["have made"], "6": ["has got"], "7": ["has been"], "8": ["has served"], "9": ["has started looking", "looks"], "10": ["have been dreading"], "11": ["has been"], "12": ["still trying"], "13": ["has started"]}, "bankItems": [{"lemma": "try", "count": 2, "forms": ["has been trying", "has tried", "hasn't been trying", "hasn't tried", "have been trying", "have tried", "haven't been trying", "haven't tried", "tried", "tries", "try", "trying", "was trying", "were trying"], "core": ["tried", "tries", "try", "trying"], "neg": false}, {"lemma": "achieve", "count": 1, "forms": ["achieve", "achieved", "achieves", "achieving", "has achieved", "has been achieving", "hasn't achieved", "hasn't been achieving", "have achieved", "have been achieving", "haven't achieved", "haven't been achieving", "was achieving", "were achieving"], "core": ["achieve", "achieved", "achieves", "achieving"], "neg": false}, {"lemma": "sit", "count": 1, "forms": ["has been sitting", "has sat", "hasn't been sitting", "hasn't sat", "have been sitting", "have sat", "haven't been sitting", "haven't sat", "sat", "sit", "sits", "sitting", "was sitting", "were sitting"], "core": ["sat", "sit", "sits", "sitting"], "neg": false}, {"lemma": "learn", "count": 1, "forms": ["has been learning", "has learned", "hasn't been learning", "hasn't learned", "have been learning", "have learned", "haven't been learning", "haven't learned", "learn", "learned", "learning", "learns", "was learning", "were learning"], "core": ["learn", "learned", "learning", "learns"], "neg": false}, {"lemma": "make", "count": 1, "forms": ["has been making", "has made", "hasn't been making", "hasn't made", "have been making", "have made", "haven't been making", "haven't made", "made", "make", "makes", "making", "was making", "were making"], "core": ["made", "make", "makes", "making"], "neg": false}, {"lemma": "get", "count": 1, "forms": ["get", "gets", "getting", "got", "has been getting", "has got", "hasn't been getting", "hasn't got", "have been getting", "have got", "haven't been getting", "haven't got", "was getting", "were getting"], "core": ["get", "gets", "getting", "got"], "neg": false}, {"lemma": "be", "count": 2, "forms": ["be", "am", "is", "are", "was", "were", "been", "being", "'m", "'s", "'re", "has been", "have been"], "core": ["be", "am", "is", "are", "was", "were", "been", "being"], "neg": false}, {"lemma": "serve", "count": 1, "forms": ["has been serving", "has served", "hasn't been serving", "hasn't served", "have been serving", "have served", "haven't been serving", "haven't served", "serve", "served", "serves", "serving", "was serving", "were serving"], "core": ["serve", "served", "serves", "serving"], "neg": false}, {"lemma": "start", "count": 2, "forms": ["has been starting", "has started", "hasn't been starting", "hasn't started", "have been starting", "have started", "haven't been starting", "haven't started", "start", "started", "starting", "starts", "was starting", "were starting"], "core": ["start", "started", "starting", "starts"], "neg": false}, {"lemma": "dread", "count": 1, "forms": ["dread", "dreaded", "dreading", "dreads", "has been dreading", "has dreaded", "hasn't been dreading", "hasn't dreaded", "have been dreading", "have dreaded", "haven't been dreading", "haven't dreaded", "was dreading", "were dreading"], "core": ["dread", "dreaded", "dreading", "dreads"], "neg": false}], "totalBlanks": 13}, {"id": "g5", "name": "The Lost Trail", "role": "adventure", "category": "stories", "block": 7, "paragraphsHtml": ["For three days, Mara <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"1\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">1</span></span> through the jungle, following a trail that older maps <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"2\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">2</span></span> to mark accurately. Her supplies <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"3\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">3</span></span> dangerously low, and the sky above <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"4\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">4</span></span> darkening steadily since noon. She <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"5\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">5</span></span> this far into unexplored territory before, and part of her <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"6\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">6</span></span> whether she made the right choice.", "Since crossing the river, she <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"7\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">7</span></span> strange markings carved into the trees, symbols nobody in her village <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"8\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">8</span></span> ever seen before. She <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"9\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">9</span></span> careful notes of every one, hoping they <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"10\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">10</span></span> lead her toward the ruins she <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"11\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">11</span></span> her entire life.", "By nightfall, exhausted, Mara <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"12\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">12</span></span> to make camp beneath an enormous tree. She <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"13\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">13</span></span> anything since breakfast, and her legs <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"14\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">14</span></span> to ache badly. Yet somewhere ahead, through the darkness, a faint light <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"15\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">15</span></span> steadily, and Mara <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"16\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">16</span></span> that whatever waited there <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"17\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">17</span></span> worth every difficult step she <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"18\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">18</span></span> to get here."], "answers": {"1": ["has been walking", "has been trekking"], "2": ["have failed"], "3": ["have run", "have got"], "4": ["has been"], "5": ["has never travelled", "has never traveled"], "6": ["has been wondering"], "7": ["has noticed", "has been noticing"], "8": ["has"], "9": ["has been taking"], "10": ["will"], "11": ["has searched for", "has been searching for"], "12": ["has decided"], "13": ["hasn't eaten"], "14": ["have started", "have begun"], "15": ["has been glowing", "glows"], "16": ["believes", "has decided"], "17": ["will be"], "18": ["has taken"]}, "bankItems": [{"lemma": "walk", "count": 1, "forms": ["has been walking", "has walked", "hasn't been walking", "hasn't walked", "have been walking", "have walked", "haven't been walking", "haven't walked", "walk", "walked", "walking", "walks", "was walking", "were walking"], "core": ["walk", "walked", "walking", "walks"], "neg": false}, {"lemma": "fail", "count": 1, "forms": ["fail", "failed", "failing", "fails", "has been failing", "has failed", "hasn't been failing", "hasn't failed", "have been failing", "have failed", "haven't been failing", "haven't failed", "was failing", "were failing"], "core": ["fail", "failed", "failing", "fails"], "neg": false}, {"lemma": "run", "count": 1, "forms": ["has been running", "has run", "hasn't been running", "hasn't run", "have been running", "have run", "haven't been running", "haven't run", "ran", "run", "running", "runs", "was running", "were running"], "core": ["ran", "run", "running", "runs"], "neg": false}, {"lemma": "be", "count": 1, "forms": ["be", "am", "is", "are", "was", "were", "been", "being", "'m", "'s", "'re", "has been", "have been"], "core": ["be", "am", "is", "are", "was", "were", "been", "being"], "neg": false}, {"lemma": "travel", "count": 1, "forms": ["has been travelling", "has travelled", "hasn't been travelling", "hasn't travelled", "have been travelling", "have travelled", "haven't been travelling", "haven't travelled", "travel", "travelled", "travelling", "travels", "was travelling", "were travelling"], "core": ["travel", "travelled", "travelling", "travels"], "neg": false}, {"lemma": "wonder", "count": 1, "forms": ["has been wondering", "has wondered", "hasn't been wondering", "hasn't wondered", "have been wondering", "have wondered", "haven't been wondering", "haven't wondered", "was wondering", "were wondering", "wonder", "wondered", "wondering", "wonders"], "core": ["wonder", "wondered", "wondering", "wonders"], "neg": false}, {"lemma": "notice", "count": 1, "forms": ["has been noticing", "has noticed", "hasn't been noticing", "hasn't noticed", "have been noticing", "have noticed", "haven't been noticing", "haven't noticed", "notice", "noticed", "notices", "noticing", "was noticing", "were noticing"], "core": ["notice", "noticed", "notices", "noticing"], "neg": false}, {"lemma": "have", "count": 1, "forms": ["had", "has", "has been having", "has had", "hasn't been having", "hasn't had", "have", "have been having", "have had", "haven't been having", "haven't had", "having", "was having", "were having"], "core": ["had", "has", "have", "having"], "neg": false}, {"lemma": "take", "count": 2, "forms": ["has been taking", "has taken", "hasn't been taking", "hasn't taken", "have been taking", "have taken", "haven't been taking", "haven't taken", "take", "taken", "takes", "taking", "took", "was taking", "were taking"], "core": ["take", "taken", "takes", "taking", "took"], "neg": false}, {"lemma": "will", "count": 2, "forms": ["has been willing", "has willed", "hasn't been willing", "hasn't willed", "have been willing", "have willed", "haven't been willing", "haven't willed", "was willing", "were willing", "will", "willed", "willing", "wills"], "core": ["will", "willed", "willing", "wills"], "neg": false}, {"lemma": "search", "count": 1, "forms": ["has been searching", "has searched", "hasn't been searching", "hasn't searched", "have been searching", "have searched", "haven't been searching", "haven't searched", "search", "searched", "searches", "searching", "was searching", "were searching"], "core": ["search", "searched", "searches", "searching"], "neg": false}, {"lemma": "decide", "count": 1, "forms": ["decide", "decided", "decides", "deciding", "has been deciding", "has decided", "hasn't been deciding", "hasn't decided", "have been deciding", "have decided", "haven't been deciding", "haven't decided", "was deciding", "were deciding"], "core": ["decide", "decided", "decides", "deciding"], "neg": false}, {"lemma": "not eat", "count": 1, "forms": ["did not eat", "didn't eat", "do not eat", "does not eat", "doesn't eat", "don't eat", "has not been eating", "has not eaten", "hasn't been eating", "hasn't eaten", "have not been eating", "have not eaten", "haven't been eating", "haven't eaten", "not eat", "was not eating", "wasn't eating", "were not eating", "weren't eating", "will not eat", "won't eat"], "core": ["ate", "eat", "eaten", "eating", "eats"], "neg": true}, {"lemma": "start", "count": 1, "forms": ["has been starting", "has started", "hasn't been starting", "hasn't started", "have been starting", "have started", "haven't been starting", "haven't started", "start", "started", "starting", "starts", "was starting", "were starting"], "core": ["start", "started", "starting", "starts"], "neg": false}, {"lemma": "glow", "count": 1, "forms": ["glow", "glowed", "glowing", "glows", "has been glowing", "has glowed", "hasn't been glowing", "hasn't glowed", "have been glowing", "have glowed", "haven't been glowing", "haven't glowed", "was glowing", "were glowing"], "core": ["glow", "glowed", "glowing", "glows"], "neg": false}, {"lemma": "believe", "count": 1, "forms": ["believe", "believed", "believes", "believing", "has been believing", "has believed", "hasn't been believing", "hasn't believed", "have been believing", "have believed", "haven't been believing", "haven't believed", "was believing", "were believing"], "core": ["believe", "believed", "believes", "believing"], "neg": false}], "totalBlanks": 18}];
+
+function confirmResetPassword(){
+  const pw = prompt('This will erase ALL saved progress on this page.\nEnter the reset password to confirm:');
+  if (pw === null) return false; // cancelled
+  if (pw !== 'thebest') { alert('Incorrect password. Progress was not reset.'); return false; }
+  return true;
+}
+
+const SUPABASE_URL = 'https://zhzhamxgfornfvwckfyf.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_LoyWwbsXHBb4l_k1FnmAog_yZO0uPrn';
+const TRACK_BLOCK = 'block7';
+
+const SESSION_ID = (function(){
+  try {
+    let sid = sessionStorage.getItem('hw_session_id');
+    if (!sid) { sid = 'sess_' + Date.now() + '_' + Math.random().toString(36).slice(2,10); sessionStorage.setItem('hw_session_id', sid); }
+    return sid;
+  } catch(e) { return 'sess_' + Date.now() + '_' + Math.random().toString(36).slice(2,10); }
+})();
+
+function getRole(){
+  try { return localStorage.getItem('hw_role') === 'teacher' ? 'teacher' : 'student'; } catch(e) { return 'student'; }
+}
+
+function trackEvent(topic, prefix, suffix, correctAnswer, studentAnswer, isCorrect){
+  if (!SUPABASE_URL || SUPABASE_URL.indexOf('__') === 0) return; // Supabase not configured yet
+  const role = getRole();
+  if (role === 'teacher') { console.log('[Supabase tracking] skipped -- teacher mode is on'); return; }
+  try {
+    fetch(SUPABASE_URL + '/rest/v1/activity_events', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({
+        session_id: SESSION_ID,
+        block: TRACK_BLOCK,
+        topic: topic,
+        prefix: prefix,
+        suffix: suffix,
+        correct_answer: correctAnswer,
+        student_answer: studentAnswer,
+        question_text: (prefix || '') + (correctAnswer || '') + (suffix || ''),
+        is_correct: isCorrect,
+        event_type: 'answer',
+        role: role
+      }),
+      keepalive: true
+    }).then(function(res){
+      if (!res.ok) {
+        res.text().then(function(t){ console.error("[Supabase tracking] insert failed:", res.status, t); });
+      } else {
+        console.log("[Supabase tracking] event saved OK");
+      }
+    }).catch(function(err){ console.error("[Supabase tracking] network error:", err); });
+  } catch(e) { console.error("[Supabase tracking] unexpected error:", e); }
+}
+
+function gapContext(inp){
+  // Reconstruct readable prefix/suffix around a specific gap: take the containing
+  // paragraph, replace every OTHER gap with its currently entered (or blank) value,
+  // mark this gap with a split token, then slice text around that token.
+  try {
+    const p = inp.closest('p');
+    if (!p) return { prefix: '', suffix: '' };
+    const origInputs = [...p.querySelectorAll('.gap')];
+    const targetIdx = origInputs.indexOf(inp);
+    const clone = p.cloneNode(true);
+    const cloneInputs = [...clone.querySelectorAll('.gap')];
+    cloneInputs.forEach((ci, i) => {
+      const marker = document.createTextNode(i === targetIdx ? '\u0001' : (origInputs[i].value || '\u2026'));
+      ci.replaceWith(marker);
+    });
+    clone.querySelectorAll('.gapnum, .correct-answer').forEach(el => el.remove());
+    const text = clone.textContent;
+    const parts = text.split('\u0001');
+    let prefix = (parts[0] || '').trim();
+    let suffix = (parts[1] || '').trim();
+    if (prefix.length > 140) prefix = '\u2026' + prefix.slice(-140);
+    if (suffix.length > 140) suffix = suffix.slice(0, 140) + '\u2026';
+    return { prefix, suffix };
+  } catch(e) { return { prefix: '', suffix: '' }; }
+}
+
+function normVal(s){
+  return s.trim().toLowerCase().replace(/’/g,"'").replace(/\s+/g,' ');
+}
+
+function shuffleArr(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+const CATEGORY_LABELS = { people: 'Notable People', stories: 'Short Stories' };
+
+// ---------- live-bank matching (content-word aware) ----------
+const PHRASAL_CHECK = {
+  'be born': v => /\bborn\b/.test(v),
+  'go off': v => /\boff\b/.test(v) && /\b(go|goes|going|went)\b/.test(v),
+  'keep going': v => /\bgoing\b/.test(v) && /\b(keep|keeps|kept|keeping)\b/.test(v),
+};
+
+function isNegated(v){ return /n't|\bnot\b|\bnever\b/.test(v); }
+
+function extractContent(v){
+  let m;
+  if (m = v.match(/^(?:i'm|i am|'m|am|is|'s|are|'re|was|were|isn't|wasn't|weren't|aren't|is not|are not|was not|were not)\s+(?:not\s+)?going to\s+(.+)$/)) return m[1].trim();
+  if (m = v.match(/^(?:will|'ll|won't|will not)\s+(?:not\s+)?(.+)$/)) return m[1].trim();
+  if (m = v.match(/^(?:is|'s|are|'re|am|'m|was|were|isn't|wasn't|weren't|aren't|is not|are not|was not|were not)\s+([a-z]+ing)\b/)) return m[1].trim();
+  if (m = v.match(/^(?:has|'ve|have|hasn't|haven't|has not|have not)\s+(.+)$/)) return m[1].trim();
+  if (m = v.match(/^(?:don't|doesn't|didn't|do not|does not|did not)\s+(.+)$/)) return m[1].trim();
+  return v;
+}
+
+function tokensOf(s){ return s.split(/\s+/).filter(Boolean); }
+
+TEXTS.forEach(t=>{
+  t.bankItems = shuffleArr(t.bankItems);
+});
+
+const STORAGE_KEY = 'hwProgress_block7';
+
+function loadState(){
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch(e) { return null; }
+}
+
+function saveState(){
+  try {
+    const state = { activeCategory: activeCategory, activeId: activeId, texts: {} };
+    TEXTS.forEach(t => {
+      const card = document.getElementById('card-' + t.id);
+      if (!card) return;
+      const gaps = {};
+      card.querySelectorAll('.gap').forEach(inp => {
+        const n = inp.dataset.n;
+        let c = null;
+        if (inp.classList.contains('correct')) c = 'correct';
+        else if (inp.classList.contains('wrong')) c = 'wrong';
+        if (inp.value || c) gaps[n] = { v: inp.value, c: c };
+      });
+      if (Object.keys(gaps).length) state.texts[t.id] = gaps;
+    });
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  } catch(e) { /* storage unavailable -- fail silently */ }
+}
+
+function applyState(state){
+  if (!state || !state.texts) return;
+  Object.keys(state.texts).forEach(tid => {
+    const t = TEXTS.find(x => x.id === tid);
+    const card = document.getElementById('card-' + tid);
+    if (!t || !card) return;
+    let correct = 0;
+    const gaps = state.texts[tid];
+    card.querySelectorAll('.gap').forEach(inp => {
+      const n = inp.dataset.n;
+      const saved = gaps[n];
+      if (!saved) return;
+      inp.value = saved.v || '';
+      const note = inp.parentElement.querySelector('.correct-answer');
+      if (saved.c === 'correct') {
+        inp.classList.add('correct'); correct++;
+      } else if (saved.c === 'wrong') {
+        inp.classList.add('wrong');
+        if (note) { note.textContent = '→ ' + t.answers[n][0]; note.classList.add('show'); }
+      }
+    });
+    document.getElementById('score-' + tid).textContent = correct + ' / ' + t.totalBlanks;
+    document.getElementById('pillscore-' + tid).textContent = correct + '/' + t.totalBlanks;
+    updateBank(tid);
+  });
+  updateGlobalScore();
+}
+
+const __savedState = loadState();
+const activeBlock = 7;
+let activeCategory = (__savedState && __savedState.activeCategory && categoriesForBlock(activeBlock).includes(__savedState.activeCategory))
+  ? __savedState.activeCategory : categoriesForBlock(activeBlock)[0];
+let activeId = (__savedState && __savedState.activeId && TEXTS.some(t => t.id === __savedState.activeId && t.block === activeBlock && t.category === activeCategory))
+  ? __savedState.activeId : TEXTS.find(t => t.block === activeBlock && t.category === activeCategory).id;
+
+const categoryTabsEl = document.getElementById('category-tabs');
+const workspace = document.getElementById('workspace');
+const pickerTrigger = document.getElementById('picker-trigger');
+const pickerPanel = document.getElementById('nav-pills');
+const pickerLabel = document.getElementById('picker-trigger-label');
+const pickerScore = document.getElementById('picker-trigger-score');
+
+pickerTrigger.addEventListener('click', () => {
+  pickerTrigger.classList.toggle('open');
+  pickerPanel.classList.toggle('open');
+});
+document.addEventListener('click', (e) => {
+  if (!document.getElementById('picker').contains(e.target)) {
+    pickerTrigger.classList.remove('open');
+    pickerPanel.classList.remove('open');
+  }
+});
+
+function buildAcceptedSet(list){
+  const set = new Set();
+  list.forEach(v=>{
+    const nv = normVal(v);
+    set.add(nv);
+    if(nv.startsWith("'m ")) set.add(normVal("am "+nv.slice(3)));
+    if(nv.startsWith("am ")) set.add(normVal("'m "+nv.slice(3)));
+    if(nv.startsWith("'s ")) set.add(normVal("is "+nv.slice(3)));
+    if(nv.startsWith("is ")) set.add(normVal("'s "+nv.slice(3)));
+    if(nv.startsWith("'re ")) set.add(normVal("are "+nv.slice(4)));
+    if(nv.startsWith("are ")) set.add(normVal("'re "+nv.slice(4)));
+    if(nv.startsWith("'ll ")) set.add(normVal("will "+nv.slice(4)));
+    if(nv.startsWith("will ")) set.add(normVal("'ll "+nv.slice(5)));
+  });
+  return set;
+}
+
+function categoriesForBlock(blockId){
+  const cats = [];
+  TEXTS.forEach(t => { if (t.block === blockId && !cats.includes(t.category)) cats.push(t.category); });
+  return cats;
+}
+
+function rebuildCategoryTabs(){
+  categoryTabsEl.innerHTML = '';
+  const cats = categoriesForBlock(activeBlock);
+  if (cats.length <= 1) {
+    categoryTabsEl.style.display = 'none';
+    return;
+  }
+  categoryTabsEl.style.display = 'flex';
+  cats.forEach(catId => {
+    const tab = document.createElement('div');
+    tab.className = 'category-tab' + (catId === activeCategory ? ' active' : '');
+    tab.id = 'cattab-' + catId;
+    tab.textContent = CATEGORY_LABELS[catId] || catId;
+    tab.onclick = () => setCategory(catId);
+    categoryTabsEl.appendChild(tab);
+  });
+}
+
+TEXTS.forEach((t) => {
+  const visible = (t.block === activeBlock && t.category === activeCategory);
+  const pill = document.createElement('div');
+  pill.className = 'picker-item' + (t.id === activeId ? ' active' : '') + (visible ? '' : ' cat-hidden');
+  pill.id = 'pill-' + t.id;
+  pill.dataset.category = t.category;
+  pill.dataset.block = t.block;
+  pill.innerHTML = '<span>' + t.name + '</span><span class="picker-item-score" id="pillscore-' + t.id + '">0/' + t.totalBlanks + '</span>';
+  pill.onclick = () => setActive(t.id);
+  document.getElementById('nav-pills').appendChild(pill);
+
+  const card = document.createElement('div');
+  card.className = 'text-card' + (t.id === activeId ? '' : ' hidden');
+  card.id = 'card-' + t.id;
+  card.innerHTML = `
+    <div class="text-head">
+      <div>
+        <div class="text-name">${t.name}</div>
+        <div class="text-role">${t.role}</div>
+      </div>
+      <div class="text-score" id="score-${t.id}">0 / ${t.totalBlanks}</div>
+    </div>
+    <div class="story">
+      ${t.paragraphsHtml.map(p => '<p>' + p + '</p>').join('')}
+    </div>
+    <div class="card-actions">
+      <button class="btn btn-check">Проверить текст</button>
+      <button class="btn btn-reset">Сбросить текст</button>
+    </div>
+    <div class="result-line" id="result-${t.id}"></div>
+  `;
+  workspace.appendChild(card);
+
+  const inputs = card.querySelectorAll('.gap');
+  inputs.forEach(inp => {
+    const note = document.createElement('span');
+    note.className = 'correct-answer';
+    inp.parentElement.appendChild(note);
+
+    inp.addEventListener('input', () => {
+      inp.classList.remove('correct', 'wrong');
+      note.classList.remove('show');
+      updateBank(t.id);
+    });
+  });
+
+  card.querySelector('.btn-check').addEventListener('click', () => {
+    let correct = 0;
+    inputs.forEach(inp => {
+      const n = inp.dataset.n;
+      const accepted = buildAcceptedSet(t.answers[n]);
+      const val = normVal(inp.value);
+      const note = inp.parentElement.querySelector('.correct-answer');
+      const isOk = val.length && accepted.has(val);
+      if (isOk) {
+        inp.classList.add('correct'); inp.classList.remove('wrong');
+        note.classList.remove('show');
+        correct++;
+      } else {
+        inp.classList.add('wrong'); inp.classList.remove('correct');
+        note.textContent = '→ ' + t.answers[n][0];
+        note.classList.add('show');
+      }
+      const ctx = gapContext(inp);
+      trackEvent(t.name, ctx.prefix, ctx.suffix, t.answers[n][0], inp.value, isOk);
+    });
+    document.getElementById('score-' + t.id).textContent = correct + ' / ' + t.totalBlanks;
+    document.getElementById('pillscore-' + t.id).textContent = correct + '/' + t.totalBlanks;
+    if (t.id === activeId) pickerScore.textContent = correct + '/' + t.totalBlanks;
+    const res = document.getElementById('result-' + t.id);
+    res.classList.add('show');
+    const pct = Math.round(correct / t.totalBlanks * 100);
+    if (pct === 100) { res.className = 'result-line show ok'; res.textContent = 'Отлично! Все ' + t.totalBlanks + ' пропусков верно (' + pct + '%).'; }
+    else if (pct >= 60) { res.className = 'result-line show mid'; res.textContent = correct + ' из ' + t.totalBlanks + ' верно (' + pct + '%). Красным отмечены ошибки, рядом — правильный ответ.'; }
+    else { res.className = 'result-line show poor'; res.textContent = correct + ' из ' + t.totalBlanks + ' верно (' + pct + '%). Посмотри маркеры времени в тексте ещё раз и попробуй снова.'; }
+    updateGlobalScore();
+    saveState();
+  });
+
+  card.querySelector('.btn-reset').addEventListener('click', () => resetText(t.id));
+});
+
+function resetText(id){
+  const t = TEXTS.find(x => x.id === id);
+  const card = document.getElementById('card-' + id);
+  const inputs = card.querySelectorAll('.gap');
+  inputs.forEach(inp => {
+    inp.value = '';
+    inp.classList.remove('correct', 'wrong');
+    inp.parentElement.querySelector('.correct-answer').classList.remove('show');
+  });
+  document.getElementById('score-' + id).textContent = '0 / ' + t.totalBlanks;
+  document.getElementById('pillscore-' + id).textContent = '0/' + t.totalBlanks;
+  if (id === activeId) pickerScore.textContent = '0/' + t.totalBlanks;
+  document.getElementById('result-' + id).classList.remove('show');
+  updateBank(id);
+  updateGlobalScore();
+  saveState();
+}
+
+function resetAll(){
+  TEXTS.forEach(t => resetText(t.id));
+}
+
+function setCategory(catId){
+  activeCategory = catId;
+  rebuildCategoryTabs();
+  TEXTS.forEach(t => {
+    const visible = (t.block === activeBlock && t.category === catId);
+    document.getElementById('pill-' + t.id).classList.toggle('cat-hidden', !visible);
+  });
+  const firstInCat = TEXTS.find(t => t.block === activeBlock && t.category === catId);
+  setActive(firstInCat.id);
+}
+
+function setActive(id){
+  activeId = id;
+  TEXTS.forEach(t => {
+    document.getElementById('card-' + t.id).classList.toggle('hidden', t.id !== id);
+    document.getElementById('pill-' + t.id).classList.toggle('active', t.id === id);
+  });
+  const t = TEXTS.find(x => x.id === id);
+  pickerLabel.textContent = t.name;
+  pickerScore.textContent = document.getElementById('pillscore-' + id).textContent;
+  pickerTrigger.classList.remove('open');
+  pickerPanel.classList.remove('open');
+  renderBank(id);
+  saveState();
+}
+
+function renderBank(id){
+  const t = TEXTS.find(x => x.id === id);
+  let sidebar = document.getElementById('bank-sidebar');
+  if(!sidebar){
+    sidebar = document.createElement('div');
+    sidebar.className = 'bank-sidebar';
+    sidebar.id = 'bank-sidebar';
+    workspace.appendChild(sidebar);
+  }
+  sidebar.innerHTML = `
+    <div class="bank-title">Банк слов</div>
+    <div class="bank-sub">Базовая форма, вперемешку. Вписал слово в любое поле — оно исчезает отсюда.</div>
+    <div class="bank-list" id="bank-list-${id}"></div>
+  `;
+  const list = document.getElementById('bank-list-' + id);
+  t.bankItems.forEach((b, i) => {
+    const chip = document.createElement('div');
+    chip.className = 'bank-chip';
+    chip.id = 'bankchip-' + id + '-' + i;
+    chip.innerHTML = '<span class="bc-word">' + b.lemma + '</span>' + (b.count > 1 ? '<span class="bc-count">×' + b.count + '</span>' : '');
+    list.appendChild(chip);
+  });
+  updateBank(id);
+}
+
+function updateBank(id){
+  const t = TEXTS.find(x => x.id === id);
+  if (id !== activeId) return;
+  const card = document.getElementById('card-' + id);
+  const inputs = card.querySelectorAll('.gap');
+  const matched = {}; // lemma -> count
+
+  inputs.forEach(inp => {
+    const raw = normVal(inp.value);
+    if (!raw) return;
+    const neg = isNegated(raw);
+    const content = extractContent(raw);
+    const words = new Set(tokensOf(content));
+    words.add(raw);
+
+    let matchedLemma = null;
+    for (const b of t.bankItems) {
+      if (PHRASAL_CHECK[b.lemma]) {
+        if (PHRASAL_CHECK[b.lemma](raw)) { matchedLemma = b.lemma; break; }
+        continue;
+      }
+      if (b.lemma === "can't") {
+        if (words.has("can't") || words.has("cannot") || words.has("couldn't")) { matchedLemma = b.lemma; break; }
+        continue;
+      }
+      if (!b.core) continue;
+      if (b.neg !== neg) continue; // polarity must match: negative lemma needs negated input, positive needs non-negated
+      for (const w of words) {
+        if (b.core.includes(w)) { matchedLemma = b.lemma; break; }
+      }
+      if (matchedLemma) break;
+    }
+    if (matchedLemma) matched[matchedLemma] = (matched[matchedLemma] || 0) + 1;
+  });
+
+  t.bankItems.forEach((b, i) => {
+    const used = Math.min(matched[b.lemma] || 0, b.count);
+    const remaining = b.count - used;
+    const chip = document.getElementById('bankchip-' + id + '-' + i);
+    if (!chip) return;
+    chip.classList.toggle('used', remaining <= 0);
+    const countEl = chip.querySelector('.bc-count');
+    if (countEl) countEl.textContent = '×' + remaining;
+  });
+}
+
+function updateGlobalScore(){
+  let correct = 0, total = 0;
+  TEXTS.forEach(t => {
+    total += t.totalBlanks;
+    correct += document.querySelectorAll('#card-' + t.id + ' .gap.correct').length;
+  });
+  document.getElementById('global-score').textContent = '✓ ' + correct + ' / ' + total;
+}
+
+document.getElementById('btn-reset-all').addEventListener('click', () => { if (confirmResetPassword()) resetAll(); });
+
+rebuildCategoryTabs();
+setActive(activeId);
+applyState(__savedState);
+</script>
+</body>
+</html>
