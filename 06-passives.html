@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Passive Voice</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Nunito:wght@600;700;800&display=swap');
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --brand: #16233F; --brand-dark: #0D1830;
+    --bg: #FFF8EE; --surface: #ffffff; --surface2: #FFF1DC;
+    --accent: #E86F0C; --accent-light: #FDE4C6; --accent-dark: #C25A00;
+    --gold: #F5B841; --gold-dark: #D69A1F;
+    --orange: #D97706;
+    --green: #2D9E6B; --green-bg: #E6F7EF;
+    --red: #D63B3B; --red-bg: #FDEAEA;
+    --text: #241C10; --muted: #7C6A54; --muted2: #C9B79B;
+    --border: #F0DFC2; --radius: 12px;
+    --shadow-card: 0 2px 10px rgba(120,80,20,0.08);
+  }
+  body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  header {
+    background: var(--brand); padding: 14px 32px;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 10px; position: sticky; top: 0; z-index: 20;
+    box-shadow: 0 3px 16px rgba(22,35,63,0.45);
+  }
+  .logo { font-family: 'Nunito', sans-serif; font-size: 17px; font-weight: 800; color: #fff; line-height: 1.2; }
+  .logo-sub { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.68); letter-spacing: 0.7px; text-transform: uppercase; display: block; margin-top: 2px; }
+  .chip { font-size: 13px; font-weight: 700; padding: 4px 12px; border-radius: 20px; background: rgba(255,255,255,0.18); color: #fff; border: 1px solid rgba(255,255,255,0.35); }
+  .chevrons { display: inline-flex; margin-left: 8px; vertical-align: middle; }
+  .chevrons span {
+    display: inline-block; width: 0; height: 0;
+    border-top: 7px solid transparent; border-bottom: 7px solid transparent;
+    border-left: 9px solid var(--accent); margin-left: -3px;
+  }
+  .chevrons span:last-child { border-left-color: var(--gold); }
+  .btn-reset-all {
+    font-family: 'Inter', sans-serif; font-size: 12.5px; font-weight: 700; padding: 7px 16px;
+    border-radius: 20px; cursor: pointer; border: 1.5px solid rgba(255,255,255,0.5);
+    background: rgba(0,0,0,0.15); color: #fff; transition: all .15s;
+  }
+  .btn-reset-all:hover { background: rgba(0,0,0,0.3); }
+  .back-link {
+    display: inline-flex; align-items: center; gap: 5px; font-family: 'Inter', sans-serif;
+    font-size: 12.5px; font-weight: 700; padding: 7px 14px; border-radius: 20px;
+    color: rgba(255,255,255,0.85); text-decoration: none; border: 1.5px solid rgba(255,255,255,0.3);
+    background: transparent; transition: all .15s; margin-right: 14px; flex-shrink: 0;
+  }
+  .back-link:hover { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.5); color: #fff; }
+
+
+  main { max-width: 900px; margin: 0 auto; padding: 24px 18px 60px; }
+
+  .block-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .block-badge {
+    font-family: 'Nunito', sans-serif; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px;
+    background: var(--accent); color: #fff; padding: 5px 14px; border-radius: 8px;
+  }
+  .block-title { font-family: 'Nunito', sans-serif; font-size: 19px; font-weight: 800; color: var(--brand-dark); }
+  .block-subtitle { font-size: 13px; color: var(--muted); margin-top: 4px; }
+
+  .cond-picker { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 18px; flex-wrap: wrap; }
+  .cond-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+  .cond-tab {
+    font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 800; padding: 8px 18px;
+    border-radius: 10px; background: var(--surface2); border: 2px solid transparent; color: var(--muted);
+    cursor: pointer; transition: all .15s; display: flex; align-items: center; gap: 6px;
+  }
+  .cond-tab .check-dot {
+    width: 14px; height: 14px; border-radius: 4px; border: 2px solid var(--muted2); background: #fff; flex-shrink: 0;
+    display: inline-flex; align-items: center; justify-content: center; font-size: 10px; color: transparent;
+  }
+  .cond-tab:hover { color: var(--brand); }
+  .cond-tab.active { background: var(--brand-dark); color: #fff; }
+  .cond-tab.active .check-dot { background: var(--gold); border-color: var(--gold); color: var(--brand-dark); }
+  .cond-quick { display: flex; gap: 6px; }
+  .quick-btn {
+    font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 700; padding: 7px 14px;
+    border-radius: 20px; cursor: pointer; border: 1.5px solid var(--border); background: var(--surface); color: var(--muted);
+    transition: all .15s;
+  }
+  .quick-btn:hover { border-color: var(--accent); color: var(--accent-dark); }
+
+  #rule-stack { display: flex; flex-direction: column; gap: 2px; margin-bottom: 10px; }
+
+  .bank-overview {
+    font-size: 13px; color: var(--muted); background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 10px 16px; margin-bottom: 16px;
+  }
+  .bank-overview b { color: var(--brand-dark); }
+
+  .stats-bar {
+    display: flex; align-items: center; gap: 22px; flex-wrap: wrap; background: var(--surface);
+    border: 1.5px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-card);
+    padding: 14px 20px; margin-bottom: 18px;
+    position: sticky; top: 66px; z-index: 15;
+  }
+  .cond-tab.mistakes-tab { background: var(--red-bg); color: var(--red); }
+  .cond-tab.mistakes-tab.active { background: var(--red); color: #fff; }
+  .cond-tab.mistakes-tab .check-dot { border-color: var(--red); }
+  .cond-tab.mistakes-tab.active .check-dot { background: #fff; border-color: #fff; color: var(--red); }
+  .stat { display: flex; align-items: baseline; gap: 5px; }
+  .stat-num { font-family: 'Nunito', sans-serif; font-size: 20px; font-weight: 800; color: var(--brand-dark); }
+  .stat-label { font-size: 12px; color: var(--muted); font-weight: 600; }
+  .stat-correct .stat-num { color: var(--green); }
+  .stat-wrong .stat-num { color: var(--red); }
+  .stats-actions { display: flex; gap: 8px; margin-left: auto; flex-wrap: wrap; }
+  .btn-newround { background: var(--gold); color: var(--brand-dark); }
+  .btn-newround:hover { background: var(--gold-dark); color: #fff; }
+
+  .empty-state { text-align: center; padding: 40px 20px; color: var(--muted); font-size: 14px; }
+
+  .rule-box { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-card); margin-bottom: 20px; overflow: hidden; }
+  .rule-toggle {
+    display: flex; align-items: center; justify-content: space-between; padding: 11px 18px; cursor: pointer;
+    font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 14.5px; color: var(--brand-dark);
+  }
+  .rule-toggle .chev { font-size: 12px; color: var(--muted); transition: transform .2s; }
+  .rule-toggle.open .chev { transform: rotate(180deg); }
+  .rule-content { display: none; padding: 0 20px 20px; font-size: 13.5px; line-height: 1.7; color: var(--text); }
+  .rule-content.open { display: block; }
+  .rule-content h4 { font-size: 13px; font-weight: 800; color: var(--brand-dark); margin: 14px 0 6px; }
+  .rule-content h4:first-child { margin-top: 0; }
+  .rule-content code { background: var(--accent-light); color: var(--accent-dark); padding: 1px 6px; border-radius: 5px; font-family: 'Inter', monospace; font-weight: 600; }
+  .rule-content ul { margin: 6px 0 6px 20px; }
+  .rule-content li { margin-bottom: 4px; }
+  .rule-note { background: var(--surface2); border-left: 3px solid var(--gold-dark); padding: 8px 12px; border-radius: 6px; margin: 10px 0; font-size: 13px; color: var(--muted); }
+  .verb-table { width: 100%; border-collapse: collapse; margin: 8px 0 14px; font-size: 13px; }
+  .verb-table td { padding: 6px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .verb-table tr:first-child td { border-top: 1px solid var(--border); }
+  .verb-table td:first-child { white-space: nowrap; width: 1%; padding-right: 16px; }
+  .verb-table td:last-child { color: var(--muted); }
+
+  .tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+  .tab {
+    font-family: 'Nunito', sans-serif; font-size: 13.5px; font-weight: 800; padding: 9px 20px;
+    border-radius: 12px; background: var(--surface); border: 2px solid var(--border); color: var(--muted); cursor: pointer; transition: all .15s;
+  }
+  .tab .tab-score { font-weight: 700; margin-left: 6px; opacity: .8; font-size: 12px; }
+  .tab:hover { border-color: var(--accent); color: var(--accent); }
+  .tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  .list-card { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-card); padding: 8px 20px; }
+  .item {
+    padding: 11px 0; border-bottom: 1px solid var(--border); font-size: 14px; line-height: 1.6;
+  }
+  .item:last-child { border-bottom: none; }
+  .item-row { display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; }
+  .item-num { font-weight: 700; color: var(--muted2); min-width: 30px; font-size: 13px; }
+  .item-text { color: var(--text); }
+  .item-ru { color: var(--muted); font-size: 12.5px; font-style: italic; margin-left: 36px; margin-top: 2px; }
+  .gapwrap { position: relative; display: inline-block; margin: 0 2px; }
+  .gap {
+    font-family: 'Inter', sans-serif; font-size: 13.5px; font-weight: 600;
+    border: none; border-bottom: 2px solid var(--accent); background: var(--accent-light);
+    border-radius: 5px 5px 0 0; padding: 2px 6px; width: 160px; text-align: center; color: var(--accent-dark);
+    outline: none; transition: all .15s;
+  }
+  .gap:focus { background: #fff; box-shadow: 0 0 0 2px var(--accent-light); }
+  .gap.correct { background: var(--green-bg); border-color: var(--green); color: #1e7a4d; }
+  .gap.wrong { background: var(--red-bg); border-color: var(--red); color: var(--red); }
+  .gap[readonly] { cursor: not-allowed; }
+  .hint { color: var(--muted2); font-size: 12.5px; font-style: italic; }
+  .correct-answer { display: none; font-size: 11px; color: var(--green); font-weight: 700; margin-left: 2px; }
+  .correct-answer.show { display: inline; }
+
+  .panel-actions { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 16px 0; flex-wrap: wrap; }
+  .btn {
+    font-family: 'Inter', sans-serif; font-size: 13.5px; font-weight: 700; padding: 10px 22px;
+    border-radius: 24px; cursor: pointer; border: none; transition: all .15s;
+  }
+  .btn-check { background: var(--accent); color: #fff; }
+  .btn-check:hover { background: var(--accent-dark); }
+  .btn-reset { background: var(--surface2); color: var(--muted); border: 1.5px solid var(--border); }
+  .btn-reset:hover { border-color: var(--muted); color: var(--text); }
+  .result-line { font-size: 13.5px; font-weight: 700; }
+  .result-line.ok { color: var(--green); }
+  .result-line.mid { color: var(--gold-dark); }
+  .result-line.poor { color: var(--red); }
+
+  footer { text-align: center; padding: 24px; font-size: 12px; color: var(--muted); }
+
+  @media (max-width: 600px) {
+    .gap { width: 130px; }
+  }
+
+  #teacher-banner {
+    display: none; align-items: center; justify-content: center; gap: 14px;
+    background: var(--gold); color: var(--brand-dark); text-align: center; font-weight: 700; font-size: 13px;
+    padding: 10px 16px; position: sticky; top: 0; z-index: 50; flex-wrap: wrap;
+  }
+  #teacher-banner button {
+    font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 800; padding: 5px 14px; border-radius: 16px;
+    border: 1.5px solid var(--brand-dark); background: transparent; color: var(--brand-dark); cursor: pointer; transition: all .15s;
+  }
+  #teacher-banner button:hover { background: var(--brand-dark); color: #fff; }
+  .btn-check-item {
+    font-family: 'Inter', sans-serif; font-size: 11.5px; font-weight: 700; padding: 4px 10px;
+    border-radius: 14px; cursor: pointer; border: 1.5px solid var(--accent); background: var(--accent-light);
+    color: var(--accent-dark); margin-left: 4px; vertical-align: middle; transition: all .15s;
+  }
+  .btn-check-item:hover { background: var(--accent); color: #fff; }
+  .btn-check-item:disabled { opacity: .35; cursor: default; border-color: var(--border); background: var(--surface2); color: var(--muted); }
+</style>
+</head>
+<body>
+
+<header>
+  <div style="display:flex;align-items:center;">
+    <a class="back-link" href="index.html">← Back</a>
+    <div class="logo">Headway Pre-Intermediate<span class="chevrons"><span></span><span></span></span> <span class="logo-sub">Veronika's Practice</span></div>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <button class="btn-reset-all" id="btn-reset-all">Reset All ↻</button>
+  </div>
+</header>
+
+<div id="teacher-banner">
+  <span>🧪 Teacher mode is ON — your answers on this page are NOT being recorded.</span>
+  <button id="teacher-banner-off">Turn off</button>
+</div>
+
+<main>
+  <div class="block-header">
+    <div>
+      <div class="block-title">Passive Voice</div>
+      <div class="block-subtitle" id="block-subtitle">Present Simple, Past Simple, Present Perfect — три времени пассивного залога</div>
+    </div>
+  </div>
+
+  <div class="cond-picker">
+    <div class="cond-tabs" id="cond-tabs"></div>
+    <div class="cond-quick">
+      <button class="quick-btn" id="btn-select-all">All</button>
+      <button class="quick-btn" id="btn-select-none">None</button>
+    </div>
+  </div>
+
+  <div id="rule-stack"></div>
+
+  <div class="bank-overview" id="bank-overview"></div>
+
+  <div class="stats-bar" id="stats-bar">
+    <div class="stat"><span class="stat-num" id="stat-filled">0</span><span class="stat-label">/ 25 filled</span></div>
+    <div class="stat stat-correct"><span class="stat-num" id="stat-correct">0</span><span class="stat-label">correct</span></div>
+    <div class="stat stat-wrong"><span class="stat-num" id="stat-wrong">0</span><span class="stat-label">wrong</span></div>
+    <div class="stats-actions">
+      <button class="btn btn-check" id="btn-check-all">Check</button>
+      <button class="btn btn-reset" id="btn-reset-round">Reset</button>
+      <button class="btn btn-newround" id="btn-new-round">New Round ↻</button>
+    </div>
+  </div>
+
+  <div id="round-container"></div>
+</main>
+
+<footer>Headway Pre-Intermediate · Veronika's Practice · Block 4 · Conditionals</footer>
+
+<script>
+
+(function(){
+  try {
+    if (localStorage.getItem('hw_role') === 'teacher') {
+      document.getElementById('teacher-banner').style.display = 'flex';
+    }
+  } catch(e) {}
+})();
+var __teacherBannerOff = document.getElementById('teacher-banner-off');
+if (__teacherBannerOff) {
+  __teacherBannerOff.addEventListener('click', function(){
+    try { localStorage.setItem('hw_role', 'student'); } catch(e) {}
+    document.getElementById('teacher-banner').style.display = 'none';
+  });
+}
+const ALL = {"present_simple": {"affirmative": [{"n": 1, "prefix": "English ", "hint": "speak", "answer": "is spoken", "suffix": " in many countries around the world.", "ru": "Английский язык используется во многих странах мира."}, {"n": 2, "prefix": "This cheese ", "hint": "make", "answer": "is made", "suffix": " from goat's milk.", "ru": "Этот сыр делают из козьего молока."}, {"n": 3, "prefix": "Rice ", "hint": "grow", "answer": "is grown", "suffix": " in many parts of Asia.", "ru": "Рис выращивают во многих частях Азии."}, {"n": 4, "prefix": "The office ", "hint": "clean", "answer": "is cleaned", "suffix": " every evening.", "ru": "Офис убирают каждый вечер."}, {"n": 5, "prefix": "These cars ", "hint": "produce", "answer": "are produced", "suffix": " in Germany.", "ru": "Эти машины производят в Германии."}, {"n": 6, "prefix": "The news ", "hint": "broadcast", "answer": "is broadcast", "suffix": " live every night.", "ru": "Новости транслируют вживую каждый вечер."}, {"n": 7, "prefix": "Coffee ", "hint": "export", "answer": "is exported", "suffix": " from Brazil to many countries.", "ru": "Кофе экспортируют из Бразилии во многие страны."}, {"n": 8, "prefix": "This song ", "hint": "play", "answer": "is played", "suffix": " on the radio all the time.", "ru": "Эту песню постоянно крутят по радио."}, {"n": 9, "prefix": "The bridge ", "hint": "use", "answer": "is used", "suffix": " by thousands of people every day.", "ru": "Этим мостом пользуются тысячи людей каждый день."}, {"n": 10, "prefix": "Wine ", "hint": "produce", "answer": "is produced", "suffix": " in this region.", "ru": "В этом регионе производят вино."}, {"n": 11, "prefix": "The building ", "hint": "guard", "answer": "is guarded", "suffix": " twenty-four hours a day.", "ru": "Здание охраняют круглосуточно."}, {"n": 12, "prefix": "These flowers ", "hint": "sell", "answer": "are sold", "suffix": " at the local market.", "ru": "Эти цветы продают на местном рынке."}, {"n": 13, "prefix": "The results ", "hint": "announce", "answer": "are announced", "suffix": " every Friday.", "ru": "Результаты объявляют каждую пятницу."}, {"n": 14, "prefix": "This medicine ", "hint": "prescribe", "answer": "is prescribed", "suffix": " for headaches.", "ru": "Это лекарство назначают от головной боли."}, {"n": 15, "prefix": "The garden ", "hint": "water", "answer": "is watered", "suffix": " twice a day.", "ru": "Сад поливают дважды в день."}, {"n": 16, "prefix": "Football ", "hint": "watch", "answer": "is watched", "suffix": " by millions of people.", "ru": "Футбол смотрят миллионы людей."}, {"n": 17, "prefix": "The letters ", "hint": "deliver", "answer": "are delivered", "suffix": " in the morning.", "ru": "Письма доставляют по утрам."}, {"n": 18, "prefix": "This fabric ", "hint": "make", "answer": "is made", "suffix": " from cotton.", "ru": "Эта ткань сделана из хлопка."}, {"n": 19, "prefix": "The museum ", "hint": "visit", "answer": "is visited", "suffix": " by tourists from all over the world.", "ru": "Музей посещают туристы со всего мира."}, {"n": 20, "prefix": "These products ", "hint": "test", "answer": "are tested", "suffix": " before they are sold.", "ru": "Эти продукты тестируют перед продажей."}, {"n": 21, "prefix": "The classroom ", "hint": "clean", "answer": "is cleaned", "suffix": " by the students.", "ru": "Класс убирают сами студенты."}, {"n": 22, "prefix": "Chocolate ", "hint": "produce", "answer": "is produced", "suffix": " in many different countries.", "ru": "Шоколад производят во многих странах."}, {"n": 23, "prefix": "The event ", "hint": "organise", "answer": "is organised", "suffix": " by the school every year.", "ru": "Мероприятие организует школа каждый год."}, {"n": 24, "prefix": "This app ", "hint": "use", "answer": "is used", "suffix": " by millions of people.", "ru": "Этим приложением пользуются миллионы людей."}, {"n": 25, "prefix": "The bread ", "hint": "bake", "answer": "is baked", "suffix": " fresh every morning.", "ru": "Хлеб выпекают свежим каждое утро."}, {"n": 26, "prefix": "These shoes ", "hint": "make", "answer": "are made", "suffix": " by hand.", "ru": "Эта обувь сделана вручную."}, {"n": 27, "prefix": "The company ", "hint": "own", "answer": "is owned", "suffix": " by a large corporation.", "ru": "Компания принадлежит крупной корпорации."}, {"n": 28, "prefix": "The concert ", "hint": "hold", "answer": "is held", "suffix": " in the city park.", "ru": "Концерт проходит в городском парке."}, {"n": 29, "prefix": "This word ", "hint": "spell", "answer": "is spelled", "suffix": " differently in British English.", "ru": "Это слово пишется по-другому в британском английском."}, {"n": 30, "prefix": "The plants ", "hint": "feed", "answer": "are fed", "suffix": " once a week.", "ru": "Растения подкармливают раз в неделю."}], "negative": [{"n": 1, "prefix": "This shop ", "hint": "open", "answer": "isn't opened", "suffix": " on Sundays.", "ru": "Этот магазин не открывают по воскресеньям."}, {"n": 2, "prefix": "The pool ", "hint": "use", "answer": "isn't used", "suffix": " in winter.", "ru": "Бассейном не пользуются зимой."}, {"n": 3, "prefix": "These tools ", "hint": "allow", "answer": "aren't allowed", "suffix": " on the plane.", "ru": "Эти инструменты не разрешены на борту самолёта."}, {"n": 4, "prefix": "The file ", "hint": "share", "answer": "isn't shared", "suffix": " with anyone outside the team.", "ru": "Файл не передают никому за пределами команды."}, {"n": 5, "prefix": "This road ", "hint": "close", "answer": "isn't closed", "suffix": " during the week.", "ru": "Эту дорогу не закрывают в течение недели."}, {"n": 6, "prefix": "The data ", "hint": "store", "answer": "isn't stored", "suffix": " on this server anymore.", "ru": "Данные больше не хранятся на этом сервере."}, {"n": 7, "prefix": "Smoking ", "hint": "permit", "answer": "isn't permitted", "suffix": " inside the building.", "ru": "Курить внутри здания не разрешается."}, {"n": 8, "prefix": "The machine ", "hint": "check", "answer": "isn't checked", "suffix": " very often.", "ru": "Машину проверяют не очень часто."}, {"n": 9, "prefix": "This dish ", "hint": "serve", "answer": "isn't served", "suffix": " after 9pm.", "ru": "Это блюдо не подают после 21:00."}, {"n": 10, "prefix": "The report ", "hint": "update", "answer": "isn't updated", "suffix": " in real time.", "ru": "Отчёт не обновляется в реальном времени."}, {"n": 11, "prefix": "The garden ", "hint": "water", "answer": "isn't watered", "suffix": " during the drought.", "ru": "Сад не поливают во время засухи."}, {"n": 12, "prefix": "This product ", "hint": "sell", "answer": "isn't sold", "suffix": " outside the country.", "ru": "Этот продукт не продаётся за пределами страны."}, {"n": 13, "prefix": "The office ", "hint": "clean", "answer": "isn't cleaned", "suffix": " at weekends.", "ru": "Офис не убирают по выходным."}, {"n": 14, "prefix": "The app ", "hint": "support", "answer": "isn't supported", "suffix": " on older phones.", "ru": "Приложение не поддерживается на старых телефонах."}, {"n": 15, "prefix": "This song ", "hint": "play", "answer": "isn't played", "suffix": " on the radio much these days.", "ru": "Эту песню сейчас редко крутят по радио."}, {"n": 16, "prefix": "The bridge ", "hint": "use", "answer": "isn't used", "suffix": " by heavy vehicles.", "ru": "Этим мостом не пользуется тяжёлый транспорт."}, {"n": 17, "prefix": "The results ", "hint": "publish", "answer": "aren't published", "suffix": " until Friday.", "ru": "Результаты не публикуют до пятницы."}, {"n": 18, "prefix": "This medicine ", "hint": "recommend", "answer": "isn't recommended", "suffix": " for children.", "ru": "Это лекарство не рекомендуется детям."}, {"n": 19, "prefix": "The classroom ", "hint": "lock", "answer": "isn't locked", "suffix": " during the day.", "ru": "Класс не запирают в течение дня."}, {"n": 20, "prefix": "The museum ", "hint": "open", "answer": "isn't opened", "suffix": " on public holidays.", "ru": "Музей не открыт в государственные праздники."}, {"n": 21, "prefix": "These products ", "hint": "test", "answer": "aren't tested", "suffix": " on animals.", "ru": "Эти продукты не тестируют на животных."}, {"n": 22, "prefix": "The event ", "hint": "organise", "answer": "isn't organised", "suffix": " by the school this year.", "ru": "В этом году мероприятие не организует школа."}, {"n": 23, "prefix": "This app ", "hint": "update", "answer": "isn't updated", "suffix": " very often.", "ru": "Это приложение обновляют не очень часто."}, {"n": 24, "prefix": "The bread ", "hint": "deliver", "answer": "isn't delivered", "suffix": " on Sundays.", "ru": "Хлеб не доставляют по воскресеньям."}, {"n": 25, "prefix": "These shoes ", "hint": "make", "answer": "aren't made", "suffix": " in this factory anymore.", "ru": "Эту обувь больше не производят на этой фабрике."}, {"n": 26, "prefix": "The company ", "hint": "own", "answer": "isn't owned", "suffix": " by the same people now.", "ru": "Сейчас компания принадлежит не тем же людям."}, {"n": 27, "prefix": "The concert ", "hint": "hold", "answer": "isn't held", "suffix": " outdoors in winter.", "ru": "Зимой концерт не проводят на улице."}, {"n": 28, "prefix": "This word ", "hint": "use", "answer": "isn't used", "suffix": " in formal writing.", "ru": "Это слово не используют в официальном письме."}, {"n": 29, "prefix": "The letters ", "hint": "deliver", "answer": "aren't delivered", "suffix": " on public holidays.", "ru": "Письма не доставляют в государственные праздники."}, {"n": 30, "prefix": "Wine ", "hint": "produce", "answer": "isn't produced", "suffix": " in this small village.", "ru": "В этой маленькой деревне вино не производят."}], "interrogative": [{"n": 1, "prefix": "", "hint": "make", "answer": "Is this cheese made", "suffix": " from goat's milk?", "ru": "Этот сыр делают из козьего молока?"}, {"n": 2, "prefix": "", "hint": "clean", "answer": "Is the office cleaned", "suffix": " every evening?", "ru": "Офис убирают каждый вечер?"}, {"n": 3, "prefix": "", "hint": "produce", "answer": "Are these cars produced", "suffix": " in Germany?", "ru": "Эти машины производят в Германии?"}, {"n": 4, "prefix": "", "hint": "broadcast", "answer": "Is the news broadcast", "suffix": " live?", "ru": "Новости транслируют вживую?"}, {"n": 5, "prefix": "", "hint": "export", "answer": "Is coffee exported", "suffix": " from this country?", "ru": "Кофе экспортируют из этой страны?"}, {"n": 6, "prefix": "", "hint": "play", "answer": "Is this song played", "suffix": " on the radio often?", "ru": "Эту песню часто крутят по радио?"}, {"n": 7, "prefix": "", "hint": "use", "answer": "Is the bridge used", "suffix": " by many people?", "ru": "Этим мостом пользуется много людей?"}, {"n": 8, "prefix": "", "hint": "produce", "answer": "Is wine produced", "suffix": " in this region?", "ru": "В этом регионе производят вино?"}, {"n": 9, "prefix": "", "hint": "guard", "answer": "Is the building guarded", "suffix": " at night?", "ru": "Здание охраняют ночью?"}, {"n": 10, "prefix": "", "hint": "sell", "answer": "Are these flowers sold", "suffix": " at the market?", "ru": "Эти цветы продают на рынке?"}, {"n": 11, "prefix": "", "hint": "announce", "answer": "Are the results announced", "suffix": " on Fridays?", "ru": "Результаты объявляют по пятницам?"}, {"n": 12, "prefix": "", "hint": "prescribe", "answer": "Is this medicine prescribed", "suffix": " for headaches?", "ru": "Это лекарство назначают от головной боли?"}, {"n": 13, "prefix": "", "hint": "water", "answer": "Is the garden watered", "suffix": " every day?", "ru": "Сад поливают каждый день?"}, {"n": 14, "prefix": "", "hint": "watch", "answer": "Is football watched", "suffix": " by millions of people here?", "ru": "Здесь футбол смотрят миллионы людей?"}, {"n": 15, "prefix": "", "hint": "deliver", "answer": "Are the letters delivered", "suffix": " in the morning?", "ru": "Письма доставляют по утрам?"}, {"n": 16, "prefix": "", "hint": "make", "answer": "Is this fabric made", "suffix": " from cotton?", "ru": "Эта ткань сделана из хлопка?"}, {"n": 17, "prefix": "", "hint": "visit", "answer": "Is the museum visited", "suffix": " by many tourists?", "ru": "Музей посещает много туристов?"}, {"n": 18, "prefix": "", "hint": "test", "answer": "Are these products tested", "suffix": " before they are sold?", "ru": "Эти продукты тестируют перед продажей?"}, {"n": 19, "prefix": "", "hint": "clean", "answer": "Is the classroom cleaned", "suffix": " every day?", "ru": "Класс убирают каждый день?"}, {"n": 20, "prefix": "", "hint": "produce", "answer": "Is chocolate produced", "suffix": " in this country?", "ru": "В этой стране производят шоколад?"}, {"n": 21, "prefix": "", "hint": "use", "answer": "Is this app used", "suffix": " by students?", "ru": "Этим приложением пользуются студенты?"}, {"n": 22, "prefix": "", "hint": "bake", "answer": "Is the bread baked", "suffix": " fresh every day?", "ru": "Хлеб выпекают свежим каждый день?"}, {"n": 23, "prefix": "", "hint": "make", "answer": "Are these shoes made", "suffix": " by hand?", "ru": "Эта обувь сделана вручную?"}, {"n": 24, "prefix": "", "hint": "own", "answer": "Is the company owned", "suffix": " by a large corporation?", "ru": "Компания принадлежит крупной корпорации?"}, {"n": 25, "prefix": "", "hint": "hold", "answer": "Is the concert held", "suffix": " every summer?", "ru": "Концерт проходит каждое лето?"}, {"n": 26, "prefix": "", "hint": "spell", "answer": "Is this word spelled", "suffix": " the same way in American English?", "ru": "Это слово пишется так же в американском английском?"}, {"n": 27, "prefix": "", "hint": "feed", "answer": "Are the plants fed", "suffix": " every week?", "ru": "Растения подкармливают каждую неделю?"}, {"n": 28, "prefix": "", "hint": "speak", "answer": "Is English spoken", "suffix": " in this country?", "ru": "В этой стране говорят по-английски?"}, {"n": 29, "prefix": "", "hint": "grow", "answer": "Is rice grown", "suffix": " here?", "ru": "Здесь выращивают рис?"}, {"n": 30, "prefix": "", "hint": "guard", "answer": "Is the building guarded", "suffix": " by security staff?", "ru": "Здание охраняет служба безопасности?"}]}, "past_simple": {"affirmative": [{"n": 1, "prefix": "The Mona Lisa ", "hint": "paint", "answer": "was painted", "suffix": " by Leonardo da Vinci.", "ru": "«Мону Лизу» написал Леонардо да Винчи."}, {"n": 2, "prefix": "This bridge ", "hint": "build", "answer": "was built", "suffix": " in the 19th century.", "ru": "Этот мост построили в 19 веке."}, {"n": 3, "prefix": "The letter ", "hint": "send", "answer": "was sent", "suffix": " last week.", "ru": "Письмо отправили на прошлой неделе."}, {"n": 4, "prefix": "The car ", "hint": "steal", "answer": "was stolen", "suffix": " from the car park.", "ru": "Машину украли со стоянки."}, {"n": 5, "prefix": "The window ", "hint": "break", "answer": "was broken", "suffix": " during the storm.", "ru": "Окно разбилось во время шторма."}, {"n": 6, "prefix": "The house ", "hint": "damage", "answer": "was damaged", "suffix": " in the fire.", "ru": "Дом пострадал в пожаре."}, {"n": 7, "prefix": "The report ", "hint": "write", "answer": "was written", "suffix": " by a junior researcher.", "ru": "Отчёт написал младший научный сотрудник."}, {"n": 8, "prefix": "The film ", "hint": "direct", "answer": "was directed", "suffix": " by a young Spanish director.", "ru": "Фильм снял молодой испанский режиссёр."}, {"n": 9, "prefix": "The meeting ", "hint": "cancel", "answer": "was cancelled", "suffix": " because of the weather.", "ru": "Встречу отменили из-за погоды."}, {"n": 10, "prefix": "The contract ", "hint": "sign", "answer": "was signed", "suffix": " yesterday afternoon.", "ru": "Контракт подписали вчера днём."}, {"n": 11, "prefix": "The book ", "hint": "publish", "answer": "was published", "suffix": " in 1998.", "ru": "Книгу опубликовали в 1998 году."}, {"n": 12, "prefix": "The song ", "hint": "record", "answer": "was recorded", "suffix": " in a small studio.", "ru": "Песню записали в маленькой студии."}, {"n": 13, "prefix": "The article ", "hint": "translate", "answer": "was translated", "suffix": " into five languages.", "ru": "Статью перевели на пять языков."}, {"n": 14, "prefix": "The phone ", "hint": "invent", "answer": "was invented", "suffix": " by a team of engineers.", "ru": "Телефон изобрела команда инженеров."}, {"n": 15, "prefix": "The treasure ", "hint": "discover", "answer": "was discovered", "suffix": " by a local farmer.", "ru": "Клад нашёл местный фермер."}, {"n": 16, "prefix": "The painting ", "hint": "find", "answer": "was found", "suffix": " in an old attic.", "ru": "Картину нашли на старом чердаке."}, {"n": 17, "prefix": "The bank ", "hint": "rob", "answer": "was robbed", "suffix": " early this morning.", "ru": "Банк ограбили сегодня рано утром."}, {"n": 18, "prefix": "The suspect ", "hint": "arrest", "answer": "was arrested", "suffix": " near the station.", "ru": "Подозреваемого арестовали возле вокзала."}, {"n": 19, "prefix": "The man ", "hint": "injure", "answer": "was injured", "suffix": " in the accident.", "ru": "Мужчина пострадал в аварии."}, {"n": 20, "prefix": "The dog ", "hint": "rescue", "answer": "was rescued", "suffix": " from the river.", "ru": "Собаку спасли из реки."}, {"n": 21, "prefix": "The president ", "hint": "elect", "answer": "was elected", "suffix": " by a large majority.", "ru": "Президента избрали подавляющим большинством."}, {"n": 22, "prefix": "The building ", "hint": "attack", "answer": "was attacked", "suffix": " during the protest.", "ru": "На здание напали во время протеста."}, {"n": 23, "prefix": "The award ", "hint": "give", "answer": "was given", "suffix": " to the best student.", "ru": "Награду вручили лучшему студенту."}, {"n": 24, "prefix": "The prize ", "hint": "win", "answer": "was won", "suffix": " by a local team.", "ru": "Приз выиграла местная команда."}, {"n": 25, "prefix": "The wedding ", "hint": "postpone", "answer": "was postponed", "suffix": " until next spring.", "ru": "Свадьбу отложили до следующей весны."}, {"n": 26, "prefix": "The road ", "hint": "close", "answer": "was closed", "suffix": " for repairs.", "ru": "Дорогу закрыли на ремонт."}, {"n": 27, "prefix": "The factory ", "hint": "open", "answer": "was opened", "suffix": " in 1975.", "ru": "Завод открыли в 1975 году."}, {"n": 28, "prefix": "The app ", "hint": "update", "answer": "was updated", "suffix": " last month.", "ru": "Приложение обновили в прошлом месяце."}, {"n": 29, "prefix": "The account ", "hint": "hack", "answer": "was hacked", "suffix": " last week.", "ru": "Аккаунт взломали на прошлой неделе."}, {"n": 30, "prefix": "The file ", "hint": "delete", "answer": "was deleted", "suffix": " by mistake.", "ru": "Файл удалили по ошибке."}], "negative": [{"n": 1, "prefix": "The letter ", "hint": "send", "answer": "wasn't sent", "suffix": " to the right address.", "ru": "Письмо отправили не по тому адресу."}, {"n": 2, "prefix": "The car ", "hint": "find", "answer": "wasn't found", "suffix": " for three days.", "ru": "Машину не находили три дня."}, {"n": 3, "prefix": "The window ", "hint": "break", "answer": "wasn't broken", "suffix": " during the game.", "ru": "Окно не разбилось во время игры."}, {"n": 4, "prefix": "The report ", "hint": "finish", "answer": "wasn't finished", "suffix": " by the deadline.", "ru": "Отчёт не закончили к сроку."}, {"n": 5, "prefix": "The film ", "hint": "direct", "answer": "wasn't directed", "suffix": " by the person we expected.", "ru": "Фильм снял не тот человек, которого мы ожидали."}, {"n": 6, "prefix": "The meeting ", "hint": "cancel", "answer": "wasn't cancelled", "suffix": " in the end.", "ru": "В итоге встречу не отменили."}, {"n": 7, "prefix": "The contract ", "hint": "sign", "answer": "wasn't signed", "suffix": " last week.", "ru": "Контракт не подписали на прошлой неделе."}, {"n": 8, "prefix": "The book ", "hint": "publish", "answer": "wasn't published", "suffix": " until years later.", "ru": "Книгу опубликовали только годы спустя."}, {"n": 9, "prefix": "The song ", "hint": "record", "answer": "wasn't recorded", "suffix": " in that studio.", "ru": "Песню записали не в той студии."}, {"n": 10, "prefix": "The article ", "hint": "translate", "answer": "wasn't translated", "suffix": " into German.", "ru": "Статью не перевели на немецкий."}, {"n": 11, "prefix": "The treasure ", "hint": "discover", "answer": "wasn't discovered", "suffix": " until much later.", "ru": "Клад нашли только намного позже."}, {"n": 12, "prefix": "The painting ", "hint": "find", "answer": "wasn't found", "suffix": " for over a century.", "ru": "Картину не находили больше века."}, {"n": 13, "prefix": "The suspect ", "hint": "arrest", "answer": "wasn't arrested", "suffix": " that night.", "ru": "Подозреваемого не арестовали в ту ночь."}, {"n": 14, "prefix": "The dog ", "hint": "injure", "answer": "wasn't injured", "suffix": " in the accident.", "ru": "Собака не пострадала в аварии."}, {"n": 15, "prefix": "The president ", "hint": "elect", "answer": "wasn't elected", "suffix": " in the first round.", "ru": "Президента не избрали в первом туре."}, {"n": 16, "prefix": "The building ", "hint": "damage", "answer": "wasn't damaged", "suffix": " in the storm.", "ru": "Здание не пострадало во время шторма."}, {"n": 17, "prefix": "The prize ", "hint": "give", "answer": "wasn't given", "suffix": " to the youngest competitor.", "ru": "Приз не достался самому молодому участнику."}, {"n": 18, "prefix": "The wedding ", "hint": "postpone", "answer": "wasn't postponed", "suffix": " after all.", "ru": "В итоге свадьбу не отложили."}, {"n": 19, "prefix": "The road ", "hint": "close", "answer": "wasn't closed", "suffix": " for long.", "ru": "Дорогу закрыли ненадолго."}, {"n": 20, "prefix": "The factory ", "hint": "open", "answer": "wasn't opened", "suffix": " until 1980.", "ru": "Завод открыли только в 1980 году."}, {"n": 21, "prefix": "The app ", "hint": "update", "answer": "wasn't updated", "suffix": " for months.", "ru": "Приложение не обновляли несколько месяцев."}, {"n": 22, "prefix": "The account ", "hint": "hack", "answer": "wasn't hacked", "suffix": " that day.", "ru": "В тот день аккаунт не взломали."}, {"n": 23, "prefix": "The file ", "hint": "delete", "answer": "wasn't deleted", "suffix": " by the new intern.", "ru": "Файл удалил не новый стажёр."}, {"n": 24, "prefix": "The bridge ", "hint": "build", "answer": "wasn't built", "suffix": " in that decade.", "ru": "Мост построили не в то десятилетие."}, {"n": 25, "prefix": "The house ", "hint": "damage", "answer": "wasn't damaged", "suffix": " by the flood.", "ru": "Дом не пострадал от наводнения."}, {"n": 26, "prefix": "The man ", "hint": "injure", "answer": "wasn't injured", "suffix": " badly.", "ru": "Мужчина не сильно пострадал."}, {"n": 27, "prefix": "The award ", "hint": "give", "answer": "wasn't given", "suffix": " to a local artist.", "ru": "Награда не досталась местному художнику."}, {"n": 28, "prefix": "The museum ", "hint": "open", "answer": "wasn't opened", "suffix": " on that day.", "ru": "В тот день музей не открыли."}, {"n": 29, "prefix": "The concert ", "hint": "cancel", "answer": "wasn't cancelled", "suffix": " in the end.", "ru": "В итоге концерт не отменили."}, {"n": 30, "prefix": "The results ", "hint": "announce", "answer": "weren't announced", "suffix": " that evening.", "ru": "В тот вечер результаты не объявили."}], "interrogative": [{"n": 1, "prefix": "", "hint": "paint", "answer": "Was the Mona Lisa painted", "suffix": " by Leonardo da Vinci?", "ru": "«Мону Лизу» написал Леонардо да Винчи?"}, {"n": 2, "prefix": "", "hint": "build", "answer": "Was this bridge built", "suffix": " in the 19th century?", "ru": "Этот мост построили в 19 веке?"}, {"n": 3, "prefix": "", "hint": "send", "answer": "Was the letter sent", "suffix": " last week?", "ru": "Письмо отправили на прошлой неделе?"}, {"n": 4, "prefix": "", "hint": "steal", "answer": "Was the car stolen", "suffix": " from the car park?", "ru": "Машину украли со стоянки?"}, {"n": 5, "prefix": "", "hint": "break", "answer": "Was the window broken", "suffix": " during the storm?", "ru": "Окно разбилось во время шторма?"}, {"n": 6, "prefix": "", "hint": "damage", "answer": "Was the house damaged", "suffix": " in the fire?", "ru": "Дом пострадал в пожаре?"}, {"n": 7, "prefix": "", "hint": "write", "answer": "Was the report written", "suffix": " by a junior researcher?", "ru": "Отчёт написал младший научный сотрудник?"}, {"n": 8, "prefix": "", "hint": "direct", "answer": "Was the film directed", "suffix": " by a well-known director?", "ru": "Фильм снял известный режиссёр?"}, {"n": 9, "prefix": "", "hint": "cancel", "answer": "Was the meeting cancelled", "suffix": " because of the weather?", "ru": "Встречу отменили из-за погоды?"}, {"n": 10, "prefix": "", "hint": "sign", "answer": "Was the contract signed", "suffix": " yesterday?", "ru": "Контракт подписали вчера?"}, {"n": 11, "prefix": "", "hint": "publish", "answer": "Was the book published", "suffix": " last year?", "ru": "Книгу опубликовали в прошлом году?"}, {"n": 12, "prefix": "", "hint": "record", "answer": "Was the song recorded", "suffix": " in a studio?", "ru": "Песню записали в студии?"}, {"n": 13, "prefix": "", "hint": "translate", "answer": "Was the article translated", "suffix": " into French?", "ru": "Статью перевели на французский?"}, {"n": 14, "prefix": "", "hint": "discover", "answer": "Was the treasure discovered", "suffix": " by a farmer?", "ru": "Клад нашёл фермер?"}, {"n": 15, "prefix": "", "hint": "find", "answer": "Was the painting found", "suffix": " in the attic?", "ru": "Картину нашли на чердаке?"}, {"n": 16, "prefix": "", "hint": "rob", "answer": "Was the bank robbed", "suffix": " last night?", "ru": "Банк ограбили прошлой ночью?"}, {"n": 17, "prefix": "", "hint": "arrest", "answer": "Was the suspect arrested", "suffix": " near the station?", "ru": "Подозреваемого арестовали возле вокзала?"}, {"n": 18, "prefix": "", "hint": "injure", "answer": "Was the man injured", "suffix": " in the crash?", "ru": "Мужчина пострадал в аварии?"}, {"n": 19, "prefix": "", "hint": "rescue", "answer": "Was the dog rescued", "suffix": " from the river?", "ru": "Собаку спасли из реки?"}, {"n": 20, "prefix": "", "hint": "elect", "answer": "Was the president elected", "suffix": " by a large majority?", "ru": "Президента избрали подавляющим большинством?"}, {"n": 21, "prefix": "", "hint": "attack", "answer": "Was the building attacked", "suffix": " during the protest?", "ru": "На здание напали во время протеста?"}, {"n": 22, "prefix": "", "hint": "give", "answer": "Was the award given", "suffix": " to the best student?", "ru": "Награду вручили лучшему студенту?"}, {"n": 23, "prefix": "", "hint": "win", "answer": "Was the prize won", "suffix": " by a local team?", "ru": "Приз выиграла местная команда?"}, {"n": 24, "prefix": "", "hint": "postpone", "answer": "Was the wedding postponed", "suffix": " until spring?", "ru": "Свадьбу отложили до весны?"}, {"n": 25, "prefix": "", "hint": "close", "answer": "Was the road closed", "suffix": " for repairs?", "ru": "Дорогу закрыли на ремонт?"}, {"n": 26, "prefix": "", "hint": "open", "answer": "Was the factory opened", "suffix": " in 1975?", "ru": "Завод открыли в 1975 году?"}, {"n": 27, "prefix": "", "hint": "update", "answer": "Was the app updated", "suffix": " last month?", "ru": "Приложение обновили в прошлом месяце?"}, {"n": 28, "prefix": "", "hint": "hack", "answer": "Was the account hacked", "suffix": " last week?", "ru": "Аккаунт взломали на прошлой неделе?"}, {"n": 29, "prefix": "", "hint": "delete", "answer": "Was the file deleted", "suffix": " by mistake?", "ru": "Файл удалили по ошибке?"}, {"n": 30, "prefix": "", "hint": "use", "answer": "Was the bridge used", "suffix": " by many drivers?", "ru": "Этим мостом пользовалось много водителей?"}]}, "present_perfect": {"affirmative": [{"n": 1, "prefix": "The room ", "hint": "clean", "answer": "has been cleaned", "suffix": " already.", "ru": "Комнату уже убрали."}, {"n": 2, "prefix": "The email ", "hint": "send", "answer": "has been sent", "suffix": " to the wrong address.", "ru": "Письмо отправили не на тот адрес."}, {"n": 3, "prefix": "The work ", "hint": "finish", "answer": "has been finished", "suffix": " ahead of schedule.", "ru": "Работу закончили раньше срока."}, {"n": 4, "prefix": "The tickets ", "hint": "book", "answer": "have been booked", "suffix": " for next Friday.", "ru": "Билеты забронировали на следующую пятницу."}, {"n": 5, "prefix": "The results ", "hint": "confirm", "answer": "have been confirmed", "suffix": " by the lab.", "ru": "Результаты подтвердила лаборатория."}, {"n": 6, "prefix": "The package ", "hint": "deliver", "answer": "has been delivered", "suffix": " to your neighbour.", "ru": "Посылку доставили вашему соседу."}, {"n": 7, "prefix": "The request ", "hint": "approve", "answer": "has been approved", "suffix": " by the manager.", "ru": "Запрос одобрил менеджер."}, {"n": 8, "prefix": "The invoice ", "hint": "pay", "answer": "has been paid", "suffix": " in full.", "ru": "Счёт оплачен полностью."}, {"n": 9, "prefix": "The website ", "hint": "update", "answer": "has been updated", "suffix": " with new information.", "ru": "Сайт обновили новой информацией."}, {"n": 10, "prefix": "The software ", "hint": "install", "answer": "has been installed", "suffix": " on every computer.", "ru": "Программу установили на каждый компьютер."}, {"n": 11, "prefix": "The photos ", "hint": "upload", "answer": "have been uploaded", "suffix": " to the shared folder.", "ru": "Фотографии загрузили в общую папку."}, {"n": 12, "prefix": "The application ", "hint": "reject", "answer": "has been rejected", "suffix": " for the second time.", "ru": "Заявку отклонили второй раз."}, {"n": 13, "prefix": "The project ", "hint": "complete", "answer": "has been completed", "suffix": " on time.", "ru": "Проект завершили вовремя."}, {"n": 14, "prefix": "The budget ", "hint": "review", "answer": "has been reviewed", "suffix": " by the finance team.", "ru": "Бюджет проверила финансовая команда."}, {"n": 15, "prefix": "The order ", "hint": "process", "answer": "has been processed", "suffix": " this morning.", "ru": "Заказ обработали сегодня утром."}, {"n": 16, "prefix": "The item ", "hint": "return", "answer": "has been returned", "suffix": " to the shop.", "ru": "Товар вернули в магазин."}, {"n": 17, "prefix": "The password ", "hint": "change", "answer": "has been changed", "suffix": " for security reasons.", "ru": "Пароль изменили из соображений безопасности."}, {"n": 18, "prefix": "The flight ", "hint": "delay", "answer": "has been delayed", "suffix": " by two hours.", "ru": "Рейс задержали на два часа."}, {"n": 19, "prefix": "The meeting ", "hint": "reschedule", "answer": "has been rescheduled", "suffix": " for Monday.", "ru": "Встречу перенесли на понедельник."}, {"n": 20, "prefix": "The documents ", "hint": "submit", "answer": "have been submitted", "suffix": " to the office.", "ru": "Документы подали в офис."}, {"n": 21, "prefix": "The car ", "hint": "repair", "answer": "has been repaired", "suffix": " by a local mechanic.", "ru": "Машину починил местный механик."}, {"n": 22, "prefix": "The wall ", "hint": "paint", "answer": "has been painted", "suffix": " a different colour.", "ru": "Стену покрасили в другой цвет."}, {"n": 23, "prefix": "The news ", "hint": "announce", "answer": "has been announced", "suffix": " on the website.", "ru": "Новость объявили на сайте."}, {"n": 24, "prefix": "The winner ", "hint": "choose", "answer": "has been chosen", "suffix": " by the judges.", "ru": "Победителя выбрали судьи."}, {"n": 25, "prefix": "The funds ", "hint": "raise", "answer": "have been raised", "suffix": " for the charity.", "ru": "Средства собрали для благотворительности."}, {"n": 26, "prefix": "The goods ", "hint": "ship", "answer": "have been shipped", "suffix": " to the customer.", "ru": "Товар отправили клиенту."}, {"n": 27, "prefix": "The plan ", "hint": "approve", "answer": "has been approved", "suffix": " by the committee.", "ru": "План одобрил комитет."}, {"n": 28, "prefix": "The problem ", "hint": "report", "answer": "has been reported", "suffix": " to the IT department.", "ru": "О проблеме сообщили в IT-отдел."}, {"n": 29, "prefix": "The account ", "hint": "suspend", "answer": "has been suspended", "suffix": " due to unusual activity.", "ru": "Аккаунт заблокировали из-за подозрительной активности."}, {"n": 30, "prefix": "The data ", "hint": "back", "answer": "has been backed up", "suffix": " on the server.", "ru": "Данные сохранили резервной копией на сервере."}], "negative": [{"n": 1, "prefix": "The room ", "hint": "clean", "answer": "hasn't been cleaned", "suffix": " yet.", "ru": "Комнату ещё не убрали."}, {"n": 2, "prefix": "The email ", "hint": "reply", "answer": "hasn't been replied to", "suffix": " yet.", "ru": "На письмо ещё не ответили."}, {"n": 3, "prefix": "The work ", "hint": "finish", "answer": "hasn't been finished", "suffix": " yet.", "ru": "Работа ещё не закончена."}, {"n": 4, "prefix": "The tickets ", "hint": "book", "answer": "haven't been booked", "suffix": " yet.", "ru": "Билеты ещё не забронировали."}, {"n": 5, "prefix": "The results ", "hint": "confirm", "answer": "haven't been confirmed", "suffix": " yet.", "ru": "Результаты ещё не подтвердили."}, {"n": 6, "prefix": "The package ", "hint": "deliver", "answer": "hasn't been delivered", "suffix": " yet.", "ru": "Посылку ещё не доставили."}, {"n": 7, "prefix": "The request ", "hint": "approve", "answer": "hasn't been approved", "suffix": " yet.", "ru": "Запрос ещё не одобрили."}, {"n": 8, "prefix": "The invoice ", "hint": "pay", "answer": "hasn't been paid", "suffix": " yet.", "ru": "Счёт ещё не оплатили."}, {"n": 9, "prefix": "The website ", "hint": "update", "answer": "hasn't been updated", "suffix": " for months.", "ru": "Сайт не обновляли несколько месяцев."}, {"n": 10, "prefix": "The software ", "hint": "install", "answer": "hasn't been installed", "suffix": " on this computer yet.", "ru": "Программу ещё не установили на этот компьютер."}, {"n": 11, "prefix": "The photos ", "hint": "upload", "answer": "haven't been uploaded", "suffix": " yet.", "ru": "Фотографии ещё не загрузили."}, {"n": 12, "prefix": "The application ", "hint": "review", "answer": "hasn't been reviewed", "suffix": " yet.", "ru": "Заявку ещё не рассмотрели."}, {"n": 13, "prefix": "The project ", "hint": "complete", "answer": "hasn't been completed", "suffix": " yet.", "ru": "Проект ещё не завершён."}, {"n": 14, "prefix": "The budget ", "hint": "review", "answer": "hasn't been reviewed", "suffix": " this year.", "ru": "Бюджет в этом году ещё не проверяли."}, {"n": 15, "prefix": "The order ", "hint": "process", "answer": "hasn't been processed", "suffix": " yet.", "ru": "Заказ ещё не обработали."}, {"n": 16, "prefix": "The item ", "hint": "return", "answer": "hasn't been returned", "suffix": " yet.", "ru": "Товар ещё не вернули."}, {"n": 17, "prefix": "The password ", "hint": "change", "answer": "hasn't been changed", "suffix": " in a long time.", "ru": "Пароль давно не меняли."}, {"n": 18, "prefix": "The meeting ", "hint": "reschedule", "answer": "hasn't been rescheduled", "suffix": " yet.", "ru": "Встречу ещё не перенесли."}, {"n": 19, "prefix": "The documents ", "hint": "submit", "answer": "haven't been submitted", "suffix": " yet.", "ru": "Документы ещё не подали."}, {"n": 20, "prefix": "The car ", "hint": "repair", "answer": "hasn't been repaired", "suffix": " yet.", "ru": "Машину ещё не починили."}, {"n": 21, "prefix": "The wall ", "hint": "paint", "answer": "hasn't been painted", "suffix": " in years.", "ru": "Стену не красили много лет."}, {"n": 22, "prefix": "The news ", "hint": "announce", "answer": "hasn't been announced", "suffix": " officially yet.", "ru": "Новость ещё официально не объявили."}, {"n": 23, "prefix": "The winner ", "hint": "choose", "answer": "hasn't been chosen", "suffix": " yet.", "ru": "Победителя ещё не выбрали."}, {"n": 24, "prefix": "The funds ", "hint": "raise", "answer": "haven't been raised", "suffix": " yet.", "ru": "Средства ещё не собрали."}, {"n": 25, "prefix": "The goods ", "hint": "ship", "answer": "haven't been shipped", "suffix": " yet.", "ru": "Товар ещё не отправили."}, {"n": 26, "prefix": "The plan ", "hint": "approve", "answer": "hasn't been approved", "suffix": " yet.", "ru": "План ещё не одобрили."}, {"n": 27, "prefix": "The problem ", "hint": "report", "answer": "hasn't been reported", "suffix": " yet.", "ru": "О проблеме ещё не сообщили."}, {"n": 28, "prefix": "The account ", "hint": "suspend", "answer": "hasn't been suspended", "suffix": " yet.", "ru": "Аккаунт ещё не заблокировали."}, {"n": 29, "prefix": "The data ", "hint": "back", "answer": "hasn't been backed up", "suffix": " recently.", "ru": "Данные давно не сохраняли резервной копией."}, {"n": 30, "prefix": "The flight ", "hint": "confirm", "answer": "hasn't been confirmed", "suffix": " yet.", "ru": "Рейс ещё не подтвердили."}], "interrogative": [{"n": 1, "prefix": "", "hint": "clean", "answer": "Has the room been cleaned", "suffix": " yet?", "ru": "Комнату уже убрали?"}, {"n": 2, "prefix": "", "hint": "send", "answer": "Has the email been sent", "suffix": " to the right address?", "ru": "Письмо отправили на правильный адрес?"}, {"n": 3, "prefix": "", "hint": "finish", "answer": "Has the work been finished", "suffix": " on time?", "ru": "Работу закончили вовремя?"}, {"n": 4, "prefix": "", "hint": "book", "answer": "Have the tickets been booked", "suffix": " for next Friday?", "ru": "Билеты забронировали на следующую пятницу?"}, {"n": 5, "prefix": "", "hint": "confirm", "answer": "Have the results been confirmed", "suffix": " by the lab?", "ru": "Результаты подтвердила лаборатория?"}, {"n": 6, "prefix": "", "hint": "deliver", "answer": "Has the package been delivered", "suffix": " yet?", "ru": "Посылку уже доставили?"}, {"n": 7, "prefix": "", "hint": "approve", "answer": "Has the request been approved", "suffix": " by the manager?", "ru": "Запрос одобрил менеджер?"}, {"n": 8, "prefix": "", "hint": "pay", "answer": "Has the invoice been paid", "suffix": " yet?", "ru": "Счёт уже оплатили?"}, {"n": 9, "prefix": "", "hint": "update", "answer": "Has the website been updated", "suffix": " recently?", "ru": "Сайт недавно обновляли?"}, {"n": 10, "prefix": "", "hint": "install", "answer": "Has the software been installed", "suffix": " on every computer?", "ru": "Программу установили на каждый компьютер?"}, {"n": 11, "prefix": "", "hint": "upload", "answer": "Have the photos been uploaded", "suffix": " yet?", "ru": "Фотографии уже загрузили?"}, {"n": 12, "prefix": "", "hint": "review", "answer": "Has the application been reviewed", "suffix": " yet?", "ru": "Заявку уже рассмотрели?"}, {"n": 13, "prefix": "", "hint": "complete", "answer": "Has the project been completed", "suffix": " on time?", "ru": "Проект завершили вовремя?"}, {"n": 14, "prefix": "", "hint": "review", "answer": "Has the budget been reviewed", "suffix": " this year?", "ru": "Бюджет в этом году уже проверяли?"}, {"n": 15, "prefix": "", "hint": "process", "answer": "Has the order been processed", "suffix": " yet?", "ru": "Заказ уже обработали?"}, {"n": 16, "prefix": "", "hint": "return", "answer": "Has the item been returned", "suffix": " to the shop?", "ru": "Товар вернули в магазин?"}, {"n": 17, "prefix": "", "hint": "change", "answer": "Has the password been changed", "suffix": " recently?", "ru": "Пароль недавно меняли?"}, {"n": 18, "prefix": "", "hint": "delay", "answer": "Has the flight been delayed", "suffix": " again?", "ru": "Рейс снова задержали?"}, {"n": 19, "prefix": "", "hint": "reschedule", "answer": "Has the meeting been rescheduled", "suffix": " yet?", "ru": "Встречу уже перенесли?"}, {"n": 20, "prefix": "", "hint": "submit", "answer": "Have the documents been submitted", "suffix": " yet?", "ru": "Документы уже подали?"}, {"n": 21, "prefix": "", "hint": "repair", "answer": "Has the car been repaired", "suffix": " yet?", "ru": "Машину уже починили?"}, {"n": 22, "prefix": "", "hint": "paint", "answer": "Has the wall been painted", "suffix": " yet?", "ru": "Стену уже покрасили?"}, {"n": 23, "prefix": "", "hint": "announce", "answer": "Has the news been announced", "suffix": " yet?", "ru": "Новость уже объявили?"}, {"n": 24, "prefix": "", "hint": "choose", "answer": "Has the winner been chosen", "suffix": " yet?", "ru": "Победителя уже выбрали?"}, {"n": 25, "prefix": "", "hint": "raise", "answer": "Have the funds been raised", "suffix": " yet?", "ru": "Средства уже собрали?"}, {"n": 26, "prefix": "", "hint": "ship", "answer": "Have the goods been shipped", "suffix": " yet?", "ru": "Товар уже отправили?"}, {"n": 27, "prefix": "", "hint": "approve", "answer": "Has the plan been approved", "suffix": " yet?", "ru": "План уже одобрили?"}, {"n": 28, "prefix": "", "hint": "report", "answer": "Has the problem been reported", "suffix": " yet?", "ru": "О проблеме уже сообщили?"}, {"n": 29, "prefix": "", "hint": "suspend", "answer": "Has the account been suspended", "suffix": " yet?", "ru": "Аккаунт уже заблокировали?"}, {"n": 30, "prefix": "", "hint": "back", "answer": "Has the data been backed", "suffix": " up recently?", "ru": "Данные недавно сохраняли резервной копией?"}]}};
+
+
+function confirmResetPassword(){
+  const pw = prompt('This will erase ALL saved progress on this page.\nEnter the reset password to confirm:');
+  if (pw === null) return false; // cancelled
+  if (pw !== 'thebest') { alert('Incorrect password. Progress was not reset.'); return false; }
+  return true;
+}
+
+const SUPABASE_URL = 'https://zhzhamxgfornfvwckfyf.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_LoyWwbsXHBb4l_k1FnmAog_yZO0uPrn';
+const TRACK_BLOCK = 'block6';
+
+const SESSION_ID = (function(){
+  try {
+    let sid = sessionStorage.getItem('hw_session_id');
+    if (!sid) { sid = 'sess_' + Date.now() + '_' + Math.random().toString(36).slice(2,10); sessionStorage.setItem('hw_session_id', sid); }
+    return sid;
+  } catch(e) { return 'sess_' + Date.now() + '_' + Math.random().toString(36).slice(2,10); }
+})();
+
+function getRole(){
+  try { return localStorage.getItem('hw_role') === 'teacher' ? 'teacher' : 'student'; } catch(e) { return 'student'; }
+}
+
+function trackEvent(topic, prefix, suffix, correctAnswer, studentAnswer, isCorrect){
+  if (!SUPABASE_URL || SUPABASE_URL.indexOf('__') === 0) return; // Supabase not configured yet
+  const role = getRole();
+  if (role === 'teacher') { console.log('[Supabase tracking] skipped -- teacher mode is on'); return; }
+  try {
+    fetch(SUPABASE_URL + '/rest/v1/activity_events', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({
+        session_id: SESSION_ID,
+        block: TRACK_BLOCK,
+        topic: topic,
+        prefix: prefix,
+        suffix: suffix,
+        correct_answer: correctAnswer,
+        student_answer: studentAnswer,
+        question_text: (prefix || '') + (correctAnswer || '') + (suffix || ''),
+        is_correct: isCorrect,
+        event_type: 'answer',
+        role: role
+      }),
+      keepalive: true
+    }).then(function(res){
+      if (!res.ok) {
+        res.text().then(function(t){ console.error("[Supabase tracking] insert failed:", res.status, t); });
+      } else {
+        console.log("[Supabase tracking] event saved OK");
+      }
+    }).catch(function(err){ console.error("[Supabase tracking] network error:", err); });
+  } catch(e) { console.error("[Supabase tracking] unexpected error:", e); }
+}
+
+function normVal(s){
+  return s.trim().toLowerCase()
+    .replace(/[‘’´`ʼ′ʻˮ]/g, "'")
+    .replace(/\s+/g,' ');
+}
+
+function shuffleArr(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+const COND_DEFS = [
+  { key: 'present_simple', label: 'Present Simple', badge: 'Present Simple Passive',
+    ruleTitle: '📖 Present Simple Passive — правило и тонкости живой речи',
+    rule: `
+      <h4>Форма</h4>
+      <p><code>am/is/are + past participle (3-я форма глагола)</code>. Подлежащим становится объект действия — тот, НАД кем/чем совершается действие, а не тот, кто его совершает.</p>
+      <ul>
+        <li><b>English is spoken in many countries.</b> — кто-то говорит по-английски, но нам важен сам факт, а не кто именно говорит.</li>
+        <li><b>This cheese is made from goat's milk.</b></li>
+      </ul>
+      <h4>Когда используется</h4>
+      <ul>
+        <li>Когда исполнитель действия неизвестен, неважен или очевиден из контекста: <i>Rice is grown in Asia.</i> (и так понятно, что фермерами)</li>
+        <li>Общие факты, процессы, правила: <i>The office is cleaned every evening.</i></li>
+        <li>Когда хотим подчеркнуть объект, а не исполнителя (типично для новостей, инструкций, научных текстов).</li>
+      </ul>
+      <div class="rule-note"><b>by + исполнитель — опционально.</b> Если всё же нужно указать, КТО совершает действие, добавляем <code>by</code>: <i>The museum is visited by tourists.</i> Но в большинстве случаев эта часть просто опускается — в этом и смысл пассива.</div>
+      <h4>Живая речь</h4>
+      <ul>
+        <li>Пассив особенно часто встречается в формальном/официальном стиле — инструкции, объявления, новости: <i>Passengers are asked to fasten their seatbelts.</i></li>
+        <li>В разговорной речи носители иногда предпочитают активный залог с неопределённым подлежащим: <i>They speak English here</i> вместо <i>English is spoken here</i> — оба варианта верны, пассив просто чуть более "книжный".</li>
+      </ul>` },
+  { key: 'past_simple', label: 'Past Simple', badge: 'Past Simple Passive',
+    ruleTitle: '📖 Past Simple Passive — правило и тонкости живой речи',
+    rule: `
+      <h4>Форма</h4>
+      <p><code>was/were + past participle</code>. Та же логика, что и в Present Simple Passive, только само действие произошло и завершилось в прошлом.</p>
+      <ul>
+        <li><b>The Mona Lisa was painted by Leonardo da Vinci.</b></li>
+        <li><b>The letter was sent last week.</b></li>
+      </ul>
+      <h4>Когда используется</h4>
+      <ul>
+        <li>Единичное завершённое событие в прошлом, где важен объект действия: <i>The bank was robbed last night.</i></li>
+        <li>Исторические факты: <i>This bridge was built in the 19th century.</i></li>
+        <li>Особенно часто — в новостях о преступлениях, авариях, находках: <i>The treasure was discovered by a farmer.</i></li>
+      </ul>
+      <div class="rule-note"><b>Совет:</b> если можешь мысленно вставить дату/момент в прошлом ("вчера", "в 1998 году", "во время шторма") — это Past Simple Passive, а не Present Perfect Passive, у которого нет привязки к конкретному моменту.</div>
+      <h4>Живая речь</h4>
+      <ul>
+        <li>Классический стиль газетных заголовков: <i>Man Arrested After Chase</i> (даже без вспомогательного глагола — ещё более сжатый "заголовочный" пассив).</li>
+        <li>В устной речи часто используют, рассказывая истории: <i>My phone was stolen on the train!</i></li>
+      </ul>` },
+  { key: 'present_perfect', label: 'Present Perfect', badge: 'Present Perfect Passive',
+    ruleTitle: '📖 Present Perfect Passive — правило и тонкости живой речи',
+    rule: `
+      <h4>Форма</h4>
+      <p><code>has/have + been + past participle</code>. Три части подряд: вспомогательный глагол has/have, всегда неизменяемое <code>been</code>, и причастие прошедшего времени.</p>
+      <ul>
+        <li><b>The room has been cleaned already.</b></li>
+        <li><b>The tickets have been booked for next Friday.</b></li>
+      </ul>
+      <h4>Когда используется</h4>
+      <ul>
+        <li>Действие завершилось, но результат актуален сейчас, а точное время не называется: <i>The work has been finished.</i> (важен результат "готово", а не когда именно закончили)</li>
+        <li>Особенно часто с <code>already</code>, <code>yet</code>, <code>just</code>, <code>recently</code>: <i>The email hasn't been sent yet.</i></li>
+        <li>Отчёты о статусе, обновления, уведомления: <i>Your order has been processed.</i></li>
+      </ul>
+      <div class="rule-note"><b>Present Perfect vs Past Simple Passive:</b> <i>The car was repaired yesterday</i> (известно когда — Past Simple) vs <i>The car has been repaired</i> (просто факт, что сейчас всё готово, неважно когда — Present Perfect). Часто ошибка — добавлять точное время (yesterday, in 2020) к Present Perfect Passive, этого делать нельзя.</div>
+      <h4>Живая речь</h4>
+      <ul>
+        <li>Очень характерно для деловой переписки и уведомлений систем: <i>Your password has been changed.</i>, <i>The item has been shipped.</i></li>
+        <li>В быстрой речи <code>has been</code> часто сокращается до <code>'s been</code>: <i>It's been done.</i></li>
+      </ul>` },
+];
+
+const CATS = ['affirmative', 'negative', 'interrogative'];
+const ROUND_SIZE = 25;
+const BANK_SIZE_PER_COND = 90; // 30 x 3 categories (affirmative/negative/interrogative)
+
+const STORAGE_KEY = 'hwProgress_block6';
+
+function loadRoundState(){
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch(e) { return null; }
+}
+
+function saveRoundState(){
+  try {
+    const inputsState = {};
+    roundContainerEl.querySelectorAll('.gap').forEach(inp => {
+      const rid = inp.dataset.rid;
+      let c = null;
+      if (inp.classList.contains('correct')) c = 'correct';
+      else if (inp.classList.contains('wrong')) c = 'wrong';
+      if (inp.value || c) inputsState[rid] = { v: inp.value, c: c, ro: inp.readOnly };
+    });
+    const state = {
+      selectedConds: [...selectedConds],
+      mistakesOnly: mistakesOnly,
+      mistakesBank: [...mistakesBank.entries()],
+      seenSet: [...seenSet],
+      currentRound: currentRound,
+      inputs: inputsState,
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  } catch(e) { /* storage unavailable -- fail silently */ }
+}
+
+const __saved = loadRoundState();
+let selectedConds = new Set((__saved && __saved.selectedConds && __saved.selectedConds.length) ? __saved.selectedConds : ['present_simple']);
+let mistakesOnly = __saved ? !!__saved.mistakesOnly : false;
+let currentRound = [];
+let mistakesBank = new Map((__saved && __saved.mistakesBank) ? __saved.mistakesBank : []);
+let seenSet = new Set((__saved && __saved.seenSet) ? __saved.seenSet : []);
+
+function itemKey(item){
+  return item.condKey + '|' + item.cat + '|' + item.n;
+}
+
+const condTabsEl = document.getElementById('cond-tabs');
+const ruleStackEl = document.getElementById('rule-stack');
+const bankOverviewEl = document.getElementById('bank-overview');
+const roundContainerEl = document.getElementById('round-container');
+const statFilledEl = document.getElementById('stat-filled');
+const statCorrectEl = document.getElementById('stat-correct');
+const statWrongEl = document.getElementById('stat-wrong');
+
+function renderCondTabs(){
+  condTabsEl.innerHTML = '';
+  COND_DEFS.forEach(cd => {
+    const tab = document.createElement('div');
+    tab.className = 'cond-tab' + (selectedConds.has(cd.key) ? ' active' : '');
+    tab.id = 'condtab-' + cd.key;
+    tab.innerHTML = '<span class="check-dot">' + (selectedConds.has(cd.key) ? '✓' : '') + '</span>' + cd.label;
+    tab.onclick = () => toggleCond(cd.key);
+    condTabsEl.appendChild(tab);
+  });
+  const mtab = document.createElement('div');
+  mtab.className = 'cond-tab mistakes-tab' + (mistakesOnly ? ' active' : '');
+  mtab.id = 'mistakes-tab';
+  mtab.innerHTML = '<span class="check-dot">' + (mistakesOnly ? '✓' : '') + '</span>⚠ Mistakes Bank (' + mistakesBank.size + ')';
+  mtab.onclick = () => { mistakesOnly = !mistakesOnly; onSelectionChanged(); };
+  condTabsEl.appendChild(mtab);
+}
+
+function toggleCond(key){
+  if (selectedConds.has(key)) selectedConds.delete(key);
+  else selectedConds.add(key);
+  onSelectionChanged();
+}
+
+function onSelectionChanged(){
+  seenSet = new Set();
+  renderCondTabs();
+  renderRuleStack();
+  buildRound();
+  renderRound();
+  updateBankOverview();
+  saveRoundState();
+}
+
+function renderRuleStack(){
+  ruleStackEl.innerHTML = '';
+  COND_DEFS.forEach(cd => {
+    if (!selectedConds.has(cd.key)) return;
+    const box = document.createElement('div');
+    box.className = 'rule-box';
+    box.innerHTML = `
+      <div class="rule-toggle" id="ruletoggle-${cd.key}">
+        <span>${cd.ruleTitle}</span>
+        <span class="chev">▾</span>
+      </div>
+      <div class="rule-content" id="rulecontent-${cd.key}">${cd.rule}</div>
+    `;
+    ruleStackEl.appendChild(box);
+    const toggle = box.querySelector('.rule-toggle');
+    const contentEl = box.querySelector('.rule-content');
+    toggle.addEventListener('click', () => {
+      toggle.classList.toggle('open');
+      contentEl.classList.toggle('open');
+    });
+  });
+}
+
+function currentPoolSize(){
+  if (mistakesOnly) return mistakesBank.size;
+  return selectedConds.size * BANK_SIZE_PER_COND;
+}
+
+function updateBankOverview(){
+  const total = currentPoolSize();
+  const seen = seenSet.size;
+  if (total === 0) {
+    bankOverviewEl.innerHTML = mistakesOnly
+      ? 'Mistakes Bank is empty — nice work! Answer questions elsewhere and mistakes will collect here.'
+      : 'Select at least one conditional type to see the question bank.';
+  } else {
+    bankOverviewEl.innerHTML = `Bank: <b>${total}</b> question${total===1?'':'s'} ${mistakesOnly ? '(Mistakes Bank)' : 'across selected filters'} &nbsp;·&nbsp; Completed so far: <b>${seen}</b> / ${total}`;
+  }
+}
+
+function buildRound(){
+  if (mistakesOnly) {
+    const pool = [...mistakesBank.values()];
+    if (pool.length === 0) { currentRound = []; return; }
+    const roundSize = Math.min(ROUND_SIZE, pool.length); // don't pad with repeats -- show only real mistakes
+    const shuffled = shuffleArr(pool);
+    const items = shuffled.slice(0, roundSize);
+    currentRound = shuffleArr(items).map((item, i) => Object.assign({}, item, { rid: i }));
+    return;
+  }
+
+  const conds = [...selectedConds];
+  if (conds.length === 0) { currentRound = []; return; }
+
+  const base = Math.floor(ROUND_SIZE / CATS.length);
+  const rem = ROUND_SIZE - base * CATS.length;
+  const counts = CATS.map((c, i) => base + (i < rem ? 1 : 0));
+
+  let items = [];
+  CATS.forEach((cat, idx) => {
+    let pool = [];
+    conds.forEach(condKey => {
+      ALL[condKey][cat].forEach(it => pool.push(Object.assign({}, it, { condKey, cat })));
+    });
+    const shuffled = shuffleArr(pool);
+    const need = counts[idx];
+    for (let i = 0; i < need; i++) {
+      items.push(Object.assign({}, shuffled[i % shuffled.length]));
+    }
+  });
+  items = shuffleArr(items);
+  currentRound = items.map((item, i) => Object.assign({}, item, { rid: i }));
+}
+
+function renderRound(){
+  roundContainerEl.innerHTML = '';
+  if (currentRound.length === 0) {
+    roundContainerEl.innerHTML = mistakesOnly
+      ? '<div class="empty-state">No mistakes recorded yet for the current filters. Answer some questions elsewhere first!</div>'
+      : '<div class="empty-state">Select at least one conditional type above to start a round.</div>';
+    updateStats();
+    return;
+  }
+  const listCard = document.createElement('div');
+  listCard.className = 'list-card';
+  currentRound.forEach((item, i) => {
+    const row = document.createElement('div');
+    row.className = 'item';
+    row.innerHTML = `
+      <div class="item-row">
+        <span class="item-num">${i + 1}.</span>
+        <span class="item-text">${item.prefix}</span>
+        <span class="gapwrap">
+          <input type="text" class="gap" data-rid="${item.rid}" autocomplete="off" spellcheck="false">
+        </span>
+        <span class="hint">(${item.hint})</span>
+        <span class="item-text">${item.suffix}</span>
+        <span class="correct-answer"></span>
+        <button type="button" class="btn-check-item" data-rid="${item.rid}">Check</button>
+      </div>
+      <div class="item-ru">${item.ru || ''}</div>
+    `;
+    listCard.appendChild(row);
+  });
+  roundContainerEl.appendChild(listCard);
+
+  roundContainerEl.querySelectorAll('.gap').forEach(inp => {
+
+
+    inp.addEventListener('keydown', (e) => {
+
+
+      if (e.key === 'Enter') {
+
+
+        e.preventDefault();
+
+
+        checkSingle(inp);
+
+
+        focusNext(inp);
+
+
+      }
+
+
+    });
+
+
+  });
+
+
+  roundContainerEl.querySelectorAll('.btn-check-item').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const inp = roundContainerEl.querySelector('.gap[data-rid="' + btn.dataset.rid + '"]');
+      if (inp) checkSingle(inp);
+    });
+  });
+
+  updateStats();
+}
+
+function focusNext(inp){
+  const all = [...roundContainerEl.querySelectorAll('.gap')];
+  const idx = all.indexOf(inp);
+  for (let i = idx + 1; i < all.length; i++) {
+    if (!all[i].readOnly) { all[i].focus(); return; }
+  }
+}
+
+// note element is the 3rd sibling after the gapwrap: gapwrap -> hint -> suffix(item-text) -> correct-answer
+function getNoteEl(inp){
+  return inp.parentElement.nextElementSibling.nextElementSibling.nextElementSibling;
+}
+
+function getCheckBtn(inp){
+  return roundContainerEl.querySelector('.btn-check-item[data-rid="' + inp.dataset.rid + '"]');
+}
+
+function checkSingle(inp){
+  if (inp.readOnly) return;
+  const rid = inp.dataset.rid;
+  const item = currentRound.find(x => String(x.rid) === String(rid));
+  if (!item) return;
+  const note = getNoteEl(inp);
+  const val = normVal(inp.value);
+  const acceptedList = (item.answers || [item.answer]).map(normVal);
+  const key = itemKey(item);
+  const isCorrect = val.length && acceptedList.includes(val);
+
+  if (isCorrect) {
+    inp.classList.add('correct'); inp.classList.remove('wrong');
+    note.classList.remove('show');
+    if (mistakesBank.has(key)) mistakesBank.delete(key); // graduate out of mistakes
+  } else {
+    inp.classList.add('wrong'); inp.classList.remove('correct');
+    const shown = (item.answers && item.answers.length > 1) ? item.answers.join(' / ') : item.answer;
+    note.textContent = '→ ' + shown;
+    note.classList.add('show');
+    mistakesBank.set(key, item);
+  }
+  inp.readOnly = true;
+  const __btn = getCheckBtn(inp); if (__btn) __btn.disabled = true;
+  seenSet.add(key);
+  trackEvent(item.condKey + ' \u00b7 ' + item.cat, item.prefix, item.suffix, item.answer, inp.value, isCorrect);
+  updateStats();
+  updateBankOverview();
+  updateMistakesTabLabel();
+  saveRoundState();
+}
+
+function updateMistakesTabLabel(){
+  const tab = document.getElementById('mistakes-tab');
+  if (tab) tab.innerHTML = '<span class="check-dot">' + (mistakesOnly ? '✓' : '') + '</span>⚠ Mistakes Bank (' + mistakesBank.size + ')';
+}
+
+function checkAll(){
+  roundContainerEl.querySelectorAll('.gap').forEach(inp => {
+    if (!inp.readOnly) checkSingle(inp);
+  });
+}
+
+function resetRound(){
+  roundContainerEl.querySelectorAll('.gap').forEach(inp => {
+    inp.value = '';
+    inp.readOnly = false;
+    const __rbtn = getCheckBtn(inp); if (__rbtn) __rbtn.disabled = false;
+    inp.classList.remove('correct', 'wrong');
+    getNoteEl(inp).classList.remove('show');
+  });
+  updateStats();
+  saveRoundState();
+}
+
+function newRound(){
+  buildRound();
+  renderRound();
+  saveRoundState();
+}
+
+function updateStats(){
+  const inputs = [...roundContainerEl.querySelectorAll('.gap')];
+  const filled = inputs.filter(i => i.readOnly).length;
+  const correct = inputs.filter(i => i.classList.contains('correct')).length;
+  const wrong = inputs.filter(i => i.classList.contains('wrong')).length;
+  statFilledEl.textContent = filled;
+  statCorrectEl.textContent = correct;
+  statWrongEl.textContent = wrong;
+}
+
+document.getElementById('btn-select-all').addEventListener('click', () => {
+  COND_DEFS.forEach(cd => selectedConds.add(cd.key));
+  mistakesOnly = false;
+  onSelectionChanged();
+});
+document.getElementById('btn-select-none').addEventListener('click', () => {
+  selectedConds.clear();
+  onSelectionChanged();
+});
+document.getElementById('btn-check-all').addEventListener('click', checkAll);
+document.getElementById('btn-reset-round').addEventListener('click', resetRound);
+document.getElementById('btn-new-round').addEventListener('click', newRound);
+document.getElementById('btn-reset-all').addEventListener('click', () => {
+  if (!confirmResetPassword()) return;
+  selectedConds = new Set(['present_simple']);
+  mistakesOnly = false;
+  mistakesBank = new Map();
+  onSelectionChanged();
+});
+
+renderCondTabs();
+renderRuleStack();
+if (__saved && __saved.currentRound && __saved.currentRound.length) {
+  currentRound = __saved.currentRound;
+} else {
+  buildRound();
+}
+renderRound();
+if (__saved && __saved.inputs) {
+  roundContainerEl.querySelectorAll('.gap').forEach(inp => {
+    const saved = __saved.inputs[inp.dataset.rid];
+    if (!saved) return;
+    inp.value = saved.v || '';
+    if (saved.c === 'correct') {
+      inp.classList.add('correct');
+    } else if (saved.c === 'wrong') {
+      inp.classList.add('wrong');
+      const item = currentRound.find(x => String(x.rid) === inp.dataset.rid);
+      if (item) {
+        const note = getNoteEl(inp);
+        note.textContent = '→ ' + item.answer;
+        note.classList.add('show');
+      }
+    }
+    if (saved.ro) { inp.readOnly = true; const __sbtn = getCheckBtn(inp); if (__sbtn) __sbtn.disabled = true; }
+  });
+  updateStats();
+}
+updateBankOverview();
+</script>
+</body>
+</html>
