@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Word Formation</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Nunito:wght@600;700;800&display=swap');
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --brand: #16233F; --brand-dark: #0D1830;
+    --bg: #FFF8EE; --surface: #ffffff; --surface2: #FFF1DC;
+    --accent: #E86F0C; --accent-light: #FDE4C6; --accent-dark: #C25A00;
+    --gold: #F5B841; --gold-dark: #D69A1F;
+    --orange: #D97706;
+    --green: #2D9E6B; --green-bg: #E6F7EF;
+    --red: #D63B3B; --red-bg: #FDEAEA;
+    --text: #241C10; --muted: #7C6A54; --muted2: #C9B79B;
+    --border: #F0DFC2; --radius: 12px;
+    --shadow-card: 0 2px 10px rgba(120,80,20,0.08);
+  }
+  body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  header {
+    background: var(--brand); padding: 14px 32px;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 10px; position: sticky; top: 0; z-index: 20;
+    box-shadow: 0 3px 16px rgba(22,35,63,0.45);
+  }
+  .logo { font-family: 'Nunito', sans-serif; font-size: 17px; font-weight: 800; color: #fff; line-height: 1.2; }
+  .logo-sub { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.68); letter-spacing: 0.7px; text-transform: uppercase; display: block; margin-top: 2px; }
+  .chip { font-size: 13px; font-weight: 700; padding: 4px 12px; border-radius: 20px; background: rgba(255,255,255,0.18); color: #fff; border: 1px solid rgba(255,255,255,0.35); }
+  .chevrons { display: inline-flex; margin-left: 8px; vertical-align: middle; }
+  .chevrons span {
+    display: inline-block; width: 0; height: 0;
+    border-top: 7px solid transparent; border-bottom: 7px solid transparent;
+    border-left: 9px solid var(--accent); margin-left: -3px;
+  }
+  .chevrons span:last-child { border-left-color: var(--gold); }
+  .btn-reset-all {
+    font-family: 'Inter', sans-serif; font-size: 12.5px; font-weight: 700; padding: 7px 16px;
+    border-radius: 20px; cursor: pointer; border: 1.5px solid rgba(255,255,255,0.5);
+    background: rgba(0,0,0,0.15); color: #fff; transition: all .15s;
+  }
+  .btn-reset-all:hover { background: rgba(0,0,0,0.3); }
+  .back-link {
+    display: inline-flex; align-items: center; gap: 5px; font-family: 'Inter', sans-serif;
+    font-size: 12.5px; font-weight: 700; padding: 7px 14px; border-radius: 20px;
+    color: rgba(255,255,255,0.85); text-decoration: none; border: 1.5px solid rgba(255,255,255,0.3);
+    background: transparent; transition: all .15s; margin-right: 14px; flex-shrink: 0;
+  }
+  .back-link:hover { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.5); color: #fff; }
+
+
+  main { max-width: 900px; margin: 0 auto; padding: 24px 18px 60px; }
+
+  .block-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .block-badge {
+    font-family: 'Nunito', sans-serif; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px;
+    background: var(--accent); color: #fff; padding: 5px 14px; border-radius: 8px;
+  }
+  .block-title { font-family: 'Nunito', sans-serif; font-size: 19px; font-weight: 800; color: var(--brand-dark); }
+  .block-subtitle { font-size: 13px; color: var(--muted); margin-top: 4px; }
+
+  .cond-picker { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 18px; flex-wrap: wrap; }
+  .cond-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+  .cond-tab {
+    font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 800; padding: 8px 18px;
+    border-radius: 10px; background: var(--surface2); border: 2px solid transparent; color: var(--muted);
+    cursor: pointer; transition: all .15s; display: flex; align-items: center; gap: 6px;
+  }
+  .cond-tab .check-dot {
+    width: 14px; height: 14px; border-radius: 4px; border: 2px solid var(--muted2); background: #fff; flex-shrink: 0;
+    display: inline-flex; align-items: center; justify-content: center; font-size: 10px; color: transparent;
+  }
+  .cond-tab:hover { color: var(--brand); }
+  .cond-tab.active { background: var(--brand-dark); color: #fff; }
+  .cond-tab.active .check-dot { background: var(--gold); border-color: var(--gold); color: var(--brand-dark); }
+  .cond-quick { display: flex; gap: 6px; }
+  .quick-btn {
+    font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 700; padding: 7px 14px;
+    border-radius: 20px; cursor: pointer; border: 1.5px solid var(--border); background: var(--surface); color: var(--muted);
+    transition: all .15s;
+  }
+  .quick-btn:hover { border-color: var(--accent); color: var(--accent-dark); }
+
+  #rule-stack { display: flex; flex-direction: column; gap: 2px; margin-bottom: 10px; }
+
+  .bank-overview {
+    font-size: 13px; color: var(--muted); background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 10px 16px; margin-bottom: 16px;
+  }
+  .bank-overview b { color: var(--brand-dark); }
+
+  .stats-bar {
+    display: flex; align-items: center; gap: 22px; flex-wrap: wrap; background: var(--surface);
+    border: 1.5px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-card);
+    padding: 14px 20px; margin-bottom: 18px;
+    position: sticky; top: 66px; z-index: 15;
+  }
+  .cond-tab.mistakes-tab { background: var(--red-bg); color: var(--red); }
+  .cond-tab.mistakes-tab.active { background: var(--red); color: #fff; }
+  .cond-tab.mistakes-tab .check-dot { border-color: var(--red); }
+  .cond-tab.mistakes-tab.active .check-dot { background: #fff; border-color: #fff; color: var(--red); }
+  .stat { display: flex; align-items: baseline; gap: 5px; }
+  .stat-num { font-family: 'Nunito', sans-serif; font-size: 20px; font-weight: 800; color: var(--brand-dark); }
+  .stat-label { font-size: 12px; color: var(--muted); font-weight: 600; }
+  .stat-correct .stat-num { color: var(--green); }
+  .stat-wrong .stat-num { color: var(--red); }
+  .stats-actions { display: flex; gap: 8px; margin-left: auto; flex-wrap: wrap; }
+  .btn-newround { background: var(--gold); color: var(--brand-dark); }
+  .btn-newround:hover { background: var(--gold-dark); color: #fff; }
+
+  .empty-state { text-align: center; padding: 40px 20px; color: var(--muted); font-size: 14px; }
+
+  .rule-box { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-card); margin-bottom: 20px; overflow: hidden; }
+  .rule-toggle {
+    display: flex; align-items: center; justify-content: space-between; padding: 11px 18px; cursor: pointer;
+    font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 14.5px; color: var(--brand-dark);
+  }
+  .rule-toggle .chev { font-size: 12px; color: var(--muted); transition: transform .2s; }
+  .rule-toggle.open .chev { transform: rotate(180deg); }
+  .rule-content { display: none; padding: 0 20px 20px; font-size: 13.5px; line-height: 1.7; color: var(--text); }
+  .rule-content.open { display: block; }
+  .rule-content h4 { font-size: 13px; font-weight: 800; color: var(--brand-dark); margin: 14px 0 6px; }
+  .rule-content h4:first-child { margin-top: 0; }
+  .rule-content code { background: var(--accent-light); color: var(--accent-dark); padding: 1px 6px; border-radius: 5px; font-family: 'Inter', monospace; font-weight: 600; }
+  .rule-content ul { margin: 6px 0 6px 20px; }
+  .rule-content li { margin-bottom: 4px; }
+  .rule-note { background: var(--surface2); border-left: 3px solid var(--gold-dark); padding: 8px 12px; border-radius: 6px; margin: 10px 0; font-size: 13px; color: var(--muted); }
+  .verb-table { width: 100%; border-collapse: collapse; margin: 8px 0 14px; font-size: 13px; }
+  .verb-table td { padding: 6px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .verb-table tr:first-child td { border-top: 1px solid var(--border); }
+  .verb-table td:first-child { white-space: nowrap; width: 1%; padding-right: 16px; }
+  .verb-table td:last-child { color: var(--muted); }
+
+  .tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+  .tab {
+    font-family: 'Nunito', sans-serif; font-size: 13.5px; font-weight: 800; padding: 9px 20px;
+    border-radius: 12px; background: var(--surface); border: 2px solid var(--border); color: var(--muted); cursor: pointer; transition: all .15s;
+  }
+  .tab .tab-score { font-weight: 700; margin-left: 6px; opacity: .8; font-size: 12px; }
+  .tab:hover { border-color: var(--accent); color: var(--accent); }
+  .tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  .list-card { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-card); padding: 8px 20px; }
+  .item {
+    padding: 11px 0; border-bottom: 1px solid var(--border); font-size: 14px; line-height: 1.6;
+  }
+  .item:last-child { border-bottom: none; }
+  .item-row { display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; }
+  .item-num { font-weight: 700; color: var(--muted2); min-width: 30px; font-size: 13px; }
+  .item-text { color: var(--text); }
+  .item-ru { color: var(--muted); font-size: 12.5px; font-style: italic; margin-left: 36px; margin-top: 2px; }
+  .gapwrap { position: relative; display: inline-block; margin: 0 2px; }
+  .gap {
+    font-family: 'Inter', sans-serif; font-size: 13.5px; font-weight: 600;
+    border: none; border-bottom: 2px solid var(--accent); background: var(--accent-light);
+    border-radius: 5px 5px 0 0; padding: 2px 6px; width: 160px; text-align: center; color: var(--accent-dark);
+    outline: none; transition: all .15s;
+  }
+  .gap:focus { background: #fff; box-shadow: 0 0 0 2px var(--accent-light); }
+  .gap.correct { background: var(--green-bg); border-color: var(--green); color: #1e7a4d; }
+  .gap.wrong { background: var(--red-bg); border-color: var(--red); color: var(--red); }
+  .gap[readonly] { cursor: not-allowed; }
+  .hint { color: var(--muted2); font-size: 12.5px; font-style: italic; }
+  .correct-answer { display: none; font-size: 11px; color: var(--green); font-weight: 700; margin-left: 2px; }
+  .correct-answer.show { display: inline; }
+
+  .panel-actions { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 16px 0; flex-wrap: wrap; }
+  .btn {
+    font-family: 'Inter', sans-serif; font-size: 13.5px; font-weight: 700; padding: 10px 22px;
+    border-radius: 24px; cursor: pointer; border: none; transition: all .15s;
+  }
+  .btn-check { background: var(--accent); color: #fff; }
+  .btn-check:hover { background: var(--accent-dark); }
+  .btn-reset { background: var(--surface2); color: var(--muted); border: 1.5px solid var(--border); }
+  .btn-reset:hover { border-color: var(--muted); color: var(--text); }
+  .result-line { font-size: 13.5px; font-weight: 700; }
+  .result-line.ok { color: var(--green); }
+  .result-line.mid { color: var(--gold-dark); }
+  .result-line.poor { color: var(--red); }
+
+  footer { text-align: center; padding: 24px; font-size: 12px; color: var(--muted); }
+
+  @media (max-width: 600px) {
+    .gap { width: 130px; }
+  }
+
+  #teacher-banner {
+    display: none; align-items: center; justify-content: center; gap: 14px;
+    background: var(--gold); color: var(--brand-dark); text-align: center; font-weight: 700; font-size: 13px;
+    padding: 10px 16px; position: sticky; top: 0; z-index: 50; flex-wrap: wrap;
+  }
+  #teacher-banner button {
+    font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 800; padding: 5px 14px; border-radius: 16px;
+    border: 1.5px solid var(--brand-dark); background: transparent; color: var(--brand-dark); cursor: pointer; transition: all .15s;
+  }
+  #teacher-banner button:hover { background: var(--brand-dark); color: #fff; }
+  .btn-check-item {
+    font-family: 'Inter', sans-serif; font-size: 11.5px; font-weight: 700; padding: 4px 10px;
+    border-radius: 14px; cursor: pointer; border: 1.5px solid var(--accent); background: var(--accent-light);
+    color: var(--accent-dark); margin-left: 4px; vertical-align: middle; transition: all .15s;
+  }
+  .btn-check-item:hover { background: var(--accent); color: #fff; }
+  .btn-check-item:disabled { opacity: .35; cursor: default; border-color: var(--border); background: var(--surface2); color: var(--muted); }
+</style>
+</head>
+<body>
+
+<header>
+  <div style="display:flex;align-items:center;">
+    <a class="back-link" href="index.html">← Back</a>
+    <div class="logo">Headway Pre-Intermediate<span class="chevrons"><span></span><span></span></span> <span class="logo-sub">Veronika's Practice</span></div>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <button class="btn-reset-all" id="btn-reset-all">Reset All ↻</button>
+  </div>
+</header>
+
+<div id="teacher-banner">
+  <span>🧪 Teacher mode is ON — your answers on this page are NOT being recorded.</span>
+  <button id="teacher-banner-off">Turn off</button>
+</div>
+
+<main>
+  <div class="block-header">
+    <div>
+      <div class="block-title">Word Formation</div>
+      <div class="block-subtitle" id="block-subtitle">Prefixes and suffixes — nouns, adjectives, negatives, verbs, adverbs (500 words)</div>
+    </div>
+  </div>
+
+  <div class="cond-picker">
+    <div class="cond-tabs" id="cond-tabs"></div>
+    <div class="cond-quick">
+      <button class="quick-btn" id="btn-select-all">All</button>
+      <button class="quick-btn" id="btn-select-none">None</button>
+    </div>
+  </div>
+
+  <div id="rule-stack"></div>
+
+  <div class="bank-overview" id="bank-overview"></div>
+
+  <div class="stats-bar" id="stats-bar">
+    <div class="stat"><span class="stat-num" id="stat-filled">0</span><span class="stat-label">/ 25 filled</span></div>
+    <div class="stat stat-correct"><span class="stat-num" id="stat-correct">0</span><span class="stat-label">correct</span></div>
+    <div class="stat stat-wrong"><span class="stat-num" id="stat-wrong">0</span><span class="stat-label">wrong</span></div>
+    <div class="stats-actions">
+      <button class="btn btn-check" id="btn-check-all">Check</button>
+      <button class="btn btn-reset" id="btn-reset-round">Reset</button>
+      <button class="btn btn-newround" id="btn-new-round">New Round ↻</button>
+    </div>
+  </div>
+
+  <div id="round-container"></div>
+</main>
+
+<footer>Headway Pre-Intermediate · Veronika's Practice · Block 4 · Conditionals</footer>
+
+<script>
+
+(function(){
+  try {
+    if (localStorage.getItem('hw_role') === 'teacher') {
+      document.getElementById('teacher-banner').style.display = 'flex';
+    }
+  } catch(e) {}
+})();
+var __teacherBannerOff = document.getElementById('teacher-banner-off');
+if (__teacherBannerOff) {
+  __teacherBannerOff.addEventListener('click', function(){
+    try { localStorage.setItem('hw_role', 'student'); } catch(e) {}
+    document.getElementById('teacher-banner').style.display = 'none';
+  });
+}
+const ALL = {"noun_formation": {"affirmative": [{"n": 1, "prefix": "After hours of talking, they finally made a ", "hint": "decide → решение", "answer": "decision", "suffix": "."}, {"n": 2, "prefix": "The film is full of fast ", "hint": "act → действие", "answer": "action", "suffix": " scenes."}, {"n": 3, "prefix": "You can find more ", "hint": "inform → информация", "answer": "information", "suffix": " on our website."}, {"n": 4, "prefix": "A good ", "hint": "educate → образование", "answer": "education", "suffix": " opens many doors in life."}, {"n": 5, "prefix": "She works for a large charity ", "hint": "organise → организация", "answer": "organisation", "suffix": "."}, {"n": 6, "prefix": "We received an ", "hint": "invite → приглашение", "answer": "invitation", "suffix": " to the wedding last week."}, {"n": 7, "prefix": "He has a huge ", "hint": "collect → коллекция", "answer": "collection", "suffix": " of old coins."}, {"n": 8, "prefix": "The factory increased its ", "hint": "produce → производство", "answer": "production", "suffix": " this year."}, {"n": 9, "prefix": "We had a long ", "hint": "discuss → обсуждение", "answer": "discussion", "suffix": " about the new plan."}, {"n": 10, "prefix": "I still don't understand his ", "hint": "explain → объяснение", "answer": "explanation", "suffix": " for being late."}, {"n": 11, "prefix": "Children often have a very active ", "hint": "imagine → воображение", "answer": "imagination", "suffix": "."}, {"n": 12, "prefix": "There was a big ", "hint": "celebrate → празднование", "answer": "celebration", "suffix": " after the team won."}, {"n": 13, "prefix": "The ", "hint": "operate → операция", "answer": "operation", "suffix": " lasted almost five hours."}, {"n": 14, "prefix": "Good ", "hint": "communicate → общение", "answer": "communication", "suffix": " is the key to any relationship."}, {"n": 15, "prefix": "The ", "hint": "create → создание", "answer": "creation", "suffix": " of the new app took two years."}, {"n": 16, "prefix": "Students were nervous before the final ", "hint": "examine → экзамен", "answer": "examination", "suffix": "."}, {"n": 17, "prefix": "Thank you for your helpful ", "hint": "suggest → предложение", "answer": "suggestion", "suffix": "."}, {"n": 18, "prefix": "", "hint": "admit → допуск", "answer": "admission", "suffix": " to the museum is free on Sundays."}, {"n": 19, "prefix": "You need ", "hint": "permit → разрешение", "answer": "permission", "suffix": " from your manager to leave early."}, {"n": 20, "prefix": "There is a strong ", "hint": "connect → связь", "answer": "connection", "suffix": " between diet and health."}, {"n": 21, "prefix": "The shop has a wide ", "hint": "select → выбор", "answer": "selection", "suffix": " of cheeses."}, {"n": 22, "prefix": "The helmet gives good ", "hint": "protect → защита", "answer": "protection", "suffix": " for cyclists."}, {"n": 23, "prefix": "Her ", "hint": "react → реакция", "answer": "reaction", "suffix": " to the news was pure shock."}, {"n": 24, "prefix": "We walked in the wrong ", "hint": "direct → направление", "answer": "direction", "suffix": " for an hour."}, {"n": 25, "prefix": "The teacher made a few small ", "hint": "correct → исправление", "answer": "correction", "suffix": "s on my essay."}, {"n": 26, "prefix": "Please read the ", "hint": "instruct → инструкция", "answer": "instruction", "suffix": "s before you start."}, {"n": 27, "prefix": "The ", "hint": "construct → строительство", "answer": "construction", "suffix": " of the new bridge began last spring."}, {"n": 28, "prefix": "The book starts with a short ", "hint": "introduce → введение", "answer": "introduction", "suffix": "."}, {"n": 29, "prefix": "The store is offering a 20% ", "hint": "reduce → сокращение", "answer": "reduction", "suffix": " this week."}, {"n": 30, "prefix": "The ", "hint": "translate → перевод", "answer": "translation", "suffix": " of the poem lost some of its beauty."}, {"n": 31, "prefix": "There's no clear ", "hint": "relate → отношение", "answer": "relation", "suffix": " between the two events."}, {"n": 32, "prefix": "The mountains were a great ", "hint": "inspire → вдохновение", "answer": "inspiration", "suffix": " for the artist."}, {"n": 33, "prefix": "", "hint": "prepare → подготовка", "answer": "preparation", "suffix": " for the exam took the whole month."}, {"n": 34, "prefix": "We'll give your idea careful ", "hint": "consider → рассмотрение", "answer": "consideration", "suffix": "."}], "negative": [{"n": 1, "prefix": "The town has seen a lot of ", "hint": "develop → развитие", "answer": "development", "suffix": " recently."}, {"n": 2, "prefix": "There has been a big ", "hint": "improve → улучшение", "answer": "improvement", "suffix": " in her English."}, {"n": 3, "prefix": "The two companies signed an ", "hint": "agree → согласие", "answer": "agreement", "suffix": " yesterday."}, {"n": 4, "prefix": "Good ", "hint": "manage → управление", "answer": "management", "suffix": " keeps a team working smoothly."}, {"n": 5, "prefix": "The dancer's ", "hint": "move → движение", "answer": "movement", "suffix": "s were smooth and graceful."}, {"n": 6, "prefix": "Winning the award was a huge ", "hint": "achieve → достижение", "answer": "achievement", "suffix": " for her."}, {"n": 7, "prefix": "The airport made an important ", "hint": "announce → объявление", "answer": "announcement", "suffix": " this morning."}, {"n": 8, "prefix": "They had a small ", "hint": "argue → спор", "answer": "argument", "suffix": " about money."}, {"n": 9, "prefix": "", "hint": "employ → занятость", "answer": "employment", "suffix": " in the city has risen this year."}, {"n": 10, "prefix": "Reading gives me great ", "hint": "enjoy → удовольствие", "answer": "enjoyment", "suffix": "."}, {"n": 11, "prefix": "The ", "hint": "govern → правительство", "answer": "government", "suffix": " announced new rules today."}, {"n": 12, "prefix": "The ", "hint": "pay → оплата", "answer": "payment", "suffix": " is due by the end of the month."}, {"n": 13, "prefix": "English is a basic ", "hint": "require → требование", "answer": "requirement", "suffix": " for this job."}, {"n": 14, "prefix": "The company released a short ", "hint": "state → заявление", "answer": "statement", "suffix": " this afternoon."}, {"n": 15, "prefix": "The new ", "hint": "treat → лечение", "answer": "treatment", "suffix": " has helped many patients."}, {"n": 16, "prefix": "The gym has modern ", "hint": "equip → оборудование", "answer": "equipment", "suffix": " for every workout."}, {"n": 17, "prefix": "The clown provided plenty of ", "hint": "amuse → развлечение", "answer": "amusement", "suffix": " for the kids."}, {"n": 18, "prefix": "Losing the final was a real ", "hint": "disappoint → разочарование", "answer": "disappointment", "suffix": "."}, {"n": 19, "prefix": "The cruise offers live ", "hint": "entertain → развлечение", "answer": "entertainment", "suffix": " every evening."}, {"n": 20, "prefix": "Money can't buy true ", "hint": "happy → счастье", "answer": "happiness", "suffix": "."}, {"n": 21, "prefix": "There was a deep ", "hint": "sad → грусть", "answer": "sadness", "suffix": " in her voice."}, {"n": 22, "prefix": "Thank you for your ", "hint": "kind → доброта", "answer": "kindness", "suffix": " during a hard time."}, {"n": 23, "prefix": "We sat quietly in the ", "hint": "dark → темнота", "answer": "darkness", "suffix": "."}, {"n": 24, "prefix": "Everyone has some ", "hint": "weak → слабость", "answer": "weakness", "suffix": " they want to improve."}, {"n": 25, "prefix": "He was away from work due to ", "hint": "ill → болезнь", "answer": "illness", "suffix": "."}, {"n": 26, "prefix": "Running helps me stay in good ", "hint": "fit → физическая форма", "answer": "fitness", "suffix": "."}, {"n": 27, "prefix": "The campaign raised public ", "hint": "aware → осведомлённость", "answer": "awareness", "suffix": " about the issue."}, {"n": 28, "prefix": "I was impressed by the ", "hint": "useful → полезность", "answer": "usefulness", "suffix": " of the tool."}, {"n": 29, "prefix": "The mistake happened because of pure ", "hint": "careless → небрежность", "answer": "carelessness", "suffix": "."}, {"n": 30, "prefix": "She always speaks with great ", "hint": "polite → вежливость", "answer": "politeness", "suffix": "."}, {"n": 31, "prefix": "I appreciate his ", "hint": "open → открытость", "answer": "openness", "suffix": " about the problem."}, {"n": 32, "prefix": "The salad had a wonderful ", "hint": "fresh → свежесть", "answer": "freshness", "suffix": " to it."}, {"n": 33, "prefix": "She asked for his ", "hint": "forgive → прощение", "answer": "forgiveness", "suffix": " after the argument."}], "interrogative": [{"n": 1, "prefix": "He has a natural ", "hint": "able → способность", "answer": "ability", "suffix": " to make people laugh."}, {"n": 2, "prefix": "There's a small ", "hint": "possible → возможность", "answer": "possibility", "suffix": " of rain tomorrow."}, {"n": 3, "prefix": "The band's ", "hint": "popular → популярность", "answer": "popularity", "suffix": " grew quickly after the tour."}, {"n": 4, "prefix": "The park offers a fun outdoor ", "hint": "active → активность", "answer": "activity", "suffix": " for children."}, {"n": 5, "prefix": "Sometimes fiction feels closer to ", "hint": "real → реальность", "answer": "reality", "suffix": " than we think."}, {"n": 6, "prefix": "There's a clear ", "hint": "similar → сходство", "answer": "similarity", "suffix": " between the two paintings."}, {"n": 7, "prefix": "Her ", "hint": "curious → любопытство", "answer": "curiosity", "suffix": " led her to study space science."}, {"n": 8, "prefix": "Thank you for your ", "hint": "generous → щедрость", "answer": "generosity", "suffix": " this Christmas."}, {"n": 9, "prefix": "The storm cut off ", "hint": "electric → электричество", "answer": "electricity", "suffix": " for hours."}, {"n": 10, "prefix": "The company promotes ", "hint": "equal → равенство", "answer": "equality", "suffix": " in the workplace."}, {"n": 11, "prefix": "I still can't believe my own ", "hint": "stupid → глупость", "answer": "stupidity", "suffix": "."}, {"n": 12, "prefix": "Signing the papers was just a ", "hint": "formal → формальность", "answer": "formality", "suffix": "."}, {"n": 13, "prefix": "She has such a warm ", "hint": "personal → личность", "answer": "personality", "suffix": "."}, {"n": 14, "prefix": "Taking care of the dog is your ", "hint": "responsible → ответственность", "answer": "responsibility", "suffix": "."}, {"n": 15, "prefix": "She stressed the ", "hint": "important → важность", "answer": "importance", "suffix": " of getting enough sleep."}, {"n": 16, "prefix": "There's a big ", "hint": "different → различие", "answer": "difference", "suffix": " between the two options."}, {"n": 17, "prefix": "Winning the match gave the team new ", "hint": "confident → уверенность", "answer": "confidence", "suffix": "."}, {"n": 18, "prefix": "Teaching young children requires a lot of ", "hint": "patient → терпение", "answer": "patience", "suffix": "."}, {"n": 19, "prefix": "Scientists still debate the ", "hint": "exist → существование", "answer": "existence", "suffix": " of the creature."}, {"n": 20, "prefix": "Please give the name of a ", "hint": "refer → ссылка", "answer": "reference", "suffix": " for the job."}, {"n": 21, "prefix": "The country's ", "hint": "depend → зависимость", "answer": "dependence", "suffix": " on oil is a real problem."}, {"n": 22, "prefix": "His sudden ", "hint": "appear → внешность", "answer": "appearance", "suffix": " surprised everyone at the party."}, {"n": 23, "prefix": "The singer's ", "hint": "perform → выступление", "answer": "performance", "suffix": " was truly amazing."}, {"n": 24, "prefix": "Please call us if you need any ", "hint": "assist → помощь", "answer": "assistance", "suffix": "."}, {"n": 25, "prefix": "My favourite ", "hint": "teach → учитель", "answer": "teacher", "suffix": " retired last year."}, {"n": 26, "prefix": "Every ", "hint": "work → рабочий", "answer": "worker", "suffix": " received a bonus this month."}, {"n": 27, "prefix": "The ", "hint": "act → актёр", "answer": "actor", "suffix": " practised his lines for hours."}, {"n": 28, "prefix": "The ", "hint": "paint → художник", "answer": "painter", "suffix": " sold three pictures at the show."}, {"n": 29, "prefix": "She dreams of becoming a famous ", "hint": "write → писатель", "answer": "writer", "suffix": "."}, {"n": 30, "prefix": "The young ", "hint": "invent → изобретатель", "answer": "inventor", "suffix": " won a science prize."}, {"n": 31, "prefix": "The museum welcomes thousands of ", "hint": "visit → посетитель", "answer": "visitor", "suffix": "s each year."}, {"n": 32, "prefix": "Her ", "hint": "employ → работодатель", "answer": "employer", "suffix": " offered her a promotion."}, {"n": 33, "prefix": "The new ", "hint": "direct → директор", "answer": "director", "suffix": " made big changes at the school."}]}, "adjective_formation": {"affirmative": [{"n": 1, "prefix": "Please be ", "hint": "care → осторожный", "answer": "careful", "suffix": " when you cross the road."}, {"n": 2, "prefix": "It was ", "hint": "care → небрежный", "answer": "careless", "suffix": " of him to leave the door open."}, {"n": 3, "prefix": "This app is really ", "hint": "use → полезный", "answer": "useful", "suffix": " for learning languages."}, {"n": 4, "prefix": "My old phone is completely ", "hint": "use → бесполезный", "answer": "useless", "suffix": " now."}, {"n": 5, "prefix": "Too much sugar can be ", "hint": "harm → вредный", "answer": "harmful", "suffix": " to your health."}, {"n": 6, "prefix": "Don't worry, the spider is completely ", "hint": "harm → безвредный", "answer": "harmless", "suffix": "."}, {"n": 7, "prefix": "The staff at the hotel were very ", "hint": "help → полезный/услужливый", "answer": "helpful", "suffix": "."}, {"n": 8, "prefix": "Doctors are ", "hint": "hope → обнадёживающий", "answer": "hopeful", "suffix": " that she will fully recover."}, {"n": 9, "prefix": "The situation seemed completely ", "hint": "hope → безнадёжный", "answer": "hopeless", "suffix": " at first."}, {"n": 10, "prefix": "The new engine is far more ", "hint": "power → могущественный", "answer": "powerful", "suffix": " than the old one."}, {"n": 11, "prefix": "We felt ", "hint": "power → бессильный", "answer": "powerless", "suffix": " to stop the flood."}, {"n": 12, "prefix": "The market was full of ", "hint": "colour → красочный", "answer": "colourful", "suffix": " fruit and flowers."}, {"n": 13, "prefix": "The gas is ", "hint": "colour → бесцветный", "answer": "colourless", "suffix": " and has no smell."}, {"n": 14, "prefix": "The sunset over the sea was absolutely ", "hint": "beauty → красивый", "answer": "beautiful", "suffix": "."}, {"n": 15, "prefix": "That was a very ", "hint": "thought → заботливый", "answer": "thoughtful", "suffix": " gift, thank you."}, {"n": 16, "prefix": "Leaving without saying goodbye was pretty ", "hint": "thought → бездумный", "answer": "thoughtless", "suffix": "."}, {"n": 17, "prefix": "The injury was extremely ", "hint": "pain → болезненный", "answer": "painful", "suffix": " at first."}, {"n": 18, "prefix": "The dentist promised the procedure would be ", "hint": "pain → безболезненный", "answer": "painless", "suffix": "."}, {"n": 19, "prefix": "The dog looked ", "hint": "fear → испуганный", "answer": "fearful", "suffix": " during the storm."}, {"n": 20, "prefix": "The firefighters were ", "hint": "fear → бесстрашный", "answer": "fearless", "suffix": " as they entered the building."}, {"n": 21, "prefix": "Her first novel was extremely ", "hint": "success → успешный", "answer": "successful", "suffix": "."}, {"n": 22, "prefix": "We had a ", "hint": "wonder → замечательный", "answer": "wonderful", "suffix": " time in Italy last summer."}, {"n": 23, "prefix": "The surgeon was calm and ", "hint": "skill → умелый", "answer": "skilful", "suffix": " throughout."}, {"n": 24, "prefix": "The apartment was decorated in a ", "hint": "taste → со вкусом", "answer": "tasteful", "suffix": " way."}, {"n": 25, "prefix": "The soup was watery and completely ", "hint": "taste → безвкусный", "answer": "tasteless", "suffix": "."}, {"n": 26, "prefix": "We had a short but ", "hint": "meaning → значимый", "answer": "meaningful", "suffix": " conversation."}, {"n": 27, "prefix": "The rules seemed ", "hint": "meaning → бессмысленный", "answer": "meaningless", "suffix": " to most students."}, {"n": 28, "prefix": "The queue at the airport seemed ", "hint": "end → бесконечный", "answer": "endless", "suffix": "."}, {"n": 29, "prefix": "The children were ", "hint": "rest → беспокойный", "answer": "restless", "suffix": " after the long car journey."}, {"n": 30, "prefix": "The charity helps ", "hint": "home → бездомный", "answer": "homeless", "suffix": " people find shelter."}, {"n": 31, "prefix": "The old painting turned out to be ", "hint": "price → бесценный", "answer": "priceless", "suffix": "."}, {"n": 32, "prefix": "Without a signature, the cheque is ", "hint": "worth → никчёмный", "answer": "worthless", "suffix": "."}, {"n": 33, "prefix": "The village felt ", "hint": "peace → мирный", "answer": "peaceful", "suffix": " and quiet in the morning."}, {"n": 34, "prefix": "We spent a ", "hint": "delight → восхитительный", "answer": "delightful", "suffix": " evening by the lake."}], "negative": [{"n": 1, "prefix": "This sofa is incredibly ", "hint": "comfort → удобный", "answer": "comfortable", "suffix": "."}, {"n": 2, "prefix": "We're looking for an ", "hint": "afford → доступный", "answer": "affordable", "suffix": " flat near the centre."}, {"n": 3, "prefix": "His behaviour at the meeting was not ", "hint": "accept → приемлемый", "answer": "acceptable", "suffix": "."}, {"n": 4, "prefix": "The trip was really ", "hint": "enjoy → приятный", "answer": "enjoyable", "suffix": " from start to finish."}, {"n": 5, "prefix": "The price they offered seemed quite ", "hint": "reason → разумный", "answer": "reasonable", "suffix": "."}, {"n": 6, "prefix": "Those shoes were very ", "hint": "fashion → модный", "answer": "fashionable", "suffix": " a few years ago."}, {"n": 7, "prefix": "The ring has been in her family and is very ", "hint": "value → ценный", "answer": "valuable", "suffix": "."}, {"n": 8, "prefix": "He's always been a ", "hint": "depend → надёжный", "answer": "dependable", "suffix": " friend."}, {"n": 9, "prefix": "This film isn't really ", "hint": "suit → подходящий", "answer": "suitable", "suffix": " for young children."}, {"n": 10, "prefix": "The story he told wasn't very ", "hint": "believe → правдоподобный", "answer": "believable", "suffix": "."}, {"n": 11, "prefix": "The accident was completely ", "hint": "avoid → предотвратимый", "answer": "avoidable", "suffix": "."}, {"n": 12, "prefix": "We need a more ", "hint": "rely → надёжный", "answer": "reliable", "suffix": " internet connection."}, {"n": 13, "prefix": "The tour guide was extremely ", "hint": "knowledge → знающий", "answer": "knowledgeable", "suffix": " about the ruins."}, {"n": 14, "prefix": "The new shop became ", "hint": "profit → прибыльный", "answer": "profitable", "suffix": " within a year."}, {"n": 15, "prefix": "The ending of the film was a bit ", "hint": "predict → предсказуемый", "answer": "predictable", "suffix": "."}, {"n": 16, "prefix": "Her anger about the delay was completely ", "hint": "understand → понятный", "answer": "understandable", "suffix": "."}, {"n": 17, "prefix": "These curtains are machine ", "hint": "wash → моющийся", "answer": "washable", "suffix": "."}, {"n": 18, "prefix": "Please mark the box as ", "hint": "break → хрупкий", "answer": "breakable", "suffix": " before shipping."}, {"n": 19, "prefix": "The weather here is very ", "hint": "change → изменчивый", "answer": "changeable", "suffix": " in spring."}, {"n": 20, "prefix": "With a plan, the workload becomes more ", "hint": "manage → управляемый", "answer": "manageable", "suffix": "."}, {"n": 21, "prefix": "There was a ", "hint": "notice → заметный", "answer": "noticeable", "suffix": " improvement in his grades."}, {"n": 22, "prefix": "She made a ", "hint": "remark → замечательный", "answer": "remarkable", "suffix": " recovery after the surgery."}, {"n": 23, "prefix": "He's a very ", "hint": "like → симпатичный", "answer": "likeable", "suffix": " character in the film."}, {"n": 24, "prefix": "The manager seemed quite ", "hint": "agree → приятный", "answer": "agreeable", "suffix": " about the change."}, {"n": 25, "prefix": "The office chairs all have ", "hint": "adjust → регулируемый", "answer": "adjustable", "suffix": " height."}, {"n": 26, "prefix": "She comes from a ", "hint": "respect → уважаемый", "answer": "respectable", "suffix": " family in the town."}, {"n": 27, "prefix": "A quiet location is very ", "hint": "desire → желательный", "answer": "desirable", "suffix": " for this project."}, {"n": 28, "prefix": "We tried every ", "hint": "imagine → вообразимый", "answer": "imaginable", "suffix": " solution to the problem."}, {"n": 29, "prefix": "Sadly, the film was pretty ", "hint": "forget → забываемый", "answer": "forgettable", "suffix": "."}, {"n": 30, "prefix": "It's more ", "hint": "sense → разумный", "answer": "sensible", "suffix": " to leave early and avoid the traffic."}, {"n": 31, "prefix": "Who is ", "hint": "response → ответственный", "answer": "responsible", "suffix": " for locking the office at night?"}, {"n": 32, "prefix": "The smell coming from the kitchen was ", "hint": "horror → ужасный", "answer": "horrible", "suffix": "."}, {"n": 33, "prefix": "The building is fully ", "hint": "access → доступный", "answer": "accessible", "suffix": " for wheelchairs."}], "interrogative": [{"n": 1, "prefix": "She stays ", "hint": "act → активный", "answer": "active", "suffix": " by cycling every morning."}, {"n": 2, "prefix": "The team came up with a very ", "hint": "create → творческий", "answer": "creative", "suffix": " solution."}, {"n": 3, "prefix": "The job offer looked very ", "hint": "attract → привлекательный", "answer": "attractive", "suffix": " at first."}, {"n": 4, "prefix": "The new method proved far more ", "hint": "effect → эффективный", "answer": "effective", "suffix": "."}, {"n": 5, "prefix": "The view from the top floor was truly ", "hint": "impress → впечатляющий", "answer": "impressive", "suffix": "."}, {"n": 6, "prefix": "The manager needs to be more ", "hint": "decide → решительный", "answer": "decisive", "suffix": " under pressure."}, {"n": 7, "prefix": "The dog became ", "hint": "aggress → агрессивный", "answer": "aggressive", "suffix": " when strangers approached."}, {"n": 8, "prefix": "The hotel near the beach was too ", "hint": "expense → дорогой", "answer": "expensive", "suffix": " for us."}, {"n": 9, "prefix": "It's ", "hint": "nature → естественный", "answer": "natural", "suffix": " to feel nervous before an exam."}, {"n": 10, "prefix": "The festival celebrates the region's ", "hint": "culture → культурный", "answer": "cultural", "suffix": " history."}, {"n": 11, "prefix": "The team will represent the country at the ", "hint": "nation → национальный", "answer": "national", "suffix": " level."}, {"n": 12, "prefix": "There are big ", "hint": "region → региональный", "answer": "regional", "suffix": " differences in how people speak."}, {"n": 13, "prefix": "This is a ", "hint": "person → личный", "answer": "personal", "suffix": " matter, so please don't share it."}, {"n": 14, "prefix": "She has always been a very ", "hint": "music → музыкальный", "answer": "musical", "suffix": " child."}, {"n": 15, "prefix": "The old town had a truly ", "hint": "magic → волшебный", "answer": "magical", "suffix": " atmosphere at night."}, {"n": 16, "prefix": "His ideas for the project were surprisingly ", "hint": "origin → оригинальный", "answer": "original", "suffix": "."}, {"n": 17, "prefix": "Swimming here can be ", "hint": "danger → опасный", "answer": "dangerous", "suffix": " during high tide."}, {"n": 18, "prefix": "The chef became ", "hint": "fame → знаменитый", "answer": "famous", "suffix": " after appearing on TV."}, {"n": 19, "prefix": "There was something ", "hint": "mystery → таинственный", "answer": "mysterious", "suffix": " about the old house."}, {"n": 20, "prefix": "She felt ", "hint": "nerve → нервный", "answer": "nervous", "suffix": " before her first day at the new job."}, {"n": 21, "prefix": "Some mushrooms in the forest are extremely ", "hint": "poison → ядовитый", "answer": "poisonous", "suffix": "."}, {"n": 22, "prefix": "He set himself a very ", "hint": "ambition → амбициозный", "answer": "ambitious", "suffix": " target for the year."}, {"n": 23, "prefix": "It was a ", "hint": "courage → отважный", "answer": "courageous", "suffix": " decision to speak up at the meeting."}, {"n": 24, "prefix": "The speech was short but quite ", "hint": "humour → юмористический", "answer": "humorous", "suffix": "."}, {"n": 25, "prefix": "The country is facing a serious ", "hint": "economy → экономический", "answer": "economic", "suffix": " crisis."}, {"n": 26, "prefix": "The town centre is full of ", "hint": "history → исторический", "answer": "historic", "suffix": " buildings."}, {"n": 27, "prefix": "He has always had an ", "hint": "athlete → спортивный", "answer": "athletic", "suffix": " build."}, {"n": 28, "prefix": "The puppy is incredibly ", "hint": "energy → энергичный", "answer": "energetic", "suffix": " in the mornings."}, {"n": 29, "prefix": "The results were based on solid ", "hint": "science → научный", "answer": "scientific", "suffix": " research."}, {"n": 30, "prefix": "She has an almost ", "hint": "photograph → фотографический", "answer": "photographic", "suffix": " memory for faces."}, {"n": 31, "prefix": "The course covers only the most ", "hint": "base → базовый", "answer": "basic", "suffix": " grammar rules."}, {"n": 32, "prefix": "The firefighter's ", "hint": "hero → героический", "answer": "heroic", "suffix": " actions saved three lives."}, {"n": 33, "prefix": "The drummer kept a steady, ", "hint": "rhythm → ритмичный", "answer": "rhythmic", "suffix": " beat."}]}, "negative_prefixes": {"affirmative": [{"n": 1, "prefix": "She looked ", "hint": "happy → несчастливый", "answer": "unhappy", "suffix": " after hearing the news."}, {"n": 2, "prefix": "It was ", "hint": "kind → недобрый", "answer": "unkind", "suffix": " of him to laugh at her mistake."}, {"n": 3, "prefix": "The referee's decision seemed completely ", "hint": "fair → несправедливый", "answer": "unfair", "suffix": "."}, {"n": 4, "prefix": "The old bridge is now considered ", "hint": "safe → небезопасный", "answer": "unsafe", "suffix": "."}, {"n": 5, "prefix": "I'm still ", "hint": "sure → неуверенный", "answer": "unsure", "suffix": " about which job to take."}, {"n": 6, "prefix": "He was ", "hint": "able → неспособный", "answer": "unable", "suffix": " to attend the meeting yesterday."}, {"n": 7, "prefix": "The chairs in the waiting room were very ", "hint": "comfortable → неудобный", "answer": "uncomfortable", "suffix": "."}, {"n": 8, "prefix": "The future of the company remains ", "hint": "certain → неопределённый", "answer": "uncertain", "suffix": "."}, {"n": 9, "prefix": "It's ", "hint": "usual → необычный", "answer": "unusual", "suffix": " for him to arrive so late."}, {"n": 10, "prefix": "The cause of the fire is still ", "hint": "known → неизвестный", "answer": "unknown", "suffix": "."}, {"n": 11, "prefix": "It's ", "hint": "likely → маловероятный", "answer": "unlikely", "suffix": " to rain today, according to the forecast."}, {"n": 12, "prefix": "We were ", "hint": "lucky → неудачливый", "answer": "unlucky", "suffix": " enough to miss the last train."}, {"n": 13, "prefix": "Eating fast food every day is quite ", "hint": "healthy → нездоровый", "answer": "unhealthy", "suffix": "."}, {"n": 14, "prefix": "The staff at that shop were surprisingly ", "hint": "friendly → недружелюбный", "answer": "unfriendly", "suffix": "."}, {"n": 15, "prefix": "There was an ", "hint": "pleasant → неприятный", "answer": "unpleasant", "suffix": " smell in the kitchen."}, {"n": 16, "prefix": "The new tax was extremely ", "hint": "popular → непопулярный", "answer": "unpopular", "suffix": " with voters."}, {"n": 17, "prefix": "His first attempt at the exam was ", "hint": "successful → неуспешный", "answer": "unsuccessful", "suffix": "."}, {"n": 18, "prefix": "He has been ", "hint": "employed → безработный", "answer": "unemployed", "suffix": " since the factory closed."}, {"n": 19, "prefix": "She has remained ", "hint": "married → неженатый", "answer": "unmarried", "suffix": " her whole life."}, {"n": 20, "prefix": "The plan offers ", "hint": "limited → неограниченный", "answer": "unlimited", "suffix": " internet access."}, {"n": 21, "prefix": "The results came as a complete ", "hint": "expected → неожиданный", "answer": "unexpected", "suffix": " surprise."}, {"n": 22, "prefix": "The charity collects ", "hint": "wanted → нежеланный", "answer": "unwanted", "suffix": " clothes and toys."}, {"n": 23, "prefix": "That kind of behaviour is simply ", "hint": "acceptable → неприемлемый", "answer": "unacceptable", "suffix": " at work."}, {"n": 24, "prefix": "The ending of the film was totally ", "hint": "believable → невероятный", "answer": "unbelievable", "suffix": "."}, {"n": 25, "prefix": "The weather in the mountains is very ", "hint": "predictable → непредсказуемый", "answer": "unpredictable", "suffix": "."}, {"n": 26, "prefix": "My old car has become completely ", "hint": "reliable → ненадёжный", "answer": "unreliable", "suffix": "."}, {"n": 27, "prefix": "Compared to her health, the money is ", "hint": "important → неважный", "answer": "unimportant", "suffix": "."}, {"n": 28, "prefix": "The lecture was long and rather ", "hint": "interesting → неинтересный", "answer": "uninteresting", "suffix": "."}, {"n": 29, "prefix": "Buying a new phone right now seems ", "hint": "necessary → ненужный", "answer": "unnecessary", "suffix": "."}, {"n": 30, "prefix": "It was an ", "hint": "fortunate → неудачный", "answer": "unfortunate", "suffix": " mistake that cost him the job."}, {"n": 31, "prefix": "Use this key to ", "hint": "lock → отпирать", "answer": "unlock", "suffix": " the front door."}, {"n": 32, "prefix": "We didn't ", "hint": "pack → распаковывать", "answer": "unpack", "suffix": " our bags until the next morning."}, {"n": 33, "prefix": "His bedroom is always ", "hint": "tidy → неопрятный", "answer": "untidy", "suffix": "."}, {"n": 34, "prefix": "Press this button to ", "hint": "do → отменить", "answer": "undo", "suffix": " your last action."}], "negative": [{"n": 1, "prefix": "It's ", "hint": "possible → невозможный", "answer": "impossible", "suffix": " to finish this project by tomorrow."}, {"n": 2, "prefix": "The children grew ", "hint": "patient → нетерпеливый", "answer": "impatient", "suffix": " waiting for the bus."}, {"n": 3, "prefix": "It's ", "hint": "polite → невежливый", "answer": "impolite", "suffix": " to interrupt someone while they're speaking."}, {"n": 4, "prefix": "No system is completely ", "hint": "perfect → несовершенный", "answer": "imperfect", "suffix": "."}, {"n": 5, "prefix": "His behaviour at the party was rather ", "hint": "mature → незрелый", "answer": "immature", "suffix": "."}, {"n": 6, "prefix": "Lying to your friends is generally seen as ", "hint": "moral → аморальный", "answer": "immoral", "suffix": "."}, {"n": 7, "prefix": "After the accident, his leg was completely ", "hint": "mobile → неподвижный", "answer": "immobile", "suffix": "."}, {"n": 8, "prefix": "Parking here is ", "hint": "legal → незаконный", "answer": "illegal", "suffix": " after 8pm."}, {"n": 9, "prefix": "A century ago, many people in the country were ", "hint": "literate → неграмотный", "answer": "illiterate", "suffix": "."}, {"n": 10, "prefix": "Her argument seemed completely ", "hint": "logical → нелогичный", "answer": "illogical", "suffix": " to me."}, {"n": 11, "prefix": "The doctor's handwriting was almost ", "hint": "legible → неразборчивый", "answer": "illegible", "suffix": "."}, {"n": 12, "prefix": "His sleeping pattern has become quite ", "hint": "regular → нерегулярный", "answer": "irregular", "suffix": "."}, {"n": 13, "prefix": "It was ", "hint": "responsible → безответственный", "answer": "irresponsible", "suffix": " of him to leave the children alone."}, {"n": 14, "prefix": "That question is completely ", "hint": "relevant → неуместный", "answer": "irrelevant", "suffix": " to our discussion."}, {"n": 15, "prefix": "Her fear of buttons seemed ", "hint": "rational → иррациональный", "answer": "irrational", "suffix": " to her friends."}, {"n": 16, "prefix": "The old photographs are ", "hint": "replaceable → незаменимый", "answer": "irreplaceable", "suffix": " to the family."}, {"n": 17, "prefix": "Two of his answers were ", "hint": "correct → неправильный", "answer": "incorrect", "suffix": "."}, {"n": 18, "prefix": "The report was still ", "hint": "complete → незавершённый", "answer": "incomplete", "suffix": " when the deadline arrived."}, {"n": 19, "prefix": "The meeting time was quite ", "hint": "convenient → неудобный", "answer": "inconvenient", "suffix": " for most staff."}, {"n": 20, "prefix": "The dinner was a relaxed, ", "hint": "formal → неформальный", "answer": "informal", "suffix": " occasion."}, {"n": 21, "prefix": "The stars are ", "hint": "visible → невидимый", "answer": "invisible", "suffix": " during the day."}, {"n": 22, "prefix": "She gave a rather ", "hint": "direct → косвенный", "answer": "indirect", "suffix": " answer to the question."}, {"n": 23, "prefix": "At eighteen, she moved out and became fully ", "hint": "dependent → независимый", "answer": "independent", "suffix": "."}, {"n": 24, "prefix": "His joke about her illness was really ", "hint": "sensitive → нечувствительный", "answer": "insensitive", "suffix": "."}, {"n": 25, "prefix": "Driving that fast in the fog seemed almost ", "hint": "sane → безумный", "answer": "insane", "suffix": "."}, {"n": 26, "prefix": "The account has been ", "hint": "active → неактивный", "answer": "inactive", "suffix": " for over a year."}, {"n": 27, "prefix": "The old map turned out to be quite ", "hint": "accurate → неточный", "answer": "inaccurate", "suffix": "."}, {"n": 28, "prefix": "His comment at the funeral was very ", "hint": "appropriate → неуместный", "answer": "inappropriate", "suffix": "."}, {"n": 29, "prefix": "She seemed ", "hint": "capable → неспособный", "answer": "incapable", "suffix": " of making a simple decision."}, {"n": 30, "prefix": "The trip has been postponed for an ", "hint": "definite → неопределённый", "answer": "indefinite", "suffix": " period."}, {"n": 31, "prefix": "We found a small, ", "hint": "expensive → недорогой", "answer": "inexpensive", "suffix": " hotel near the beach."}, {"n": 32, "prefix": "He felt ", "hint": "secure → неуверенный", "answer": "insecure", "suffix": " about his job after the news."}, {"n": 33, "prefix": "The old teacher was quite ", "hint": "tolerant → нетерпимый", "answer": "intolerant", "suffix": " of any noise."}], "interrogative": [{"n": 1, "prefix": "I completely ", "hint": "agree → не соглашаться", "answer": "disagree", "suffix": " with your opinion on this."}, {"n": 2, "prefix": "I really ", "hint": "like → не любить", "answer": "dislike", "suffix": " cold, rainy weather."}, {"n": 3, "prefix": "It would be ", "hint": "honest → нечестный", "answer": "dishonest", "suffix": " to say I wasn't disappointed."}, {"n": 4, "prefix": "His comments to the press seemed ", "hint": "loyal → нелояльный", "answer": "disloyal", "suffix": " to the team."}, {"n": 5, "prefix": "The soldier was punished for choosing to ", "hint": "obey → не подчиняться", "answer": "disobey", "suffix": " the order."}, {"n": 6, "prefix": "The magician made the coin ", "hint": "appear → исчезать", "answer": "disappear", "suffix": " instantly."}, {"n": 7, "prefix": "Please ", "hint": "connect → отключать", "answer": "disconnect", "suffix": " the cable before cleaning the machine."}, {"n": 8, "prefix": "The company decided to ", "hint": "continue → прекращать", "answer": "discontinue", "suffix": " the old model."}, {"n": 9, "prefix": "She felt some ", "hint": "comfort → дискомфорт", "answer": "discomfort", "suffix": " after the long flight."}, {"n": 10, "prefix": "Officials sometimes ", "hint": "qualify → дисквалифицировать", "answer": "disqualify", "suffix": " runners who start too early."}, {"n": 11, "prefix": "There was a deep ", "hint": "trust → недоверие", "answer": "distrust", "suffix": " between the two nations."}, {"n": 12, "prefix": "One big ", "hint": "advantage → недостаток", "answer": "disadvantage", "suffix": " of the plan is the cost."}, {"n": 13, "prefix": "Shouting at the referee is a sign of ", "hint": "respect → неуважение", "answer": "disrespect", "suffix": "."}, {"n": 14, "prefix": "Her parents clearly ", "hint": "approve → не одобрять", "answer": "disapprove", "suffix": " of her new job."}, {"n": 15, "prefix": "He stared at the results in complete ", "hint": "belief → неверие", "answer": "disbelief", "suffix": "."}, {"n": 16, "prefix": "Many customers were ", "hint": "satisfied → неудовлетворённый", "answer": "dissatisfied", "suffix": " with the service."}, {"n": 17, "prefix": "The two proposals are not entirely ", "hint": "similar → непохожий", "answer": "dissimilar", "suffix": "."}, {"n": 18, "prefix": "The event felt rushed and rather ", "hint": "organized → неорганизованный", "answer": "disorganized", "suffix": "."}, {"n": 19, "prefix": "He has been a ", "hint": "smoker → некурящий", "answer": "non-smoker", "suffix": " his whole life."}, {"n": 20, "prefix": "What he said in the meeting was pure ", "hint": "sense → бессмыслица", "answer": "nonsense", "suffix": "."}, {"n": 21, "prefix": "The flight to Tokyo is ", "hint": "stop → безостановочный", "answer": "non-stop", "suffix": ", which saves a lot of time."}, {"n": 22, "prefix": "She mostly reads ", "hint": "fiction → документальная литература", "answer": "non-fiction", "suffix": " books about history."}, {"n": 23, "prefix": "The shelter is run by a small ", "hint": "profit → некоммерческий", "answer": "non-profit", "suffix": " organisation."}, {"n": 24, "prefix": "A lot of communication is actually ", "hint": "verbal → невербальный", "answer": "nonverbal", "suffix": "."}, {"n": 25, "prefix": "Support for the plan is almost ", "hint": "existent → несуществующий", "answer": "nonexistent", "suffix": " in the town."}, {"n": 26, "prefix": "The deadline for the project is ", "hint": "negotiable → не подлежащий обсуждению", "answer": "non-negotiable", "suffix": "."}, {"n": 27, "prefix": "They also serve a good range of ", "hint": "alcoholic → безалкогольный", "answer": "non-alcoholic", "suffix": " drinks."}, {"n": 28, "prefix": "The paint used in the nursery is completely ", "hint": "toxic → нетоксичный", "answer": "non-toxic", "suffix": "."}, {"n": 29, "prefix": "All ", "hint": "essential → несущественный", "answer": "non-essential", "suffix": " travel was cancelled during the storm."}, {"n": 30, "prefix": "Unfortunately, the ticket is ", "hint": "refundable → невозвратный", "answer": "non-refundable", "suffix": " after purchase."}, {"n": 31, "prefix": "As a ", "hint": "resident → нерезидент", "answer": "non-resident", "suffix": ", she has to pay extra tax on the property."}, {"n": 32, "prefix": "The course is designed for ", "hint": "native → неродной", "answer": "non-native", "suffix": " speakers of English."}, {"n": 33, "prefix": "The building was found to be ", "hint": "conforming → несоответствующий", "answer": "non-conforming", "suffix": " with the new rules."}]}, "verb_formation": {"affirmative": [{"n": 1, "prefix": "Can you ", "hint": "large → увеличивать", "answer": "enlarge", "suffix": " this photo a little for the poster?"}, {"n": 2, "prefix": "This setting will ", "hint": "able → позволять", "answer": "enable", "suffix": " you to save files offline."}, {"n": 3, "prefix": "Travelling really does ", "hint": "rich → обогащать", "answer": "enrich", "suffix": " your understanding of the world."}, {"n": 4, "prefix": "Her teacher tried to ", "hint": "courage → подбадривать", "answer": "encourage", "suffix": " her to keep practising."}, {"n": 5, "prefix": "Building here could seriously ", "hint": "danger → подвергать опасности", "answer": "endanger", "suffix": " the local wildlife."}, {"n": 6, "prefix": "Please ", "hint": "sure → гарантировать", "answer": "ensure", "suffix": " the door is locked before you leave."}, {"n": 7, "prefix": "The new law will be difficult to ", "hint": "force → обеспечивать выполнение", "answer": "enforce", "suffix": "."}, {"n": 8, "prefix": "We really ", "hint": "joy → наслаждаться", "answer": "enjoy", "suffix": " spending weekends in the countryside."}, {"n": 9, "prefix": "A low wall used to ", "hint": "circle → окружать", "answer": "encircle", "suffix": " the old castle."}, {"n": 10, "prefix": "Please ", "hint": "close → вкладывать", "answer": "enclose", "suffix": " a copy of your passport with the form."}, {"n": 11, "prefix": "Being a member will ", "hint": "title → давать право", "answer": "entitle", "suffix": " you to a discount."}, {"n": 12, "prefix": "The statue seems to ", "hint": "body → воплощать", "answer": "embody", "suffix": " the spirit of the city."}, {"n": 13, "prefix": "The programme aims to ", "hint": "power → наделять правами", "answer": "empower", "suffix": " young women in business."}, {"n": 14, "prefix": "She ran to ", "hint": "brace → обнимать", "answer": "embrace", "suffix": " her brother at the airport."}, {"n": 15, "prefix": "The ship will ", "hint": "bark → отправляться", "answer": "embark", "suffix": " on its journey at dawn."}, {"n": 16, "prefix": "The old coin was ", "hint": "bed → внедрять", "answer": "embed", "suffix": "ded deep in the mud."}, {"n": 17, "prefix": "Years of hardship had left him deeply ", "hint": "bitter → озлоблять", "answer": "embitter", "suffix": "ed."}, {"n": 18, "prefix": "His honesty helped ", "hint": "dear → располагать к себе", "answer": "endear", "suffix": " him to the whole team."}, {"n": 19, "prefix": "The lecture really helped to ", "hint": "light → просвещать", "answer": "enlighten", "suffix": " us about the topic."}, {"n": 20, "prefix": "The empire tried to ", "hint": "slave → порабощать", "answer": "enslave", "suffix": " the people it conquered."}, {"n": 21, "prefix": "The unfair decision seemed to ", "hint": "rage → приводить в ярость", "answer": "enrage", "suffix": " the whole crowd."}, {"n": 22, "prefix": "Flames quickly began to ", "hint": "gulf → поглощать", "answer": "engulf", "suffix": " the old barn."}, {"n": 23, "prefix": "The hunters used a net to ", "hint": "trap → заманивать в ловушку", "answer": "entrap", "suffix": " the animal."}, {"n": 24, "prefix": "He decided to ", "hint": "list → зачислять", "answer": "enlist", "suffix": " in the army at eighteen."}, {"n": 25, "prefix": "The message was ", "hint": "code → кодировать", "answer": "encode", "suffix": "d before it was sent."}, {"n": 26, "prefix": "Parliament plans to ", "hint": "act → принимать закон", "answer": "enact", "suffix": " the new law next year."}, {"n": 27, "prefix": "The two vines had ", "hint": "twine → переплетать", "answer": "entwine", "suffix": "d around the fence."}, {"n": 28, "prefix": "They chose to ", "hint": "grave → гравировать", "answer": "engrave", "suffix": " his name on the trophy."}, {"n": 29, "prefix": "A little music can really ", "hint": "hance → улучшать", "answer": "enhance", "suffix": " the mood of a film."}, {"n": 30, "prefix": "The scandal ", "hint": "gender → порождать", "answer": "engender", "suffix": "ed a lot of anger among voters."}, {"n": 31, "prefix": "The phone was ", "hint": "case → заключать в оболочку", "answer": "encase", "suffix": "d in thick plastic to protect it."}, {"n": 32, "prefix": "The teacher found a fun way to ", "hint": "gage → привлекать", "answer": "engage", "suffix": " the class."}, {"n": 33, "prefix": "The project will ", "hint": "compass → охватывать", "answer": "encompass", "suffix": " several different departments."}, {"n": 34, "prefix": "Old habits can become deeply ", "hint": "trench → укоренять", "answer": "entrench", "suffix": "ed over time."}], "negative": [{"n": 1, "prefix": "The factory plans to ", "hint": "modern → модернизировать", "answer": "modernise", "suffix": " its old equipment."}, {"n": 2, "prefix": "She didn't ", "hint": "real → осознавать", "answer": "realise", "suffix": " how late it was until midnight."}, {"n": 3, "prefix": "After training, he decided to ", "hint": "special → специализироваться", "answer": "specialise", "suffix": " in heart surgery."}, {"n": 4, "prefix": "It's easy to ", "hint": "general → обобщать", "answer": "generalise", "suffix": " about a whole country from one visit."}, {"n": 5, "prefix": "The show helped to ", "hint": "popular → популяризировать", "answer": "popularise", "suffix": " the sport across the country."}, {"n": 6, "prefix": "Please don't ", "hint": "critic → критиковать", "answer": "criticise", "suffix": " him in front of the whole team."}, {"n": 7, "prefix": "The region began to ", "hint": "industrial → индустриализировать", "answer": "industrialise", "suffix": " rapidly in the 1960s."}, {"n": 8, "prefix": "The old idea that explorers came to ", "hint": "civil → цивилизовать", "answer": "civilise", "suffix": " the world is outdated."}, {"n": 9, "prefix": "Could you ", "hint": "organ → организовывать", "answer": "organise", "suffix": " the files by date, please?"}, {"n": 10, "prefix": "Bright colours ", "hint": "character → характеризовать", "answer": "characterise", "suffix": " most of her early paintings."}, {"n": 11, "prefix": "The company wants to ", "hint": "standard → стандартизировать", "answer": "standardise", "suffix": " its size charts worldwide."}, {"n": 12, "prefix": "Take a few minutes to ", "hint": "familiar → ознакамливать", "answer": "familiarise", "suffix": " yourself with the map."}, {"n": 13, "prefix": "The white dove is often used to ", "hint": "symbol → символизировать", "answer": "symbolise", "suffix": " peace."}, {"n": 14, "prefix": "He had to ", "hint": "memory → запоминать", "answer": "memorise", "suffix": " the whole speech for the ceremony."}, {"n": 15, "prefix": "She called to ", "hint": "apology → извиняться", "answer": "apologise", "suffix": " for missing the meeting."}, {"n": 16, "prefix": "Could you ", "hint": "summary → суммировать", "answer": "summarise", "suffix": " the main points of the report?"}, {"n": 17, "prefix": "We need to ", "hint": "final → завершать", "answer": "finalise", "suffix": " the guest list by Friday."}, {"n": 18, "prefix": "The company decided to ", "hint": "central → централизовать", "answer": "centralise", "suffix": " all its IT support."}, {"n": 19, "prefix": "Several countries have chosen to ", "hint": "legal → легализовать", "answer": "legalise", "suffix": " the practice."}, {"n": 20, "prefix": "We took every step to ", "hint": "minimal → минимизировать", "answer": "minimise", "suffix": " the risk of injury."}, {"n": 21, "prefix": "The team worked hard to ", "hint": "maximal → максимизировать", "answer": "maximise", "suffix": " profits this quarter."}, {"n": 22, "prefix": "The new policy aims to ", "hint": "equal → уравнивать", "answer": "equalise", "suffix": " pay across departments."}, {"n": 23, "prefix": "It took a few weeks for things to ", "hint": "normal → нормализовать", "answer": "normalise", "suffix": " after the move."}, {"n": 24, "prefix": "They plan to ", "hint": "formal → формализовать", "answer": "formalise", "suffix": " the agreement with a signed contract."}, {"n": 25, "prefix": "Trade has helped to ", "hint": "global → глобализировать", "answer": "globalise", "suffix": " many local industries."}, {"n": 26, "prefix": "The library is working to ", "hint": "digital → переводить в цифровой формат", "answer": "digitalise", "suffix": " its old records."}, {"n": 27, "prefix": "The hospital decided to ", "hint": "computer → компьютеризировать", "answer": "computerise", "suffix": " all patient records."}, {"n": 28, "prefix": "A short walk outside can really ", "hint": "energy → заряжать энергией", "answer": "energise", "suffix": " you."}, {"n": 29, "prefix": "All the equipment must be ", "hint": "sterile → стерилизовать", "answer": "sterilise", "suffix": "d before use."}, {"n": 30, "prefix": "Farmers ", "hint": "fertile → удобрять", "answer": "fertilise", "suffix": " the fields early in the spring."}, {"n": 31, "prefix": "He had to be ", "hint": "hospital → госпитализировать", "answer": "hospitalise", "suffix": "d after the accident."}, {"n": 32, "prefix": "The company tried to ", "hint": "capital → извлекать выгоду", "answer": "capitalise", "suffix": " on the sudden interest."}, {"n": 33, "prefix": "Try to ", "hint": "vision → визуализировать", "answer": "visualise", "suffix": " your goal before the race begins."}], "interrogative": [{"n": 1, "prefix": "The new form should ", "hint": "simple → упрощать", "answer": "simplify", "suffix": " the whole process."}, {"n": 2, "prefix": "Scientists ", "hint": "class → классифицировать", "answer": "classify", "suffix": " the plant as a rare species."}, {"n": 3, "prefix": "This device is designed to ", "hint": "pure → очищать", "answer": "purify", "suffix": " tap water."}, {"n": 4, "prefix": "The city council plans to ", "hint": "beauty → украшать", "answer": "beautify", "suffix": " the old park."}, {"n": 5, "prefix": "Could you ", "hint": "clear → прояснять", "answer": "clarify", "suffix": " what you meant by that comment?"}, {"n": 6, "prefix": "Police were able to ", "hint": "identity → идентифицировать", "answer": "identify", "suffix": " the driver from the video."}, {"n": 7, "prefix": "We will ", "hint": "note → уведомлять", "answer": "notify", "suffix": " you as soon as the parcel arrives."}, {"n": 8, "prefix": "He struggled to ", "hint": "just → оправдывать", "answer": "justify", "suffix": " the extra cost to his boss."}, {"n": 9, "prefix": "The loud thunder seemed to ", "hint": "terror → ужасать", "answer": "terrify", "suffix": " the puppy."}, {"n": 10, "prefix": "She needs one more exam to ", "hint": "quality → квалифицироваться", "answer": "qualify", "suffix": " as a nurse."}, {"n": 11, "prefix": "A red light usually ", "hint": "sign → означать", "answer": "signify", "suffix": "ies danger or a warning."}, {"n": 12, "prefix": "The film has been criticised for trying to ", "hint": "glory → прославлять", "answer": "glorify", "suffix": " violence."}, {"n": 13, "prefix": "Leave the mixture to cool and ", "hint": "solid → затвердевать", "answer": "solidify", "suffix": " overnight."}, {"n": 14, "prefix": "The storm is expected to ", "hint": "intense → усиливать", "answer": "intensify", "suffix": " later tonight."}, {"n": 15, "prefix": "They plan to ", "hint": "wide → расширять", "answer": "widen", "suffix": " the road next summer."}, {"n": 16, "prefix": "Could you ", "hint": "short → укорачивать", "answer": "shorten", "suffix": " the essay to fit one page?"}, {"n": 17, "prefix": "She decided to ", "hint": "long → удлинять", "answer": "lengthen", "suffix": " the skirt by two inches."}, {"n": 18, "prefix": "Years of study only ", "hint": "deep → углублять", "answer": "deepen", "suffix": "ed his love for music."}, {"n": 19, "prefix": "Regular exercise will ", "hint": "strong → укреплять", "answer": "strengthen", "suffix": " your back muscles."}, {"n": 20, "prefix": "The long illness had begun to ", "hint": "weak → ослаблять", "answer": "weaken", "suffix": " his heart."}, {"n": 21, "prefix": "Loud fireworks often ", "hint": "fright → пугать", "answer": "frighten", "suffix": " small dogs."}, {"n": 22, "prefix": "Remember to ", "hint": "tight → затягивать", "answer": "tighten", "suffix": " the screws before you leave."}, {"n": 23, "prefix": "He had to ", "hint": "loose → ослаблять", "answer": "loosen", "suffix": " his tie after the long meeting."}, {"n": 24, "prefix": "A little butter will ", "hint": "soft → смягчать", "answer": "soften", "suffix": " the mixture nicely."}, {"n": 25, "prefix": "The clay will ", "hint": "hard → твердеть", "answer": "harden", "suffix": " if you leave it in the sun."}, {"n": 26, "prefix": "Studying abroad really helped to ", "hint": "broad → расширять", "answer": "broaden", "suffix": " her thinking."}, {"n": 27, "prefix": "Could you ", "hint": "sharp → затачивать", "answer": "sharpen", "suffix": " this pencil for me, please?"}, {"n": 28, "prefix": "Add flour slowly to ", "hint": "thick → сгущать", "answer": "thicken", "suffix": " the sauce."}, {"n": 29, "prefix": "Use a rolling pin to ", "hint": "flat → выравнивать", "answer": "flatten", "suffix": " the dough."}, {"n": 30, "prefix": "A short holiday might ", "hint": "light → облегчать", "answer": "lighten", "suffix": " your mood a little."}, {"n": 31, "prefix": "The sky began to ", "hint": "dark → темнеть", "answer": "darken", "suffix": " before the storm hit."}, {"n": 32, "prefix": "A spoon of honey will ", "hint": "sweet → подслащивать", "answer": "sweeten", "suffix": " the tea nicely."}, {"n": 33, "prefix": "Heavy rain could ", "hint": "threat → угрожать", "answer": "threaten", "suffix": " the outdoor concert this weekend."}]}, "adverb_formation": {"affirmative": [{"n": 1, "prefix": "She finished her homework ", "hint": "quick → быстро", "answer": "quickly", "suffix": " and went outside."}, {"n": 2, "prefix": "He walked ", "hint": "slow → медленно", "answer": "slowly", "suffix": " up the hill, out of breath."}, {"n": 3, "prefix": "The children played ", "hint": "quiet → тихо", "answer": "quietly", "suffix": " while their mother rested."}, {"n": 4, "prefix": "The music was playing ", "hint": "loud → громко", "answer": "loudly", "suffix": " next door."}, {"n": 5, "prefix": "Please read the instructions ", "hint": "careful → осторожно", "answer": "carefully", "suffix": " before you start."}, {"n": 6, "prefix": "He left his bike ", "hint": "careless → небрежно", "answer": "carelessly", "suffix": " in the middle of the path."}, {"n": 7, "prefix": "She explained the rules very ", "hint": "clear → ясно", "answer": "clearly", "suffix": "."}, {"n": 8, "prefix": "The teacher watched the students ", "hint": "close → внимательно", "answer": "closely", "suffix": " during the test."}, {"n": 9, "prefix": "He looked at her ", "hint": "cold → холодно", "answer": "coldly", "suffix": " and said nothing."}, {"n": 10, "prefix": "The staff greeted us ", "hint": "warm → тепло", "answer": "warmly", "suffix": " at the door."}, {"n": 11, "prefix": "The stars shone ", "hint": "bright → ярко", "answer": "brightly", "suffix": " over the desert."}, {"n": 12, "prefix": "He joked ", "hint": "dark → мрачно", "answer": "darkly", "suffix": " about the situation."}, {"n": 13, "prefix": "You can contact the manager ", "hint": "direct → напрямую", "answer": "directly", "suffix": " by email."}, {"n": 14, "prefix": "I don't remember ", "hint": "exact → точно", "answer": "exactly", "suffix": " what she said."}, {"n": 15, "prefix": "After hours of waiting, the bus ", "hint": "final → наконец", "answer": "finally", "suffix": " arrived."}, {"n": 16, "prefix": "He gripped the rope ", "hint": "firm → твёрдо", "answer": "firmly", "suffix": " and refused to let go."}, {"n": 17, "prefix": "Please call the doctor ", "hint": "immediate → немедленно", "answer": "immediately", "suffix": " if the pain returns."}, {"n": 18, "prefix": "The nurse spoke ", "hint": "kind → любезно", "answer": "kindly", "suffix": " to the frightened child."}, {"n": 19, "prefix": "She always dresses very ", "hint": "nice → мило", "answer": "nicely", "suffix": " for interviews."}, {"n": 20, "prefix": "He spoke ", "hint": "open → открыто", "answer": "openly", "suffix": " about his mistakes at the meeting."}, {"n": 21, "prefix": "She waited ", "hint": "patient → терпеливо", "answer": "patiently", "suffix": " for the results all week."}, {"n": 22, "prefix": "The plan worked out ", "hint": "perfect → идеально", "answer": "perfectly", "suffix": " in the end."}, {"n": 23, "prefix": "He ", "hint": "polite → вежливо", "answer": "politely", "suffix": " asked the waiter for the bill."}, {"n": 24, "prefix": "She ", "hint": "proud → гордо", "answer": "proudly", "suffix": " showed everyone her new certificate."}, {"n": 25, "prefix": "He ", "hint": "rare → редко", "answer": "rarely", "suffix": " eats meat these days."}, {"n": 26, "prefix": "We ", "hint": "recent → недавно", "answer": "recently", "suffix": " moved to a smaller flat in town."}, {"n": 27, "prefix": "She visits her grandmother ", "hint": "regular → регулярно", "answer": "regularly", "suffix": " on Sundays."}, {"n": 28, "prefix": "He pushed the door open rather ", "hint": "rough → грубо", "answer": "roughly", "suffix": "."}, {"n": 29, "prefix": "Please drive ", "hint": "safe → безопасно", "answer": "safely", "suffix": " in this weather."}, {"n": 30, "prefix": "He took the warning very ", "hint": "serious → серьёзно", "answer": "seriously", "suffix": "."}, {"n": 31, "prefix": "She ", "hint": "sincere → искренне", "answer": "sincerely", "suffix": " apologised for the misunderstanding."}, {"n": 32, "prefix": "The meeting went very ", "hint": "smooth → гладко", "answer": "smoothly", "suffix": " from start to finish."}, {"n": 33, "prefix": "I would ", "hint": "strong → решительно", "answer": "strongly", "suffix": " recommend this restaurant to anyone."}, {"n": 34, "prefix": "The lights ", "hint": "sudden → внезапно", "answer": "suddenly", "suffix": " went out during the storm."}], "negative": [{"n": 1, "prefix": "They lived ", "hint": "happy → счастливо", "answer": "happily", "suffix": " in the small village for years."}, {"n": 2, "prefix": "She ", "hint": "easy → легко", "answer": "easily", "suffix": " passed the driving test on her first try."}, {"n": 3, "prefix": "He ", "hint": "angry → сердито", "answer": "angrily", "suffix": " slammed the door on his way out."}, {"n": 4, "prefix": "The bees were working ", "hint": "busy → занято", "answer": "busily", "suffix": " around the flowers."}, {"n": 5, "prefix": "It rained ", "hint": "heavy → тяжело", "answer": "heavily", "suffix": " throughout the whole weekend."}, {"n": 6, "prefix": "The dog ate its dinner ", "hint": "hungry → голодно", "answer": "hungrily", "suffix": " in seconds."}, {"n": 7, "prefix": "", "hint": "lucky → к счастью", "answer": "luckily", "suffix": ", nobody was hurt in the accident."}, {"n": 8, "prefix": "He tries to eat ", "hint": "healthy → здорово", "answer": "healthily", "suffix": " during the week."}, {"n": 9, "prefix": "The children came down the stairs ", "hint": "noisy → шумно", "answer": "noisily", "suffix": "."}, {"n": 10, "prefix": "She ", "hint": "ready → охотно", "answer": "readily", "suffix": " agreed to help with the project."}, {"n": 11, "prefix": "Sales have grown ", "hint": "steady → стабильно", "answer": "steadily", "suffix": " over the past year."}, {"n": 12, "prefix": "The cat stretched ", "hint": "lazy → лениво", "answer": "lazily", "suffix": " in the sun."}, {"n": 13, "prefix": "He stared ", "hint": "gloomy → мрачно", "answer": "gloomily", "suffix": " out of the rainy window."}, {"n": 14, "prefix": "She ", "hint": "simple → просто", "answer": "simply", "suffix": " said no and walked away."}, {"n": 15, "prefix": "The nurse ", "hint": "gentle → нежно", "answer": "gently", "suffix": " cleaned the child's wound."}, {"n": 16, "prefix": "We could ", "hint": "possible → возможно", "answer": "possibly", "suffix": " meet earlier if that helps."}, {"n": 17, "prefix": "The cat was sleeping ", "hint": "comfortable → удобно", "answer": "comfortably", "suffix": " by the fire."}, {"n": 18, "prefix": "I'm ", "hint": "terrible → ужасно", "answer": "terribly", "suffix": " sorry for the confusion."}, {"n": 19, "prefix": "The show was ", "hint": "incredible → невероятно", "answer": "incredibly", "suffix": " well organised this year."}, {"n": 20, "prefix": "She will ", "hint": "probable → вероятно", "answer": "probably", "suffix": " arrive a little late."}, {"n": 21, "prefix": "The hotel was ", "hint": "reasonable → разумно", "answer": "reasonably", "suffix": " priced for the area."}, {"n": 22, "prefix": "Please drink ", "hint": "responsible → ответственно", "answer": "responsibly", "suffix": " during the celebration."}, {"n": 23, "prefix": "Prices have risen ", "hint": "considerable → значительно", "answer": "considerably", "suffix": " since last year."}, {"n": 24, "prefix": "She stayed ", "hint": "remarkable → удивительно", "answer": "remarkably", "suffix": " calm during the emergency."}, {"n": 25, "prefix": "The room was ", "hint": "beautiful → красиво", "answer": "beautifully", "suffix": " decorated for the party."}, {"n": 26, "prefix": "The team ", "hint": "successful → успешно", "answer": "successfully", "suffix": " completed the project on time."}, {"n": 27, "prefix": "Everything turned out ", "hint": "wonderful → замечательно", "answer": "wonderfully", "suffix": " in the end."}, {"n": 28, "prefix": "", "hint": "hopeful → будем надеяться", "answer": "hopefully", "suffix": ", the weather will improve by the weekend."}, {"n": 29, "prefix": "The old dog slept ", "hint": "peaceful → мирно", "answer": "peacefully", "suffix": " by the fire."}, {"n": 30, "prefix": "She spent the free hour ", "hint": "useful → полезно", "answer": "usefully", "suffix": " organising her notes."}, {"n": 31, "prefix": "People here are ", "hint": "general → в целом", "answer": "generally", "suffix": " very friendly."}, {"n": 32, "prefix": "The agreement was ", "hint": "formal → формально", "answer": "formally", "suffix": " signed on Monday."}, {"n": 33, "prefix": "I ", "hint": "real → действительно", "answer": "really", "suffix": " enjoyed the concert last night."}], "interrogative": [{"n": 1, "prefix": "", "hint": "basic → в основном", "answer": "basically", "suffix": ", the plan is quite simple."}, {"n": 2, "prefix": "The lights turn on ", "hint": "automatic → автоматически", "answer": "automatically", "suffix": " when it gets dark."}, {"n": 3, "prefix": "Sales have ", "hint": "dramatic → драматически", "answer": "dramatically", "suffix": " increased since the ad campaign."}, {"n": 4, "prefix": "The region has developed ", "hint": "economic → экономически", "answer": "economically", "suffix": " over the last decade."}, {"n": 5, "prefix": "The claim hasn't been ", "hint": "scientific → научно", "answer": "scientifically", "suffix": " proven yet."}, {"n": 6, "prefix": "Could you tell me ", "hint": "specific → конкретно", "answer": "specifically", "suffix": " what you need?"}, {"n": 7, "prefix": "The story ended ", "hint": "tragic → трагически", "answer": "tragically", "suffix": " for both families."}, {"n": 8, "prefix": "The kids played ", "hint": "energetic → энергично", "answer": "energetically", "suffix": " in the garden all afternoon."}, {"n": 9, "prefix": "They spent a ", "hint": "romantic → романтично", "answer": "romantically", "suffix": " decorated evening by the sea."}, {"n": 10, "prefix": "", "hint": "realistic → реалистично", "answer": "realistically", "suffix": ", we won't finish before Friday."}, {"n": 11, "prefix": "The whole trip was ", "hint": "fantastic → фантастически", "answer": "fantastically", "suffix": " organised."}, {"n": 12, "prefix": "The building is ", "hint": "historic → исторически", "answer": "historically", "suffix": " important to the city."}, {"n": 13, "prefix": "", "hint": "ironic → иронично", "answer": "ironically", "suffix": ", the fire station itself caught fire."}, {"n": 14, "prefix": "Try to explain your answer ", "hint": "logic → логично", "answer": "logically", "suffix": "."}, {"n": 15, "prefix": "The plan is ", "hint": "practical → практически", "answer": "practically", "suffix": " impossible to carry out."}, {"n": 16, "prefix": "Meetings ", "hint": "typical → обычно", "answer": "typically", "suffix": " last about an hour here."}, {"n": 17, "prefix": "The job is quite ", "hint": "physical → физически", "answer": "physically", "suffix": " demanding."}, {"n": 18, "prefix": "The problem didn't just ", "hint": "magical → волшебным образом", "answer": "magically", "suffix": " disappear overnight."}, {"n": 19, "prefix": "She has always been ", "hint": "musical → музыкально", "answer": "musically", "suffix": " talented."}, {"n": 20, "prefix": "He needed to be ", "hint": "medical → медицински", "answer": "medically", "suffix": " examined after the fall."}, {"n": 21, "prefix": "The topic is still very ", "hint": "political → политически", "answer": "politically", "suffix": " sensitive."}, {"n": 22, "prefix": "", "hint": "technical → технически", "answer": "technically", "suffix": ", the machine is still under warranty."}, {"n": 23, "prefix": "The patient remains ", "hint": "critical → критически", "answer": "critically", "suffix": " ill in hospital."}, {"n": 24, "prefix": "He described the accident in a ", "hint": "comical → комично", "answer": "comically", "suffix": " way."}, {"n": 25, "prefix": "She sings really ", "hint": "good → хорошо", "answer": "well", "suffix": " for her age."}, {"n": 26, "prefix": "I haven't seen him much ", "hint": "late → в последнее время", "answer": "lately", "suffix": "."}, {"n": 27, "prefix": "The teacher spoke ", "hint": "high → весьма", "answer": "highly", "suffix": " of her students."}, {"n": 28, "prefix": "We ", "hint": "near → почти", "answer": "nearly", "suffix": " missed the train this morning."}, {"n": 29, "prefix": "The class is ", "hint": "most → в основном", "answer": "mostly", "suffix": " made up of beginners."}, {"n": 30, "prefix": "I could ", "hint": "hard → едва", "answer": "hardly", "suffix": " hear him over the noise."}, {"n": 31, "prefix": "You can ", "hint": "free → свободно", "answer": "freely", "suffix": " discuss any topic in the group."}, {"n": 32, "prefix": "The mayor ", "hint": "public → публично", "answer": "publicly", "suffix": " apologised for the mistake."}, {"n": 33, "prefix": "She was ", "hint": "true → поистине", "answer": "truly", "suffix": " grateful for all the support."}]}};
+
+
+function confirmResetPassword(){
+  const pw = prompt('This will erase ALL saved progress on this page.\nEnter the reset password to confirm:');
+  if (pw === null) return false; // cancelled
+  if (pw !== 'thebest') { alert('Incorrect password. Progress was not reset.'); return false; }
+  return true;
+}
+
+const SUPABASE_URL = 'https://zhzhamxgfornfvwckfyf.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_LoyWwbsXHBb4l_k1FnmAog_yZO0uPrn';
+const TRACK_BLOCK = 'block9';
+
+const SESSION_ID = (function(){
+  try {
+    let sid = sessionStorage.getItem('hw_session_id');
+    if (!sid) { sid = 'sess_' + Date.now() + '_' + Math.random().toString(36).slice(2,10); sessionStorage.setItem('hw_session_id', sid); }
+    return sid;
+  } catch(e) { return 'sess_' + Date.now() + '_' + Math.random().toString(36).slice(2,10); }
+})();
+
+function getRole(){
+  try { return localStorage.getItem('hw_role') === 'teacher' ? 'teacher' : 'student'; } catch(e) { return 'student'; }
+}
+
+function trackEvent(topic, prefix, suffix, correctAnswer, studentAnswer, isCorrect){
+  if (!SUPABASE_URL || SUPABASE_URL.indexOf('__') === 0) return; // Supabase not configured yet
+  const role = getRole();
+  if (role === 'teacher') { console.log('[Supabase tracking] skipped -- teacher mode is on'); return; }
+  try {
+    fetch(SUPABASE_URL + '/rest/v1/activity_events', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({
+        session_id: SESSION_ID,
+        block: TRACK_BLOCK,
+        topic: topic,
+        prefix: prefix,
+        suffix: suffix,
+        correct_answer: correctAnswer,
+        student_answer: studentAnswer,
+        question_text: (prefix || '') + (correctAnswer || '') + (suffix || ''),
+        is_correct: isCorrect,
+        event_type: 'answer',
+        role: role
+      }),
+      keepalive: true
+    }).then(function(res){
+      if (!res.ok) {
+        res.text().then(function(t){ console.error("[Supabase tracking] insert failed:", res.status, t); });
+      } else {
+        console.log("[Supabase tracking] event saved OK");
+      }
+    }).catch(function(err){ console.error("[Supabase tracking] network error:", err); });
+  } catch(e) { console.error("[Supabase tracking] unexpected error:", e); }
+}
+
+function normVal(s){
+  return s.trim().toLowerCase()
+    .replace(/[‘’´`ʼ′ʻˮ]/g, "'")
+    .replace(/\s+/g,' ');
+}
+
+function shuffleArr(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+const COND_DEFS = [
+  { key: 'noun_formation', label: 'Nouns', badge: 'Noun Formation',
+    ruleTitle: '📖 Noun Formation — правило и частые суффиксы',
+    rule: `
+      <h4>Из глагола/прилагательного — в существительное</h4>
+      <p>Английский образует существительные с помощью суффиксов, добавленных к глаголу или прилагательному. Разные суффиксы просто нужно запоминать вместе со словом — чёткого правила "когда какой" нет, только частотные группы.</p>
+      <h4>-tion / -sion (обычно от глаголов)</h4>
+      <p><code>decide → decision</code>, <code>act → action</code>, <code>inform → information</code>. Самая частая группа для отглагольных существительных.</p>
+      <h4>-ment / -ness</h4>
+      <p><code>-ment</code> чаще от глаголов: <code>develop → development</code>, <code>agree → agreement</code>. <code>-ness</code> почти всегда от прилагательных: <code>happy → happiness</code>, <code>dark → darkness</code>.</p>
+      <h4>-ity / -ance / -ence / -er / -or</h4>
+      <p><code>-ity</code> от прилагательных: <code>able → ability</code>, <code>popular → popularity</code>. <code>-er/-or</code> образуют существительные, обозначающие ЧЕЛОВЕКА, который выполняет действие: <code>teach → teacher</code>, <code>act → actor</code>.</p>
+      <div class="rule-note">Перевод в подсказке — это перевод СЛОВА, которое нужно написать (не базового слова). Он помогает понять, какая именно форма нужна по смыслу.</div>` },
+
+  { key: 'adjective_formation', label: 'Adjectives', badge: 'Adjective Formation',
+    ruleTitle: '📖 Adjective Formation — правило и частые суффиксы',
+    rule: `
+      <h4>-ful / -less — противоположность по смыслу</h4>
+      <p><code>-ful</code> = "полный чего-то": <code>care → careful</code> (осторожный). <code>-less</code> = "без чего-то": <code>care → careless</code> (небрежный). Один корень — два противоположных прилагательных.</p>
+      <h4>-able / -ible — "можно сделать"</h4>
+      <p>Означает "то, что можно X" или "то, что вызывает X": <code>comfort → comfortable</code>, <code>believe → believable</code>. -ible встречается реже и обычно с латинскими корнями: <code>horror → horrible</code>, <code>flex → flexible</code>.</p>
+      <h4>-ive / -al / -ous / -ic</h4>
+      <p>Разные суффиксы, схожая функция — превращают существительное в описательное прилагательное: <code>attract → attractive</code>, <code>nature → natural</code>, <code>danger → dangerous</code>, <code>base → basic</code>.</p>
+      <div class="rule-note">Один и тот же корень (care, taste, thought, meaning) часто может принимать И -ful, И -less — смысл при этом меняется на противоположный. Внимательно читай перевод в подсказке!</div>` },
+
+  { key: 'negative_prefixes', label: 'Negative Prefixes', badge: 'Negative Prefixes',
+    ruleTitle: '📖 Negative Prefixes — отрицательные приставки',
+    rule: `
+      <h4>un- — самая частая приставка</h4>
+      <p>Подходит к большинству прилагательных и некоторым глаголам: <code>happy → unhappy</code>, <code>lock → unlock</code>. Если не уверен, какую приставку выбрать — начни с un-, она чаще всего права.</p>
+      <h4>in- / im- / il- / ir- — зависит от первой буквы корня</h4>
+      <ul>
+        <li><code>im-</code> перед p/m/b: <code>possible → impossible</code>, <code>mature → immature</code></li>
+        <li><code>il-</code> перед l: <code>legal → illegal</code>, <code>logical → illogical</code></li>
+        <li><code>ir-</code> перед r: <code>regular → irregular</code>, <code>responsible → irresponsible</code></li>
+        <li><code>in-</code> во всех остальных случаях: <code>correct → incorrect</code></li>
+      </ul>
+      <div class="rule-note">Приставка "сливается" с первой буквой корня — поэтому <code>legal</code> не может стать "inlegal", только <code>illegal</code>.</div>
+      <h4>dis- / non-</h4>
+      <p><code>dis-</code> часто с глаголами и существительными на -ment/-ance: <code>agree → disagree</code>, <code>advantage → disadvantage</code>. <code>non-</code> — более "нейтральная", часто с составными/техническими словами: <code>smoker → non-smoker</code>, <code>fiction → non-fiction</code>.</p>` },
+
+  { key: 'verb_formation', label: 'Verbs', badge: 'Verb Formation',
+    ruleTitle: '📖 Verb Formation — правило и частые аффиксы',
+    rule: `
+      <h4>en- / em- — "сделать таким"</h4>
+      <p>Превращает прилагательное или существительное в глагол со значением "сделать X-ым" или "поместить в X": <code>large → enlarge</code> (увеличить), <code>rich → enrich</code> (обогатить). <code>em-</code> используется перед b/p/m: <code>power → empower</code>, <code>brace → embrace</code>.</p>
+      <h4>-ise / -ize — очень продуктивный суффикс</h4>
+      <p>Образует глаголы почти от любых прилагательных и существительных, особенно длинных/латинских: <code>modern → modernise</code>, <code>critic → criticise</code>, <code>final → finalise</code>. Британский вариант чаще -ise, американский -ize — оба варианта верны.</p>
+      <h4>-ify — тоже "сделать X-ым"</h4>
+      <p><code>simple → simplify</code>, <code>pure → purify</code>, <code>class → classify</code>.</p>
+      <h4>-en — короткие прилагательные → глаголы</h4>
+      <p>Обычно с короткими односложными прилагательными: <code>wide → widen</code>, <code>short → shorten</code>, <code>strong → strengthen</code>.</p>` },
+
+  { key: 'adverb_formation', label: 'Adverbs', badge: 'Adverb Formation',
+    ruleTitle: '📖 Adverb Formation — правило и орфографические изменения',
+    rule: `
+      <h4>Базовое правило: + -ly</h4>
+      <p>Большинство прилагательных просто получают -ly на конце: <code>quick → quickly</code>, <code>careful → carefully</code>, <code>sudden → suddenly</code>.</p>
+      <h4>Орфографические изменения</h4>
+      <ul>
+        <li>Прилагательное на -y → -ily: <code>happy → happily</code>, <code>easy → easily</code></li>
+        <li>Прилагательное на -le → просто -ly (без лишней e): <code>simple → simply</code>, <code>gentle → gently</code></li>
+        <li>Прилагательное на -l → -lly (двойная l): <code>beautiful → beautifully</code>, <code>general → generally</code></li>
+      </ul>
+      <h4>-ic → -ically</h4>
+      <p>Прилагательные на -ic почти всегда получают -ally, а не просто -ly: <code>basic → basically</code>, <code>dramatic → dramatically</code>.</p>
+      <div class="rule-note"><b>Неправильные наречия (запомнить отдельно):</b> <code>good → well</code>, <code>hard → hardly</code> (внимание — означает "едва", а не "трудно"!), <code>late → lately</code> ("недавно", не путать с "late" как наречие "поздно"), <code>true → truly</code> (без e), <code>near → nearly</code> ("почти", не то же самое, что "near" рядом).</div>` },
+];
+
+const CATS = ['affirmative', 'negative', 'interrogative'];
+const ROUND_SIZE = 25;
+const BANK_SIZE_PER_COND = 100; // ~33 x 3 subtypes
+
+const STORAGE_KEY = 'hwProgress_block9';
+
+function loadRoundState(){
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch(e) { return null; }
+}
+
+function saveRoundState(){
+  try {
+    const inputsState = {};
+    roundContainerEl.querySelectorAll('.gap').forEach(inp => {
+      const rid = inp.dataset.rid;
+      let c = null;
+      if (inp.classList.contains('correct')) c = 'correct';
+      else if (inp.classList.contains('wrong')) c = 'wrong';
+      if (inp.value || c) inputsState[rid] = { v: inp.value, c: c, ro: inp.readOnly };
+    });
+    const state = {
+      selectedConds: [...selectedConds],
+      mistakesOnly: mistakesOnly,
+      mistakesBank: [...mistakesBank.entries()],
+      seenSet: [...seenSet],
+      currentRound: currentRound,
+      inputs: inputsState,
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  } catch(e) { /* storage unavailable -- fail silently */ }
+}
+
+const __saved = loadRoundState();
+let selectedConds = new Set((__saved && __saved.selectedConds && __saved.selectedConds.length) ? __saved.selectedConds : ['noun_formation']);
+let mistakesOnly = __saved ? !!__saved.mistakesOnly : false;
+let currentRound = [];
+let mistakesBank = new Map((__saved && __saved.mistakesBank) ? __saved.mistakesBank : []);
+let seenSet = new Set((__saved && __saved.seenSet) ? __saved.seenSet : []);
+
+function itemKey(item){
+  return item.condKey + '|' + item.cat + '|' + item.n;
+}
+
+const condTabsEl = document.getElementById('cond-tabs');
+const ruleStackEl = document.getElementById('rule-stack');
+const bankOverviewEl = document.getElementById('bank-overview');
+const roundContainerEl = document.getElementById('round-container');
+const statFilledEl = document.getElementById('stat-filled');
+const statCorrectEl = document.getElementById('stat-correct');
+const statWrongEl = document.getElementById('stat-wrong');
+
+function renderCondTabs(){
+  condTabsEl.innerHTML = '';
+  COND_DEFS.forEach(cd => {
+    const tab = document.createElement('div');
+    tab.className = 'cond-tab' + (selectedConds.has(cd.key) ? ' active' : '');
+    tab.id = 'condtab-' + cd.key;
+    tab.innerHTML = '<span class="check-dot">' + (selectedConds.has(cd.key) ? '✓' : '') + '</span>' + cd.label;
+    tab.onclick = () => toggleCond(cd.key);
+    condTabsEl.appendChild(tab);
+  });
+  const mtab = document.createElement('div');
+  mtab.className = 'cond-tab mistakes-tab' + (mistakesOnly ? ' active' : '');
+  mtab.id = 'mistakes-tab';
+  mtab.innerHTML = '<span class="check-dot">' + (mistakesOnly ? '✓' : '') + '</span>⚠ Mistakes Bank (' + mistakesBank.size + ')';
+  mtab.onclick = () => { mistakesOnly = !mistakesOnly; onSelectionChanged(); };
+  condTabsEl.appendChild(mtab);
+}
+
+function toggleCond(key){
+  if (selectedConds.has(key)) selectedConds.delete(key);
+  else selectedConds.add(key);
+  onSelectionChanged();
+}
+
+function onSelectionChanged(){
+  seenSet = new Set();
+  renderCondTabs();
+  renderRuleStack();
+  buildRound();
+  renderRound();
+  updateBankOverview();
+  saveRoundState();
+}
+
+function renderRuleStack(){
+  ruleStackEl.innerHTML = '';
+  COND_DEFS.forEach(cd => {
+    if (!selectedConds.has(cd.key)) return;
+    const box = document.createElement('div');
+    box.className = 'rule-box';
+    box.innerHTML = `
+      <div class="rule-toggle" id="ruletoggle-${cd.key}">
+        <span>${cd.ruleTitle}</span>
+        <span class="chev">▾</span>
+      </div>
+      <div class="rule-content" id="rulecontent-${cd.key}">${cd.rule}</div>
+    `;
+    ruleStackEl.appendChild(box);
+    const toggle = box.querySelector('.rule-toggle');
+    const contentEl = box.querySelector('.rule-content');
+    toggle.addEventListener('click', () => {
+      toggle.classList.toggle('open');
+      contentEl.classList.toggle('open');
+    });
+  });
+}
+
+function currentPoolSize(){
+  if (mistakesOnly) return mistakesBank.size;
+  return selectedConds.size * BANK_SIZE_PER_COND;
+}
+
+function updateBankOverview(){
+  const total = currentPoolSize();
+  const seen = seenSet.size;
+  if (total === 0) {
+    bankOverviewEl.innerHTML = mistakesOnly
+      ? 'Mistakes Bank is empty — nice work! Answer questions elsewhere and mistakes will collect here.'
+      : 'Select at least one conditional type to see the question bank.';
+  } else {
+    bankOverviewEl.innerHTML = `Bank: <b>${total}</b> question${total===1?'':'s'} ${mistakesOnly ? '(Mistakes Bank)' : 'across selected filters'} &nbsp;·&nbsp; Completed so far: <b>${seen}</b> / ${total}`;
+  }
+}
+
+function buildRound(){
+  if (mistakesOnly) {
+    const pool = [...mistakesBank.values()];
+    if (pool.length === 0) { currentRound = []; return; }
+    const roundSize = Math.min(ROUND_SIZE, pool.length); // don't pad with repeats -- show only real mistakes
+    const shuffled = shuffleArr(pool);
+    const items = shuffled.slice(0, roundSize);
+    currentRound = shuffleArr(items).map((item, i) => Object.assign({}, item, { rid: i }));
+    return;
+  }
+
+  const conds = [...selectedConds];
+  if (conds.length === 0) { currentRound = []; return; }
+
+  const base = Math.floor(ROUND_SIZE / CATS.length);
+  const rem = ROUND_SIZE - base * CATS.length;
+  const counts = CATS.map((c, i) => base + (i < rem ? 1 : 0));
+
+  let items = [];
+  CATS.forEach((cat, idx) => {
+    let pool = [];
+    conds.forEach(condKey => {
+      ALL[condKey][cat].forEach(it => pool.push(Object.assign({}, it, { condKey, cat })));
+    });
+    const shuffled = shuffleArr(pool);
+    const need = counts[idx];
+    for (let i = 0; i < need; i++) {
+      items.push(Object.assign({}, shuffled[i % shuffled.length]));
+    }
+  });
+  items = shuffleArr(items);
+  currentRound = items.map((item, i) => Object.assign({}, item, { rid: i }));
+}
+
+function renderRound(){
+  roundContainerEl.innerHTML = '';
+  if (currentRound.length === 0) {
+    roundContainerEl.innerHTML = mistakesOnly
+      ? '<div class="empty-state">No mistakes recorded yet for the current filters. Answer some questions elsewhere first!</div>'
+      : '<div class="empty-state">Select at least one conditional type above to start a round.</div>';
+    updateStats();
+    return;
+  }
+  const listCard = document.createElement('div');
+  listCard.className = 'list-card';
+  currentRound.forEach((item, i) => {
+    const row = document.createElement('div');
+    row.className = 'item';
+    row.innerHTML = `
+      <div class="item-row">
+        <span class="item-num">${i + 1}.</span>
+        <span class="item-text">${item.prefix}</span>
+        <span class="gapwrap">
+          <input type="text" class="gap" data-rid="${item.rid}" autocomplete="off" spellcheck="false">
+        </span>
+        <span class="hint">(${item.hint})</span>
+        <span class="item-text">${item.suffix}</span>
+        <span class="correct-answer"></span>
+        <button type="button" class="btn-check-item" data-rid="${item.rid}">Check</button>
+      </div>
+      <div class="item-ru" style="display:none;">${item.ru || ''}</div>
+    `;
+    listCard.appendChild(row);
+  });
+  roundContainerEl.appendChild(listCard);
+
+  roundContainerEl.querySelectorAll('.gap').forEach(inp => {
+
+
+    inp.addEventListener('keydown', (e) => {
+
+
+      if (e.key === 'Enter') {
+
+
+        e.preventDefault();
+
+
+        checkSingle(inp);
+
+
+        focusNext(inp);
+
+
+      }
+
+
+    });
+
+
+  });
+
+
+  roundContainerEl.querySelectorAll('.btn-check-item').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const inp = roundContainerEl.querySelector('.gap[data-rid="' + btn.dataset.rid + '"]');
+      if (inp) checkSingle(inp);
+    });
+  });
+
+  updateStats();
+}
+
+function focusNext(inp){
+  const all = [...roundContainerEl.querySelectorAll('.gap')];
+  const idx = all.indexOf(inp);
+  for (let i = idx + 1; i < all.length; i++) {
+    if (!all[i].readOnly) { all[i].focus(); return; }
+  }
+}
+
+// note element is the 3rd sibling after the gapwrap: gapwrap -> hint -> suffix(item-text) -> correct-answer
+function getNoteEl(inp){
+  return inp.parentElement.nextElementSibling.nextElementSibling.nextElementSibling;
+}
+
+function getCheckBtn(inp){
+  return roundContainerEl.querySelector('.btn-check-item[data-rid="' + inp.dataset.rid + '"]');
+}
+
+function checkSingle(inp){
+  if (inp.readOnly) return;
+  const rid = inp.dataset.rid;
+  const item = currentRound.find(x => String(x.rid) === String(rid));
+  if (!item) return;
+  const note = getNoteEl(inp);
+  const val = normVal(inp.value);
+  const acceptedList = (item.answers || [item.answer]).map(normVal);
+  const key = itemKey(item);
+  const isCorrect = val.length && acceptedList.includes(val);
+
+  if (isCorrect) {
+    inp.classList.add('correct'); inp.classList.remove('wrong');
+    note.classList.remove('show');
+    if (mistakesBank.has(key)) mistakesBank.delete(key); // graduate out of mistakes
+  } else {
+    inp.classList.add('wrong'); inp.classList.remove('correct');
+    const shown = (item.answers && item.answers.length > 1) ? item.answers.join(' / ') : item.answer;
+    note.textContent = '→ ' + shown;
+    note.classList.add('show');
+    mistakesBank.set(key, item);
+  }
+  inp.readOnly = true;
+  const __btn = getCheckBtn(inp); if (__btn) __btn.disabled = true;
+  seenSet.add(key);
+  trackEvent(item.condKey + ' \u00b7 ' + item.cat, item.prefix, item.suffix, item.answer, inp.value, isCorrect);
+  updateStats();
+  updateBankOverview();
+  updateMistakesTabLabel();
+  saveRoundState();
+}
+
+function updateMistakesTabLabel(){
+  const tab = document.getElementById('mistakes-tab');
+  if (tab) tab.innerHTML = '<span class="check-dot">' + (mistakesOnly ? '✓' : '') + '</span>⚠ Mistakes Bank (' + mistakesBank.size + ')';
+}
+
+function checkAll(){
+  roundContainerEl.querySelectorAll('.gap').forEach(inp => {
+    if (!inp.readOnly) checkSingle(inp);
+  });
+}
+
+function resetRound(){
+  roundContainerEl.querySelectorAll('.gap').forEach(inp => {
+    inp.value = '';
+    inp.readOnly = false;
+    const __rbtn = getCheckBtn(inp); if (__rbtn) __rbtn.disabled = false;
+    inp.classList.remove('correct', 'wrong');
+    getNoteEl(inp).classList.remove('show');
+  });
+  updateStats();
+  saveRoundState();
+}
+
+function newRound(){
+  buildRound();
+  renderRound();
+  saveRoundState();
+}
+
+function updateStats(){
+  const inputs = [...roundContainerEl.querySelectorAll('.gap')];
+  const filled = inputs.filter(i => i.readOnly).length;
+  const correct = inputs.filter(i => i.classList.contains('correct')).length;
+  const wrong = inputs.filter(i => i.classList.contains('wrong')).length;
+  statFilledEl.textContent = filled;
+  statCorrectEl.textContent = correct;
+  statWrongEl.textContent = wrong;
+}
+
+document.getElementById('btn-select-all').addEventListener('click', () => {
+  COND_DEFS.forEach(cd => selectedConds.add(cd.key));
+  mistakesOnly = false;
+  onSelectionChanged();
+});
+document.getElementById('btn-select-none').addEventListener('click', () => {
+  selectedConds.clear();
+  onSelectionChanged();
+});
+document.getElementById('btn-check-all').addEventListener('click', checkAll);
+document.getElementById('btn-reset-round').addEventListener('click', resetRound);
+document.getElementById('btn-new-round').addEventListener('click', newRound);
+document.getElementById('btn-reset-all').addEventListener('click', () => {
+  if (!confirmResetPassword()) return;
+  selectedConds = new Set(['noun_formation']);
+  mistakesOnly = false;
+  mistakesBank = new Map();
+  onSelectionChanged();
+});
+
+renderCondTabs();
+renderRuleStack();
+if (__saved && __saved.currentRound && __saved.currentRound.length) {
+  currentRound = __saved.currentRound;
+} else {
+  buildRound();
+}
+renderRound();
+if (__saved && __saved.inputs) {
+  roundContainerEl.querySelectorAll('.gap').forEach(inp => {
+    const saved = __saved.inputs[inp.dataset.rid];
+    if (!saved) return;
+    inp.value = saved.v || '';
+    if (saved.c === 'correct') {
+      inp.classList.add('correct');
+    } else if (saved.c === 'wrong') {
+      inp.classList.add('wrong');
+      const item = currentRound.find(x => String(x.rid) === inp.dataset.rid);
+      if (item) {
+        const note = getNoteEl(inp);
+        note.textContent = '→ ' + item.answer;
+        note.classList.add('show');
+      }
+    }
+    if (saved.ro) { inp.readOnly = true; const __sbtn = getCheckBtn(inp); if (__sbtn) __sbtn.disabled = true; }
+  });
+  updateStats();
+}
+updateBankOverview();
+</script>
+</body>
+</html>
