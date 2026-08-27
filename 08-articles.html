@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Articles</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Nunito:wght@600;700;800&display=swap');
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --brand: #16233F; --brand-dark: #0D1830;
+    --bg: #FFF8EE; --surface: #ffffff; --surface2: #FFF1DC;
+    --accent: #E86F0C; --accent-light: #FDE4C6; --accent-dark: #C25A00;
+    --gold: #F5B841; --gold-dark: #D69A1F;
+    --purple: #7c3aed; --orange: #D97706;
+    --green: #2D9E6B; --green-bg: #E6F7EF; --green-border: #A8DBBF;
+    --red: #D63B3B; --red-bg: #FDEAEA; --red-border: #F0AAAA;
+    --text: #241C10; --muted: #7C6A54; --muted2: #C9B79B;
+    --border: #F0DFC2; --radius: 12px;
+    --shadow-card: 0 2px 10px rgba(120,80,20,0.08);
+  }
+  body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  header {
+    background: var(--brand); padding: 14px 32px;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 10px; position: sticky; top: 0; z-index: 20;
+    box-shadow: 0 3px 16px rgba(22,35,63,0.45);
+  }
+  .logo { font-family: 'Nunito', sans-serif; font-size: 17px; font-weight: 800; color: #fff; line-height: 1.2; }
+  .logo-sub { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.68); letter-spacing: 0.7px; text-transform: uppercase; display: block; margin-top: 2px; }
+  .header-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .chip { font-size: 13px; font-weight: 700; padding: 4px 12px; border-radius: 20px; background: rgba(255,255,255,0.18); color: #fff; border: 1px solid rgba(255,255,255,0.35); }
+  .chevrons { display: inline-flex; margin-left: 8px; vertical-align: middle; }
+  .chevrons span {
+    display: inline-block; width: 0; height: 0;
+    border-top: 7px solid transparent; border-bottom: 7px solid transparent;
+    border-left: 9px solid var(--accent); margin-left: -3px;
+  }
+  .chevrons span:last-child { border-left-color: var(--gold); }
+  .btn-reset-all {
+    font-family: 'Inter', sans-serif; font-size: 12.5px; font-weight: 700; padding: 7px 16px;
+    border-radius: 20px; cursor: pointer; border: 1.5px solid rgba(255,255,255,0.5);
+    background: rgba(0,0,0,0.15); color: #fff; transition: all .15s;
+  }
+  .btn-reset-all:hover { background: rgba(0,0,0,0.3); }
+  .back-link {
+    display: inline-flex; align-items: center; gap: 5px; font-family: 'Inter', sans-serif;
+    font-size: 12.5px; font-weight: 700; padding: 7px 14px; border-radius: 20px;
+    color: rgba(255,255,255,0.85); text-decoration: none; border: 1.5px solid rgba(255,255,255,0.3);
+    background: transparent; transition: all .15s; margin-right: 14px; flex-shrink: 0;
+  }
+  .back-link:hover { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.5); color: #fff; }
+
+
+  main { max-width: 1180px; margin: 0 auto; padding: 24px 18px 60px; }
+
+
+  .block-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .block-badge {
+    font-family: 'Nunito', sans-serif; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px;
+    background: var(--accent); color: #fff; padding: 5px 14px; border-radius: 8px;
+  }
+  .block-title { font-family: 'Nunito', sans-serif; font-size: 19px; font-weight: 800; color: var(--brand-dark); }
+  .block-subtitle { font-size: 13px; color: var(--muted); margin-top: 4px; }
+
+  .category-tabs { display: flex; gap: 10px; margin-bottom: 16px; }
+  .category-tab {
+    font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 800; padding: 10px 22px;
+    border-radius: 14px; background: var(--surface); border: 2px solid var(--border); color: var(--muted);
+    cursor: pointer; transition: all .15s;
+  }
+  .category-tab:hover { border-color: var(--accent); color: var(--accent); }
+  .category-tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  /* ── COLLAPSIBLE TEXT PICKER ── */
+  .picker { position: relative; margin-bottom: 20px; max-width: 420px; }
+  .picker-trigger {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    background: var(--surface); border: 1.5px solid var(--border); border-radius: 12px;
+    padding: 10px 16px; cursor: pointer; transition: all .15s;
+  }
+  .picker-trigger:hover { border-color: var(--accent); }
+  .picker-trigger.open { border-color: var(--accent); border-radius: 12px 12px 0 0; }
+  .picker-trigger-label { font-size: 14px; font-weight: 700; color: var(--text); }
+  .picker-trigger-score { font-size: 12px; font-weight: 700; color: var(--muted); margin-left: 6px; }
+  .picker-chevron { font-size: 11px; color: var(--muted); transition: transform .15s; }
+  .picker-trigger.open .picker-chevron { transform: rotate(180deg); }
+
+  .picker-panel {
+    position: absolute; top: 100%; left: 0; right: 0; z-index: 15;
+    background: var(--surface); border: 1.5px solid var(--accent); border-top: none; border-radius: 0 0 12px 12px;
+    box-shadow: 0 8px 20px rgba(30,40,100,0.15);
+    max-height: 280px; overflow-y: auto; display: none;
+  }
+  .picker-panel.open { display: block; }
+  .picker-item {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    padding: 9px 16px; font-size: 13.5px; font-weight: 600; color: var(--text); cursor: pointer; transition: background .1s;
+  }
+  .picker-item:hover { background: var(--accent-light); }
+  .picker-item.active { background: var(--accent-light); color: var(--accent-dark); font-weight: 700; }
+  .picker-item-score { font-size: 11.5px; font-weight: 700; color: var(--muted); }
+  .picker-item.cat-hidden { display: none; }
+
+  .workspace { display: block; }
+
+  .text-card {
+    background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius);
+    box-shadow: var(--shadow-card); padding: 24px 26px; flex: 1 1 auto; min-width: 0;
+  }
+  .text-card.hidden { display: none; }
+
+  .text-head { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 6px; margin-bottom: 4px; }
+  .text-name { font-family: 'Nunito', sans-serif; font-size: 20px; font-weight: 800; color: var(--brand-dark); }
+  .text-role { font-size: 12.5px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .4px; }
+  .text-score { font-size: 13px; font-weight: 700; color: var(--muted); }
+
+  .story p { font-size: 15px; line-height: 2.15; margin: 14px 0; color: var(--text); }
+  .story p:first-child { margin-top: 16px; }
+
+  .gapwrap { position: relative; display: inline-block; margin: 0 2px; }
+  .gap {
+    font-family: 'Inter', sans-serif; font-size: 14.5px; font-weight: 600;
+    border: none; border-bottom: 2px solid var(--accent); background: var(--accent-light);
+    border-radius: 5px 5px 0 0; padding: 2px 6px; width: 108px; text-align: center; color: var(--accent-dark);
+    outline: none; transition: all .15s;
+  }
+  .gap:focus { background: #fff; box-shadow: 0 0 0 2px var(--accent-light); }
+  .gap.correct { background: var(--green-bg); border-color: var(--green); color: #1e7a4d; }
+  .gap.wrong { background: var(--red-bg); border-color: var(--red); color: var(--red); }
+  .gapnum { position: absolute; top: -9px; left: 2px; font-size: 9px; font-weight: 700; color: var(--muted2); }
+  .correct-answer { display: none; font-size: 11.5px; color: var(--green); font-weight: 700; margin-left: 3px; }
+  .correct-answer.show { display: inline; }
+
+  .card-actions { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+  .btn {
+    font-family: 'Inter', sans-serif; font-size: 13.5px; font-weight: 700; padding: 9px 20px;
+    border-radius: 24px; cursor: pointer; border: none; transition: all .15s;
+  }
+  .btn-check { background: var(--accent); color: #fff; }
+  .btn-check:hover { background: var(--accent-dark); }
+  .btn-reset { background: var(--surface2); color: var(--muted); border: 1.5px solid var(--border); }
+  .btn-reset:hover { border-color: var(--muted); color: var(--text); }
+
+  .result-line { margin-top: 12px; font-size: 13.5px; font-weight: 700; display: none; }
+  .result-line.show { display: block; }
+  .result-line.ok { color: var(--green); }
+  .result-line.mid { color: var(--orange); }
+  .result-line.poor { color: var(--red); }
+
+  /* ── BANK SIDEBAR ── */
+  .bank-sidebar { display: none !important; }
+  .bank-sidebar-DISABLED {
+    width: 240px; flex: 0 0 240px; position: sticky; top: 90px;
+    background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius);
+    box-shadow: var(--shadow-card); padding: 16px 16px 18px; max-height: calc(100vh - 110px); overflow-y: auto;
+  }
+  .bank-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: var(--muted); margin-bottom: 4px; }
+  .bank-sub { font-size: 11.5px; color: var(--muted2); margin-bottom: 12px; line-height: 1.4; }
+  .bank-list { display: flex; flex-direction: column; gap: 6px; }
+  .bank-chip {
+    background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 6px 10px;
+    font-size: 13px; font-weight: 600; color: var(--text); display: flex; justify-content: space-between; align-items: center;
+    transition: all .15s;
+  }
+  .bank-chip .bc-count { font-size: 11.5px; font-weight: 700; color: var(--accent-dark); background: var(--accent-light); border-radius: 10px; padding: 1px 7px; }
+  .bank-chip.used { background: transparent; border-color: var(--border); color: var(--muted2); text-decoration: line-through; opacity: .55; }
+  .bank-chip.used .bc-count { display: none; }
+
+  @media (max-width: 860px) {
+    .workspace { flex-direction: column; }
+    .bank-sidebar { display: none !important; }
+  .bank-sidebar-DISABLED { width: 100%; flex: 1 1 auto; position: static; max-height: none; order: 2; }
+    .text-card { order: 1; }
+    .bank-list { flex-direction: row; flex-wrap: wrap; }
+    .bank-chip { flex: 0 0 auto; }
+  }
+
+  footer { text-align: center; padding: 24px; font-size: 12px; color: var(--muted); }
+
+  #teacher-banner {
+    display: none; align-items: center; justify-content: center; gap: 14px;
+    background: var(--gold); color: var(--brand-dark); text-align: center; font-weight: 700; font-size: 13px;
+    padding: 10px 16px; position: sticky; top: 0; z-index: 50; flex-wrap: wrap;
+  }
+  #teacher-banner button {
+    font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 800; padding: 5px 14px; border-radius: 16px;
+    border: 1.5px solid var(--brand-dark); background: transparent; color: var(--brand-dark); cursor: pointer; transition: all .15s;
+  }
+  #teacher-banner button:hover { background: var(--brand-dark); color: #fff; }
+  .rule-box { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-card); margin-bottom: 20px; overflow: hidden; }
+  .rule-toggle {
+    display: flex; align-items: center; justify-content: space-between; padding: 11px 18px; cursor: pointer;
+    font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 14.5px; color: var(--brand-dark);
+  }
+  .rule-toggle .chev { font-size: 12px; color: var(--muted); transition: transform .2s; }
+  .rule-toggle.open .chev { transform: rotate(180deg); }
+  .rule-content { display: none; padding: 0 20px 20px; font-size: 13.5px; line-height: 1.7; color: var(--text); }
+  .rule-content.open { display: block; }
+  .rule-content h4 { font-size: 13px; font-weight: 800; color: var(--brand-dark); margin: 14px 0 6px; }
+  .rule-content h4:first-child { margin-top: 0; }
+  .rule-content code { background: var(--accent-light); color: var(--accent-dark); padding: 1px 6px; border-radius: 5px; font-family: 'Inter', monospace; font-weight: 600; }
+  .rule-content ul { margin: 6px 0 6px 20px; }
+  .rule-content li { margin-bottom: 4px; }
+  .rule-note { background: var(--surface2); border-left: 3px solid var(--gold-dark); padding: 8px 12px; border-radius: 6px; margin: 10px 0; font-size: 13px; color: var(--muted); }
+</style>
+</head>
+<body>
+
+<header>
+  <div style="display:flex;align-items:center;">
+    <a class="back-link" href="index.html">← Back</a>
+    <div class="logo">Headway Pre-Intermediate<span class="chevrons"><span></span><span></span></span> <span class="logo-sub">Veronika's Practice</span></div>
+  </div>
+  <div class="header-right">
+    <span class="chip" id="global-score">✓ 0 / 0</span>
+    <button class="btn-reset-all" id="btn-reset-all">Reset All ↻</button>
+  </div>
+</header>
+
+<div id="teacher-banner">
+  <span>🧪 Teacher mode is ON — your answers on this page are NOT being recorded.</span>
+  <button id="teacher-banner-off">Turn off</button>
+</div>
+
+<main>
+  <div class="block-header">
+    <div>
+      <div class="block-title" id="block-title">Articles: a / an / the / no article</div>
+      <div class="block-subtitle" id="block-subtitle">Choosing the right article depends on context — read the whole sentence, sometimes the whole text</div>
+    </div>
+  </div>
+
+  <div class="rule-box">
+    <div class="rule-toggle" id="rule-toggle">
+      <span>📖 Articles — правило и тонкости живой речи</span>
+      <span class="chev">▾</span>
+    </div>
+    <div class="rule-content" id="rule-content">
+      <h4>A vs An — по звуку, не по букве</h4>
+      <p><code>a</code> перед согласным ЗВУКОМ, <code>an</code> перед гласным ЗВУКОМ. Смотри на произношение, а не на первую букву: <i>an hour</i> (h не произносится), <i>a university</i> (звучит как "юниверсити", начинается с "й").</p>
+
+      <h4>A vs The — сердце темы</h4>
+      <ul>
+        <li><code>a/an</code> — первое упоминание, один из многих, неважно какой именно: <i>I saw a cat.</i></li>
+        <li><code>the</code> — уже упоминали, единственный в своём роде, или понятно из контекста, о чём речь: <i>I saw a cat. The cat was black.</i></li>
+      </ul>
+      <div class="rule-note"><b>Главный принцип:</b> спроси себя — собеседник поймёт, о каком именно предмете речь, или это первое упоминание? Если поймёт — <code>the</code>. Если нет, один из многих — <code>a/an</code>.</div>
+
+      <h4>Нулевой артикль (ничего не пишем)</h4>
+      <ul>
+        <li>Множественное число и неисчисляемые в общем смысле: <i>Dogs are loyal. I like music.</i></li>
+        <li>Большинство названий стран и городов: <i>France, Tokyo</i> (но: <i>the UK, the Netherlands</i> — исключения с "объединённой" структурой в названии)</li>
+        <li>Приёмы пищи, транспорт, устойчивые выражения: <i>have breakfast, by car, go to school/bed/work</i> (когда речь о цели действия, а не о конкретном здании)</li>
+      </ul>
+
+      <h4>The + география: частые исключения</h4>
+      <p>Реки, моря, океаны, горные цепи, группы островов — с <code>the</code>: <i>the Nile, the Alps, the Bahamas</i>. Отдельные горы, озёра, большинство стран — без артикля: <i>Everest, Lake Baikal, France</i>. Названия с "of": <i>the Statue of Liberty, the Tower of London</i> — всегда с <code>the</code>.</p>
+      <div class="rule-note">В заданиях, если артикль не нужен вообще, ставь дефис <code>-</code> в поле — это и есть правильный ответ "без артикля".</div>
+    </div>
+  </div>
+
+  <div class="category-tabs" id="category-tabs"></div>
+
+  <div class="picker" id="picker">
+    <div class="picker-trigger" id="picker-trigger">
+      <span><span class="picker-trigger-label" id="picker-trigger-label"></span><span class="picker-trigger-score" id="picker-trigger-score"></span></span>
+      <span class="picker-chevron">▾</span>
+    </div>
+    <div class="picker-panel" id="nav-pills"></div>
+  </div>
+
+  <div class="workspace" id="workspace"></div>
+</main>
+
+<footer>Headway Pre-Intermediate · Veronika's Practice · банк слов взят из Wordlist Beginner + Elementary + Pre-Intermediate (Unit 1)</footer>
+
+<script>
+
+(function(){
+  try {
+    if (localStorage.getItem('hw_role') === 'teacher') {
+      document.getElementById('teacher-banner').style.display = 'flex';
+    }
+  } catch(e) {}
+})();
+var __teacherBannerOff = document.getElementById('teacher-banner-off');
+if (__teacherBannerOff) {
+  __teacherBannerOff.addEventListener('click', function(){
+    try { localStorage.setItem('hw_role', 'student'); } catch(e) {}
+    document.getElementById('teacher-banner').style.display = 'none';
+  });
+}
+const TEXTS = 
+[{"id": "pl1", "name": "Paris", "role": "city, France", "category": "places", "block": 8, "paragraphsHtml": ["Paris is the capital of France, and it is one of the most visited cities in the world. If you arrive by train, you will probably see <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"1\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">1</span></span> Eiffel Tower first — it is impossible to miss. <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"2\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">2</span></span> tower was built in 1889, and today millions of tourists climb it every year.", "Near the tower, there is <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"3\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">3</span></span> river called <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"4\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">4</span></span> Seine. <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"5\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">5</span></span> river flows right through the centre of the city, and in the evening, <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"6\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">6</span></span> boats sail slowly past <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"7\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">7</span></span> old bridges.", "If you enjoy art, you should visit <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"8\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">8</span></span> Louvre, which is one of <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"9\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">9</span></span> largest museums in the world. It used to be <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"10\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">10</span></span> palace, but now it is home to thousands of paintings, including <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"11\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">11</span></span> famous Mona Lisa.", "For lunch, find <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"12\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">12</span></span> small café near <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"13\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">13</span></span> river. Order <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"14\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">14</span></span> coffee and <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"15\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">15</span></span> croissant, and just watch <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"16\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">16</span></span> people walk by. That, more than anything else, is what makes Paris special."], "answers": {"1": ["the"], "2": ["The"], "3": ["a"], "4": ["the"], "5": ["The"], "6": ["-"], "7": ["-"], "8": ["the"], "9": ["the"], "10": ["a"], "11": ["the"], "12": ["a"], "13": ["the"], "14": ["-"], "15": ["a"], "16": ["-"]}, "totalBlanks": 16, "bankItems": []}, {"id": "pl2", "name": "Tokyo", "role": "city, Japan", "category": "places", "block": 8, "paragraphsHtml": ["Tokyo is <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"1\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">1</span></span> enormous city, home to more than thirteen million people. On your first morning, take <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"2\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">2</span></span> train to Shibuya and watch <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"3\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">3</span></span> famous crossing, where thousands of people cross <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"4\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">4</span></span> street at the same time.", "Not far away, you will find <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"5\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">5</span></span> quiet temple hidden between tall buildings. <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"6\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">6</span></span> temple is hundreds of years old, and it feels like a different world compared to the busy streets outside. Visitors often stop to ring <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"7\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">7</span></span> bell before they leave.", "In the evening, walk through <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"8\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">8</span></span> narrow streets of an old neighbourhood and look for <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"9\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">9</span></span> small restaurant that serves only ramen. Order <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"10\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">10</span></span> bowl of noodles, and don't be surprised if <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"11\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">11</span></span> owner refuses to take a tip — it isn't <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"12\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">12</span></span> custom here.", "<span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"13\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">13</span></span> Japan is famous for its trains, and <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"14\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">14</span></span> bullet train can take you from Tokyo to Kyoto in under three hours. If you only have <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"15\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">15</span></span> week to spend in the country, that journey alone is worth it."], "answers": {"1": ["an"], "2": ["a"], "3": ["the"], "4": ["the"], "5": ["a"], "6": ["The"], "7": ["the"], "8": ["the"], "9": ["a"], "10": ["a"], "11": ["the"], "12": ["the"], "13": ["-"], "14": ["the"], "15": ["a"]}, "totalBlanks": 15, "bankItems": []}, {"id": "pl3", "name": "New York", "role": "city, USA", "category": "places", "block": 8, "paragraphsHtml": ["New York is often called <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"1\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">1</span></span> city that never sleeps, and once you visit, you will understand why. Start your trip with <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"2\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">2</span></span> walk through Central Park, right in <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"3\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">3</span></span> middle of Manhattan.", "Later, take <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"4\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">4</span></span> ferry to see <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"5\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">5</span></span> Statue of Liberty. <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"6\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">6</span></span> statue was a gift from France, and it has welcomed millions of immigrants arriving in <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"7\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">7</span></span> United States by sea.", "For <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"8\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">8</span></span> different view of the city, go up <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"9\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">9</span></span> Empire State Building. From the top, <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"10\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">10</span></span> whole of Manhattan spreads out beneath you, and on a clear day, you can see for miles.", "In the evening, catch <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"11\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">11</span></span> show on Broadway, or simply walk around <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"12\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">12</span></span> Times Square and look at <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"13\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">13</span></span> enormous screens above you. New York can be exhausting, but it is <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"14\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">14</span></span> city everyone should see at least once."], "answers": {"1": ["the"], "2": ["a"], "3": ["the"], "4": ["a"], "5": ["the"], "6": ["The"], "7": ["the"], "8": ["a"], "9": ["the"], "10": ["the"], "11": ["a"], "12": ["-"], "13": ["the"], "14": ["a"]}, "totalBlanks": 14, "bankItems": []}, {"id": "pl4", "name": "Cairo", "role": "city, Egypt", "category": "places", "block": 8, "paragraphsHtml": ["<span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"1\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">1</span></span> Cairo is the largest city in Africa, and it sits right beside <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"2\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">2</span></span> Nile, <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"3\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">3</span></span> longest river in the world. Just outside the city, you can see <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"4\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">4</span></span> pyramids of Giza rising out of <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"5\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">5</span></span> desert.", "<span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"6\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">6</span></span> Great Pyramid is the oldest of the three, and it was built more than four thousand years ago. Nearby stands <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"7\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">7</span></span> Sphinx, <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"8\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">8</span></span> enormous statue with the body of a lion and the head of a man.", "Inside the old city, <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"9\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">9</span></span> narrow streets are full of small shops selling spices, fabric and jewellery. If you visit <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"10\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">10</span></span> market early in the morning, you will see traders setting out <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"11\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">11</span></span> baskets of dates and dried fruit before the heat of the day arrives.", "In the evening, take <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"12\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">12</span></span> boat along <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"13\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">13</span></span> river and watch the sun set behind the pyramids. It is <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"14\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">14</span></span> sight that photographs can never quite capture."], "answers": {"1": ["-"], "2": ["the"], "3": ["the"], "4": ["the"], "5": ["the"], "6": ["The"], "7": ["the"], "8": ["an"], "9": ["the"], "10": ["a"], "11": ["-"], "12": ["a"], "13": ["the"], "14": ["a"]}, "totalBlanks": 14, "bankItems": []}, {"id": "pl5", "name": "Rio de Janeiro", "role": "city, Brazil", "category": "places", "block": 8, "paragraphsHtml": ["Rio de Janeiro is famous for <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"1\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">1</span></span> beaches, <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"2\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">2</span></span> mountains, and one giant statue that watches over the whole city. If you take <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"3\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">3</span></span> cable car up Sugarloaf Mountain, you will get one of the best views in South America.", "<span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"4\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">4</span></span> most famous landmark, though, is <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"5\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">5</span></span> statue of Christ the Redeemer, standing on top of <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"6\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">6</span></span> mountain called Corcovado. <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"7\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">7</span></span> statue is enormous, and its arms stretch out as if it is embracing <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"8\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">8</span></span> entire city below.", "Down at sea level, <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"9\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">9</span></span> Copacabana beach stretches for miles along the coast. Early in the morning, you can see <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"10\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">10</span></span> old man doing yoga near the water, <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"11\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">11</span></span> group of teenagers playing football on the sand, and <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"12\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">12</span></span> fishermen bringing in their boats.", "Rio has <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"13\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">13</span></span> energy that is hard to describe. Whether you come for <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"14\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">14</span></span> carnival or just for the beaches, it is <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"15\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">15</span></span> city that stays with you long after you leave."], "answers": {"1": ["-"], "2": ["-"], "3": ["a"], "4": ["The"], "5": ["the"], "6": ["a"], "7": ["The"], "8": ["the"], "9": ["-"], "10": ["an"], "11": ["a"], "12": ["-"], "13": ["an"], "14": ["the"], "15": ["a"]}, "totalBlanks": 15, "bankItems": []}, {"id": "ev1", "name": "A Day at the Beach", "role": "everyday story", "category": "everyday", "block": 8, "paragraphsHtml": ["Last Saturday, we decided to spend <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"1\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">1</span></span> day at the beach. We packed <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"2\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">2</span></span> picnic, grabbed <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"3\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">3</span></span> umbrella, and left early before the crowds arrived.", "When we got there, my daughter found <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"4\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">4</span></span> shell near the water. <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"5\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">5</span></span> shell was pink and perfectly smooth, and she carried it around all day like it was <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"6\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">6</span></span> treasure. Later, she found <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"7\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">7</span></span> second shell, but it wasn't as pretty as <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"8\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">8</span></span> first one.", "Around midday, we ate <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"9\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">9</span></span> lunch under <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"10\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">10</span></span> umbrella, watching <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"11\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">11</span></span> waves roll in one after another. <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"12\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">12</span></span> tide was coming in slowly, and by the time we finished eating, <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"13\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">13</span></span> water had almost reached our things.", "As <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"14\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">14</span></span> sun began to set, we packed up and walked back to <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"15\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">15</span></span> car, tired but happy. It was <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"16\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">16</span></span> perfect end to a simple day."], "answers": {"1": ["a"], "2": ["a"], "3": ["an"], "4": ["a"], "5": ["The"], "6": ["a"], "7": ["a"], "8": ["the"], "9": ["-"], "10": ["the"], "11": ["the"], "12": ["The"], "13": ["the"], "14": ["the"], "15": ["the"], "16": ["a"]}, "totalBlanks": 16, "bankItems": []}, {"id": "ev2", "name": "Camping Trip", "role": "everyday story", "category": "everyday", "block": 8, "paragraphsHtml": ["We arrived at <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"1\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">1</span></span> campsite just as it started to get dark, so we had to put up <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"2\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">2</span></span> tent quickly before we lost the light completely. <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"3\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">3</span></span> tent was old and one of the poles was slightly bent, but it did the job.", "Once we had <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"4\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">4</span></span> fire going, we sat around it and cooked <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"5\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">5</span></span> sausages on sticks. <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"6\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">6</span></span> smell of woodsmoke and food filled <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"7\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">7</span></span> air, and for a while, nobody said anything at all.", "Later that night, we heard <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"8\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">8</span></span> strange sound coming from the trees. It turned out to be <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"9\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">9</span></span> owl, sitting somewhere above us in the dark. <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"10\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">10</span></span> owl called out a few more times before it finally went quiet.", "We slept surprisingly well, considering <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"11\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">11</span></span> ground was hard and <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"12\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">12</span></span> air was cold. In the morning, <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"13\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">13</span></span> sun rose slowly over the hills, and <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"14\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">14</span></span> whole forest seemed to wake up around us at once."], "answers": {"1": ["the"], "2": ["a"], "3": ["The"], "4": ["a"], "5": ["-"], "6": ["The"], "7": ["the"], "8": ["a"], "9": ["an"], "10": ["The"], "11": ["the"], "12": ["the"], "13": ["the"], "14": ["the"]}, "totalBlanks": 14, "bankItems": []}, {"id": "ev3", "name": "Cooking at Home", "role": "everyday story", "category": "everyday", "block": 8, "paragraphsHtml": ["On Sunday mornings, I like to make <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"1\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">1</span></span> big breakfast for the whole family. I start by cracking <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"2\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">2</span></span> egg into <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"3\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">3</span></span> bowl, then I add <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"4\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">4</span></span> little milk and whisk it all together.", "While <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"5\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">5</span></span> pan heats up on the stove, I chop <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"6\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">6</span></span> onion and <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"7\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">7</span></span> few mushrooms. <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"8\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">8</span></span> smell of onions cooking always brings everyone downstairs before I even call them.", "Once <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"9\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">9</span></span> pan is hot, I pour in the egg mixture and add <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"10\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">10</span></span> vegetables on top. <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"11\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">11</span></span> whole thing takes about ten minutes, and I usually serve it with <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"12\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">12</span></span> toast and <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"13\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">13</span></span> cup of tea.", "My son always asks for <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"14\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">14</span></span> same thing: extra cheese on top. It has become <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"15\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">15</span></span> little tradition in our house, and honestly, I wouldn't want Sunday mornings any other way."], "answers": {"1": ["a"], "2": ["an"], "3": ["a"], "4": ["a"], "5": ["the"], "6": ["an"], "7": ["a"], "8": ["The"], "9": ["the"], "10": ["the"], "11": ["The"], "12": ["-"], "13": ["a"], "14": ["the"], "15": ["a"]}, "totalBlanks": 15, "bankItems": []}, {"id": "ev4", "name": "Lions in the Wild", "role": "nature", "category": "everyday", "block": 8, "paragraphsHtml": ["<span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"1\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">1</span></span> lion is often called the king of the jungle, even though lions actually live on <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"2\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">2</span></span> open grasslands of Africa, not in jungles at all. <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"3\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">3</span></span> adult male can weigh as much as two hundred and fifty kilograms, and his loud roar can be heard from several kilometres away.", "Unlike most cats, lions live in <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"4\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">4</span></span> groups called prides. <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"5\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">5</span></span> pride usually consists of several related females, their cubs, and one or two males. <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"6\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">6</span></span> females do almost all of the hunting, working together to catch <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"7\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">7</span></span> animals much faster than themselves.", "Young cubs face <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"8\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">8</span></span> difficult start in life. Many do not survive <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"9\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">9</span></span> first year, threatened by hunger, disease, and sometimes even by other lions. Those that do survive spend <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"10\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">10</span></span> first two years learning to hunt by watching and copying <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"11\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">11</span></span> adults around them.", "Today, <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"12\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">12</span></span> lion population across Africa has fallen sharply, and in some countries, <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"13\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">13</span></span> animal has disappeared completely. Conservationists are working hard to protect <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"14\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">14</span></span> remaining prides before it is too late."], "answers": {"1": ["The"], "2": ["the"], "3": ["An"], "4": ["-"], "5": ["A"], "6": ["The"], "7": ["-"], "8": ["a"], "9": ["the"], "10": ["the"], "11": ["the"], "12": ["the"], "13": ["the"], "14": ["the"]}, "totalBlanks": 14, "bankItems": []}, {"id": "ev5", "name": "First Day at a New Job", "role": "everyday story", "category": "everyday", "block": 8, "paragraphsHtml": ["My first day at <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"1\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">1</span></span> new job started badly. I couldn't find <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"2\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">2</span></span> building at first, even though I had walked past it a dozen times before while job hunting. When I finally found <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"3\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">3</span></span> entrance, <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"4\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">4</span></span> receptionist smiled and told me to wait in <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"5\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">5</span></span> small room near the lift.", "After a few minutes, <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"6\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">6</span></span> woman I would be working with came to collect me. <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"7\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">7</span></span> woman turned out to be extremely friendly, and she introduced me to <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"8\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">8</span></span> rest of the team one by one.", "My desk was next to <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"9\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">9</span></span> window, which I was happy about. Outside, I could see <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"10\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">10</span></span> busy street below, full of people rushing to <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"11\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">11</span></span> work of their own. Inside, <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"12\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">12</span></span> office was quieter than I expected, with just <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"13\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">13</span></span> soft sound of typing and the occasional phone call.", "By <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"14\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">14</span></span> end of the day, I already felt slightly more comfortable. It wasn't <span class=\"gapwrap\"><input type=\"text\" class=\"gap\" data-n=\"15\" autocomplete=\"off\" spellcheck=\"false\"><span class=\"gapnum\">15</span></span> perfect first day, but it was a good start."], "answers": {"1": ["a"], "2": ["the"], "3": ["the"], "4": ["the"], "5": ["a"], "6": ["the"], "7": ["The"], "8": ["the"], "9": ["a"], "10": ["a"], "11": ["-"], "12": ["the"], "13": ["the"], "14": ["the"], "15": ["a"]}, "totalBlanks": 15, "bankItems": []}];
+
+function confirmResetPassword(){
+  const pw = prompt('This will erase ALL saved progress on this page.\nEnter the reset password to confirm:');
+  if (pw === null) return false; // cancelled
+  if (pw !== 'thebest') { alert('Incorrect password. Progress was not reset.'); return false; }
+  return true;
+}
+
+const SUPABASE_URL = 'https://zhzhamxgfornfvwckfyf.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_LoyWwbsXHBb4l_k1FnmAog_yZO0uPrn';
+const TRACK_BLOCK = 'block8';
+
+const SESSION_ID = (function(){
+  try {
+    let sid = sessionStorage.getItem('hw_session_id');
+    if (!sid) { sid = 'sess_' + Date.now() + '_' + Math.random().toString(36).slice(2,10); sessionStorage.setItem('hw_session_id', sid); }
+    return sid;
+  } catch(e) { return 'sess_' + Date.now() + '_' + Math.random().toString(36).slice(2,10); }
+})();
+
+function getRole(){
+  try { return localStorage.getItem('hw_role') === 'teacher' ? 'teacher' : 'student'; } catch(e) { return 'student'; }
+}
+
+function trackEvent(topic, prefix, suffix, correctAnswer, studentAnswer, isCorrect){
+  if (!SUPABASE_URL || SUPABASE_URL.indexOf('__') === 0) return; // Supabase not configured yet
+  const role = getRole();
+  if (role === 'teacher') { console.log('[Supabase tracking] skipped -- teacher mode is on'); return; }
+  try {
+    fetch(SUPABASE_URL + '/rest/v1/activity_events', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({
+        session_id: SESSION_ID,
+        block: TRACK_BLOCK,
+        topic: topic,
+        prefix: prefix,
+        suffix: suffix,
+        correct_answer: correctAnswer,
+        student_answer: studentAnswer,
+        question_text: (prefix || '') + (correctAnswer || '') + (suffix || ''),
+        is_correct: isCorrect,
+        event_type: 'answer',
+        role: role
+      }),
+      keepalive: true
+    }).then(function(res){
+      if (!res.ok) {
+        res.text().then(function(t){ console.error("[Supabase tracking] insert failed:", res.status, t); });
+      } else {
+        console.log("[Supabase tracking] event saved OK");
+      }
+    }).catch(function(err){ console.error("[Supabase tracking] network error:", err); });
+  } catch(e) { console.error("[Supabase tracking] unexpected error:", e); }
+}
+
+function gapContext(inp){
+  // Reconstruct readable prefix/suffix around a specific gap: take the containing
+  // paragraph, replace every OTHER gap with its currently entered (or blank) value,
+  // mark this gap with a split token, then slice text around that token.
+  try {
+    const p = inp.closest('p');
+    if (!p) return { prefix: '', suffix: '' };
+    const origInputs = [...p.querySelectorAll('.gap')];
+    const targetIdx = origInputs.indexOf(inp);
+    const clone = p.cloneNode(true);
+    const cloneInputs = [...clone.querySelectorAll('.gap')];
+    cloneInputs.forEach((ci, i) => {
+      const marker = document.createTextNode(i === targetIdx ? '\u0001' : (origInputs[i].value || '\u2026'));
+      ci.replaceWith(marker);
+    });
+    clone.querySelectorAll('.gapnum, .correct-answer').forEach(el => el.remove());
+    const text = clone.textContent;
+    const parts = text.split('\u0001');
+    let prefix = (parts[0] || '').trim();
+    let suffix = (parts[1] || '').trim();
+    if (prefix.length > 140) prefix = '\u2026' + prefix.slice(-140);
+    if (suffix.length > 140) suffix = suffix.slice(0, 140) + '\u2026';
+    return { prefix, suffix };
+  } catch(e) { return { prefix: '', suffix: '' }; }
+}
+
+function normVal(s){
+  return s.trim().toLowerCase()
+    .replace(/[‘’´`ʼ′ʻˮ]/g, "'")
+    .replace(/\s+/g,' ');
+}
+
+function shuffleArr(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+const CATEGORY_LABELS = { places: 'Places', everyday: 'Everyday & Nature' };
+
+// ---------- live-bank matching (content-word aware) ----------
+const PHRASAL_CHECK = {
+  'be born': v => /\bborn\b/.test(v),
+  'go off': v => /\boff\b/.test(v) && /\b(go|goes|going|went)\b/.test(v),
+  'keep going': v => /\bgoing\b/.test(v) && /\b(keep|keeps|kept|keeping)\b/.test(v),
+};
+
+function isNegated(v){ return /n't|\bnot\b|\bnever\b/.test(v); }
+
+function extractContent(v){
+  let m;
+  if (m = v.match(/^(?:i'm|i am|'m|am|is|'s|are|'re|was|were|isn't|wasn't|weren't|aren't|is not|are not|was not|were not)\s+(?:not\s+)?going to\s+(.+)$/)) return m[1].trim();
+  if (m = v.match(/^(?:will|'ll|won't|will not)\s+(?:not\s+)?(.+)$/)) return m[1].trim();
+  if (m = v.match(/^(?:is|'s|are|'re|am|'m|was|were|isn't|wasn't|weren't|aren't|is not|are not|was not|were not)\s+([a-z]+ing)\b/)) return m[1].trim();
+  if (m = v.match(/^(?:has|'ve|have|hasn't|haven't|has not|have not)\s+(.+)$/)) return m[1].trim();
+  if (m = v.match(/^(?:don't|doesn't|didn't|do not|does not|did not)\s+(.+)$/)) return m[1].trim();
+  return v;
+}
+
+function tokensOf(s){ return s.split(/\s+/).filter(Boolean); }
+
+TEXTS.forEach(t=>{
+  t.bankItems = shuffleArr(t.bankItems);
+});
+
+const STORAGE_KEY = 'hwProgress_block8';
+
+function loadState(){
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch(e) { return null; }
+}
+
+function saveState(){
+  try {
+    const state = { activeCategory: activeCategory, activeId: activeId, texts: {} };
+    TEXTS.forEach(t => {
+      const card = document.getElementById('card-' + t.id);
+      if (!card) return;
+      const gaps = {};
+      card.querySelectorAll('.gap').forEach(inp => {
+        const n = inp.dataset.n;
+        let c = null;
+        if (inp.classList.contains('correct')) c = 'correct';
+        else if (inp.classList.contains('wrong')) c = 'wrong';
+        if (inp.value || c) gaps[n] = { v: inp.value, c: c };
+      });
+      if (Object.keys(gaps).length) state.texts[t.id] = gaps;
+    });
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  } catch(e) { /* storage unavailable -- fail silently */ }
+}
+
+function applyState(state){
+  if (!state || !state.texts) return;
+  Object.keys(state.texts).forEach(tid => {
+    const t = TEXTS.find(x => x.id === tid);
+    const card = document.getElementById('card-' + tid);
+    if (!t || !card) return;
+    let correct = 0;
+    const gaps = state.texts[tid];
+    card.querySelectorAll('.gap').forEach(inp => {
+      const n = inp.dataset.n;
+      const saved = gaps[n];
+      if (!saved) return;
+      inp.value = saved.v || '';
+      const note = inp.parentElement.querySelector('.correct-answer');
+      if (saved.c === 'correct') {
+        inp.classList.add('correct'); correct++;
+      } else if (saved.c === 'wrong') {
+        inp.classList.add('wrong');
+        if (note) { note.textContent = '→ ' + t.answers[n][0]; note.classList.add('show'); }
+      }
+    });
+    document.getElementById('score-' + tid).textContent = correct + ' / ' + t.totalBlanks;
+    document.getElementById('pillscore-' + tid).textContent = correct + '/' + t.totalBlanks;
+    updateBank(tid);
+  });
+  updateGlobalScore();
+}
+
+const __savedState = loadState();
+const activeBlock = 8;
+let activeCategory = (__savedState && __savedState.activeCategory && categoriesForBlock(activeBlock).includes(__savedState.activeCategory))
+  ? __savedState.activeCategory : categoriesForBlock(activeBlock)[0];
+let activeId = (__savedState && __savedState.activeId && TEXTS.some(t => t.id === __savedState.activeId && t.block === activeBlock && t.category === activeCategory))
+  ? __savedState.activeId : TEXTS.find(t => t.block === activeBlock && t.category === activeCategory).id;
+
+const categoryTabsEl = document.getElementById('category-tabs');
+const workspace = document.getElementById('workspace');
+const pickerTrigger = document.getElementById('picker-trigger');
+const pickerPanel = document.getElementById('nav-pills');
+const pickerLabel = document.getElementById('picker-trigger-label');
+const pickerScore = document.getElementById('picker-trigger-score');
+
+pickerTrigger.addEventListener('click', () => {
+  pickerTrigger.classList.toggle('open');
+  pickerPanel.classList.toggle('open');
+});
+document.addEventListener('click', (e) => {
+  if (!document.getElementById('picker').contains(e.target)) {
+    pickerTrigger.classList.remove('open');
+    pickerPanel.classList.remove('open');
+  }
+});
+
+function buildAcceptedSet(list){
+  const set = new Set();
+  list.forEach(v=>{
+    const nv = normVal(v);
+    set.add(nv);
+    if(nv.startsWith("'m ")) set.add(normVal("am "+nv.slice(3)));
+    if(nv.startsWith("am ")) set.add(normVal("'m "+nv.slice(3)));
+    if(nv.startsWith("'s ")) set.add(normVal("is "+nv.slice(3)));
+    if(nv.startsWith("is ")) set.add(normVal("'s "+nv.slice(3)));
+    if(nv.startsWith("'re ")) set.add(normVal("are "+nv.slice(4)));
+    if(nv.startsWith("are ")) set.add(normVal("'re "+nv.slice(4)));
+    if(nv.startsWith("'ll ")) set.add(normVal("will "+nv.slice(4)));
+    if(nv.startsWith("will ")) set.add(normVal("'ll "+nv.slice(5)));
+  });
+  return set;
+}
+
+function categoriesForBlock(blockId){
+  const cats = [];
+  TEXTS.forEach(t => { if (t.block === blockId && !cats.includes(t.category)) cats.push(t.category); });
+  return cats;
+}
+
+function rebuildCategoryTabs(){
+  categoryTabsEl.innerHTML = '';
+  const cats = categoriesForBlock(activeBlock);
+  if (cats.length <= 1) {
+    categoryTabsEl.style.display = 'none';
+    return;
+  }
+  categoryTabsEl.style.display = 'flex';
+  cats.forEach(catId => {
+    const tab = document.createElement('div');
+    tab.className = 'category-tab' + (catId === activeCategory ? ' active' : '');
+    tab.id = 'cattab-' + catId;
+    tab.textContent = CATEGORY_LABELS[catId] || catId;
+    tab.onclick = () => setCategory(catId);
+    categoryTabsEl.appendChild(tab);
+  });
+}
+
+TEXTS.forEach((t) => {
+  const visible = (t.block === activeBlock && t.category === activeCategory);
+  const pill = document.createElement('div');
+  pill.className = 'picker-item' + (t.id === activeId ? ' active' : '') + (visible ? '' : ' cat-hidden');
+  pill.id = 'pill-' + t.id;
+  pill.dataset.category = t.category;
+  pill.dataset.block = t.block;
+  pill.innerHTML = '<span>' + t.name + '</span><span class="picker-item-score" id="pillscore-' + t.id + '">0/' + t.totalBlanks + '</span>';
+  pill.onclick = () => setActive(t.id);
+  document.getElementById('nav-pills').appendChild(pill);
+
+  const card = document.createElement('div');
+  card.className = 'text-card' + (t.id === activeId ? '' : ' hidden');
+  card.id = 'card-' + t.id;
+  card.innerHTML = `
+    <div class="text-head">
+      <div>
+        <div class="text-name">${t.name}</div>
+        <div class="text-role">${t.role}</div>
+      </div>
+      <div class="text-score" id="score-${t.id}">0 / ${t.totalBlanks}</div>
+    </div>
+    <div class="story">
+      ${t.paragraphsHtml.map(p => '<p>' + p + '</p>').join('')}
+    </div>
+    <div class="card-actions">
+      <button class="btn btn-check">Проверить текст</button>
+      <button class="btn btn-reset">Сбросить текст</button>
+    </div>
+    <div class="result-line" id="result-${t.id}"></div>
+  `;
+  workspace.appendChild(card);
+
+  const inputs = card.querySelectorAll('.gap');
+  inputs.forEach(inp => {
+    const note = document.createElement('span');
+    note.className = 'correct-answer';
+    inp.parentElement.appendChild(note);
+
+    inp.addEventListener('input', () => {
+      inp.classList.remove('correct', 'wrong');
+      note.classList.remove('show');
+      updateBank(t.id);
+    });
+  });
+
+  card.querySelector('.btn-check').addEventListener('click', () => {
+    let correct = 0;
+    inputs.forEach(inp => {
+      const n = inp.dataset.n;
+      const accepted = buildAcceptedSet(t.answers[n]);
+      const val = normVal(inp.value);
+      const note = inp.parentElement.querySelector('.correct-answer');
+      const isOk = accepted.has('-')
+        ? (val.length === 0 || accepted.has(val))
+        : (val.length && accepted.has(val));
+      if (isOk) {
+        inp.classList.add('correct'); inp.classList.remove('wrong');
+        note.classList.remove('show');
+        correct++;
+      } else {
+        inp.classList.add('wrong'); inp.classList.remove('correct');
+        note.textContent = '→ ' + t.answers[n][0];
+        note.classList.add('show');
+      }
+      const ctx = gapContext(inp);
+      trackEvent(t.name, ctx.prefix, ctx.suffix, t.answers[n][0], inp.value, isOk);
+    });
+    document.getElementById('score-' + t.id).textContent = correct + ' / ' + t.totalBlanks;
+    document.getElementById('pillscore-' + t.id).textContent = correct + '/' + t.totalBlanks;
+    if (t.id === activeId) pickerScore.textContent = correct + '/' + t.totalBlanks;
+    const res = document.getElementById('result-' + t.id);
+    res.classList.add('show');
+    const pct = Math.round(correct / t.totalBlanks * 100);
+    if (pct === 100) { res.className = 'result-line show ok'; res.textContent = 'Отлично! Все ' + t.totalBlanks + ' пропусков верно (' + pct + '%).'; }
+    else if (pct >= 60) { res.className = 'result-line show mid'; res.textContent = correct + ' из ' + t.totalBlanks + ' верно (' + pct + '%). Красным отмечены ошибки, рядом — правильный ответ.'; }
+    else { res.className = 'result-line show poor'; res.textContent = correct + ' из ' + t.totalBlanks + ' верно (' + pct + '%). Посмотри маркеры времени в тексте ещё раз и попробуй снова.'; }
+    updateGlobalScore();
+    saveState();
+  });
+
+  card.querySelector('.btn-reset').addEventListener('click', () => resetText(t.id));
+});
+
+function resetText(id){
+  const t = TEXTS.find(x => x.id === id);
+  const card = document.getElementById('card-' + id);
+  const inputs = card.querySelectorAll('.gap');
+  inputs.forEach(inp => {
+    inp.value = '';
+    inp.classList.remove('correct', 'wrong');
+    inp.parentElement.querySelector('.correct-answer').classList.remove('show');
+  });
+  document.getElementById('score-' + id).textContent = '0 / ' + t.totalBlanks;
+  document.getElementById('pillscore-' + id).textContent = '0/' + t.totalBlanks;
+  if (id === activeId) pickerScore.textContent = '0/' + t.totalBlanks;
+  document.getElementById('result-' + id).classList.remove('show');
+  updateBank(id);
+  updateGlobalScore();
+  saveState();
+}
+
+function resetAll(){
+  TEXTS.forEach(t => resetText(t.id));
+}
+
+function setCategory(catId){
+  activeCategory = catId;
+  rebuildCategoryTabs();
+  TEXTS.forEach(t => {
+    const visible = (t.block === activeBlock && t.category === catId);
+    document.getElementById('pill-' + t.id).classList.toggle('cat-hidden', !visible);
+  });
+  const firstInCat = TEXTS.find(t => t.block === activeBlock && t.category === catId);
+  setActive(firstInCat.id);
+}
+
+function setActive(id){
+  activeId = id;
+  TEXTS.forEach(t => {
+    document.getElementById('card-' + t.id).classList.toggle('hidden', t.id !== id);
+    document.getElementById('pill-' + t.id).classList.toggle('active', t.id === id);
+  });
+  const t = TEXTS.find(x => x.id === id);
+  pickerLabel.textContent = t.name;
+  pickerScore.textContent = document.getElementById('pillscore-' + id).textContent;
+  pickerTrigger.classList.remove('open');
+  pickerPanel.classList.remove('open');
+  renderBank(id);
+  saveState();
+}
+
+function renderBank(id){
+  const t = TEXTS.find(x => x.id === id);
+  let sidebar = document.getElementById('bank-sidebar');
+  if(!sidebar){
+    sidebar = document.createElement('div');
+    sidebar.className = 'bank-sidebar';
+    sidebar.id = 'bank-sidebar';
+    workspace.appendChild(sidebar);
+  }
+  sidebar.innerHTML = `
+    <div class="bank-title">Банк слов</div>
+    <div class="bank-sub">Базовая форма, вперемешку. Вписал слово в любое поле — оно исчезает отсюда.</div>
+    <div class="bank-list" id="bank-list-${id}"></div>
+  `;
+  const list = document.getElementById('bank-list-' + id);
+  t.bankItems.forEach((b, i) => {
+    const chip = document.createElement('div');
+    chip.className = 'bank-chip';
+    chip.id = 'bankchip-' + id + '-' + i;
+    chip.innerHTML = '<span class="bc-word">' + b.lemma + '</span>' + (b.count > 1 ? '<span class="bc-count">×' + b.count + '</span>' : '');
+    list.appendChild(chip);
+  });
+  updateBank(id);
+}
+
+function updateBank(id){
+  const t = TEXTS.find(x => x.id === id);
+  if (id !== activeId) return;
+  const card = document.getElementById('card-' + id);
+  const inputs = card.querySelectorAll('.gap');
+  const matched = {}; // lemma -> count
+
+  inputs.forEach(inp => {
+    const raw = normVal(inp.value);
+    if (!raw) return;
+    const neg = isNegated(raw);
+    const content = extractContent(raw);
+    const words = new Set(tokensOf(content));
+    words.add(raw);
+
+    let matchedLemma = null;
+    for (const b of t.bankItems) {
+      if (PHRASAL_CHECK[b.lemma]) {
+        if (PHRASAL_CHECK[b.lemma](raw)) { matchedLemma = b.lemma; break; }
+        continue;
+      }
+      if (b.lemma === "can't") {
+        if (words.has("can't") || words.has("cannot") || words.has("couldn't")) { matchedLemma = b.lemma; break; }
+        continue;
+      }
+      if (!b.core) continue;
+      if (b.neg !== neg) continue; // polarity must match: negative lemma needs negated input, positive needs non-negated
+      for (const w of words) {
+        if (b.core.includes(w)) { matchedLemma = b.lemma; break; }
+      }
+      if (matchedLemma) break;
+    }
+    if (matchedLemma) matched[matchedLemma] = (matched[matchedLemma] || 0) + 1;
+  });
+
+  t.bankItems.forEach((b, i) => {
+    const used = Math.min(matched[b.lemma] || 0, b.count);
+    const remaining = b.count - used;
+    const chip = document.getElementById('bankchip-' + id + '-' + i);
+    if (!chip) return;
+    chip.classList.toggle('used', remaining <= 0);
+    const countEl = chip.querySelector('.bc-count');
+    if (countEl) countEl.textContent = '×' + remaining;
+  });
+}
+
+function updateGlobalScore(){
+  let correct = 0, total = 0;
+  TEXTS.forEach(t => {
+    total += t.totalBlanks;
+    correct += document.querySelectorAll('#card-' + t.id + ' .gap.correct').length;
+  });
+  document.getElementById('global-score').textContent = '✓ ' + correct + ' / ' + total;
+}
+
+document.getElementById('btn-reset-all').addEventListener('click', () => { if (confirmResetPassword()) resetAll(); });
+
+document.getElementById('rule-toggle').addEventListener('click', () => {
+  document.getElementById('rule-toggle').classList.toggle('open');
+  document.getElementById('rule-content').classList.toggle('open');
+});
+
+rebuildCategoryTabs();
+setActive(activeId);
+applyState(__savedState);
+</script>
+</body>
+</html>
