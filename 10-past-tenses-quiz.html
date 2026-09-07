@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Past Tenses Quiz</title>
+<style>
+  :root{
+    --paper:#f6f1e4;
+    --ink:#2b2a28;
+    --ink-soft:#5c584f;
+    --rule:#d8cfb8;
+
+    --simple:#3c6e8f;   --simple-bg:#e7eef2;
+    --cont:#b5652c;     --cont-bg:#f5e9dc;
+    --perf:#3f7d52;     --perf-bg:#e6efe6;
+    --perfcont:#7a4a8f; --perfcont-bg:#efe4f2;
+
+    --correct:#3f7d52;
+    --wrong:#b5432c;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Iowan Old Style','Palatino Linotype',Georgia,'Times New Roman',serif;
+    line-height:1.5;
+  }
+  .wrap{max-width:900px;margin:0 auto;padding:48px 24px 120px;}
+
+  header{margin-bottom:36px;}
+  .back-link{
+    display:inline-flex; align-items:center; gap:5px; font-family:Georgia,serif;
+    font-size:0.85rem; font-weight:700; padding:6px 14px; border-radius:16px;
+    color:var(--ink-soft); text-decoration:none; border:1px solid var(--rule);
+    background:#fffdf8; margin-bottom:18px; transition:all .15s;
+  }
+  .back-link:hover{border-color:var(--ink); color:var(--ink);}
+  #teacher-banner{
+    display:none; align-items:center; justify-content:center; gap:14px;
+    background:#e8b923; color:#2b2a28; text-align:center; font-weight:700; font-size:0.85rem;
+    padding:10px 16px; position:sticky; top:0; z-index:50; flex-wrap:wrap; margin:-48px -24px 24px;
+  }
+  #teacher-banner button{
+    font-family:Georgia,serif; font-size:0.8rem; font-weight:800; padding:5px 14px; border-radius:16px;
+    border:1.5px solid #2b2a28; background:transparent; color:#2b2a28; cursor:pointer;
+  }
+  #teacher-banner button:hover{ background:#2b2a28; color:#fff; }
+  .kicker{font-family:Georgia,serif;font-style:italic;color:var(--ink-soft);font-size:1.02rem;margin:0 0 6px;}
+  h1{font-size:2.1rem;margin:0 0 14px;letter-spacing:-0.01em;line-height:1.2;}
+  header p.lede{font-size:1.08rem;color:var(--ink-soft);max-width:64ch;margin:0;}
+
+  /* sticky score bar */
+  .scorebar{
+    position:sticky;top:0;z-index:20;
+    background:#fbf7ec;
+    border-bottom:1px solid var(--rule);
+    padding:12px 24px;
+    margin:0 -24px 32px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:12px;
+    font-family:Georgia,serif;
+  }
+  .scorebar .score{font-size:1.15rem;font-weight:700;}
+  .scorebar .buttons{display:flex;gap:10px;flex-wrap:wrap;}
+  button{
+    font-family:Georgia,serif;
+    font-size:0.95rem;
+    padding:9px 18px;
+    border-radius:3px;
+    border:1px solid var(--ink);
+    background:var(--ink);
+    color:var(--paper);
+    cursor:pointer;
+  }
+  button.secondary{
+    background:#fffdf8;
+    color:var(--ink);
+    border:1px solid var(--rule);
+  }
+  button:hover{opacity:0.9;}
+
+  section.tense{margin-top:40px;padding-top:6px;border-top:2px solid var(--rule);}
+
+  .breakdown{
+    background:#fffdf8;
+    border:1px solid var(--rule);
+    border-radius:4px;
+    padding:18px 20px 20px;
+    margin-bottom:36px;
+  }
+  .breakdown h3{margin:0 0 14px;font-size:1.1rem;}
+  .breakdown-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:10px 24px;
+  }
+  @media (max-width:560px){.breakdown-grid{grid-template-columns:1fr;}}
+  .bd-item{
+    display:flex;
+    justify-content:space-between;
+    padding:8px 12px;
+    border-radius:3px;
+    font-size:0.98rem;
+    border-left:4px solid var(--ink-soft);
+  }
+  .bd-simple{background:var(--simple-bg);border-left-color:var(--simple);}
+  .bd-cont{background:var(--cont-bg);border-left-color:var(--cont);}
+  .bd-perf{background:var(--perf-bg);border-left-color:var(--perf);}
+  .bd-perfcont{background:var(--perfcont-bg);border-left-color:var(--perfcont);}
+  .bd-value{font-weight:700;}
+
+  ol.qlist{list-style:none;margin:0;padding:0;counter-reset:q;}
+  li.q{
+    counter-increment:q;
+    padding:11px 0;
+    border-bottom:1px solid var(--rule);
+    font-size:1.05rem;
+    display:flex;
+    flex-wrap:wrap;
+    align-items:baseline;
+    gap:6px;
+  }
+  li.q:last-child{border-bottom:none;}
+  li.q::before{
+    content:counter(q) ".";
+    color:var(--ink-soft);
+    min-width:26px;
+    font-variant-numeric:tabular-nums;
+  }
+  .sent{white-space:normal;}
+  input.blank{
+    font-family:Georgia,serif;
+    font-size:1rem;
+    padding:4px 8px;
+    border:none;
+    border-bottom:2px solid var(--rule);
+    background:transparent;
+    color:var(--ink);
+    min-width:150px;
+    text-align:center;
+  }
+  input.blank:focus{border-bottom-color:var(--ink);outline:none;}
+  input.blank.correct{border-bottom-color:var(--correct);color:var(--correct);}
+  input.blank.wrong{border-bottom-color:var(--wrong);color:var(--wrong);}
+  .hint{font-style:italic;color:var(--ink-soft);font-size:0.92rem;white-space:nowrap;}
+  button.check-one{
+    font-family:Georgia,serif;
+    font-size:0.82rem;
+    padding:4px 12px;
+    border-radius:3px;
+    border:1px solid var(--rule);
+    background:#fffdf8;
+    color:var(--ink-soft);
+    cursor:pointer;
+  }
+  button.check-one:hover{border-color:var(--ink);color:var(--ink);}
+  .answer-note{
+    width:100%;
+    font-size:0.88rem;
+    color:var(--wrong);
+    margin-left:32px;
+  }
+
+  section.footer-actions{
+    margin-top:56px;
+    padding-top:24px;
+    border-top:2px solid var(--rule);
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+  }
+  footer.note{margin-top:48px;color:var(--ink-soft);font-size:0.92rem;max-width:64ch;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div id="teacher-banner">
+    <span>🧪 Teacher mode is ON — your answers on this page are NOT being recorded.</span>
+    <button id="teacher-banner-off">Turn off</button>
+  </div>
+
+  <a class="back-link" href="index.html">← Back</a>
+
+  <header>
+    <p class="kicker">Практика · 100 вопросов</p>
+    <h1>Тест на прошедшие времена: Past Simple, Past Continuous, Past Perfect, Past Perfect Continuous</h1>
+    <p class="lede">По 25 предложений на каждое время. Впишите правильную форму глагола (глагол в скобках). Нажмите «Проверить», чтобы увидеть результат.</p>
+  </header>
+
+  <div class="scorebar">
+    <div class="score" id="totalScore">Верно: 0 / 100</div>
+    <div class="buttons">
+      <button id="checkAllBtn">Проверить все ответы</button>
+      <button class="secondary" id="revealBtn">Показать ответы</button>
+      <button class="secondary" id="resetBtn">Очистить всё</button>
+    </div>
+  </div>
+
+  <div class="breakdown" id="breakdown" style="display:none;">
+    <h3>Результат по временам</h3>
+    <div class="breakdown-grid">
+      <div class="bd-item bd-simple"><span class="bd-label">Past Simple</span><span class="bd-value" data-section-score="simple">0 / 25</span></div>
+      <div class="bd-item bd-cont"><span class="bd-label">Past Continuous</span><span class="bd-value" data-section-score="cont">0 / 25</span></div>
+      <div class="bd-item bd-perf"><span class="bd-label">Past Perfect</span><span class="bd-value" data-section-score="perf">0 / 25</span></div>
+      <div class="bd-item bd-perfcont"><span class="bd-label">Past Perfect Continuous</span><span class="bd-value" data-section-score="perfcont">0 / 25</span></div>
+    </div>
+  </div>
+
+  <section class="tense mixed">
+    <ol class="qlist" data-section="mixed"></ol>
+  </section>
+
+  <section class="footer-actions">
+    <button id="checkAllBtn2">Проверить все ответы</button>
+    <button class="secondary" id="revealBtn2">Показать ответы</button>
+    <button class="secondary" id="resetBtn2">Очистить всё</button>
+  </section>
+
+  <footer class="note">
+    Все 100 предложений перемешаны — по тому, где стоит вопрос, не угадать заранее, какое время нужно. Подсказка в скобках — глагол в начальной форме (иногда с «not» для отрицания или с местоимением для вопроса). Проверка не различает заглавные/строчные буквы и принимает варианты с сокращениями (didn't / did not). После проверки внизу появится разбивка результата по временам — так видно, где именно слабое место.
+  </footer>
+
+</div>
+
+<script>
+const SUPABASE_URL = 'https://zhzhamxgfornfvwckfyf.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_LoyWwbsXHBb4l_k1FnmAog_yZO0uPrn';
+const TRACK_BLOCK = 'block10';
+
+const SESSION_ID = (function(){
+  try {
+    let sid = sessionStorage.getItem('hw_session_id');
+    if (!sid) { sid = 'sess_' + Date.now() + '_' + Math.random().toString(36).slice(2,10); sessionStorage.setItem('hw_session_id', sid); }
+    return sid;
+  } catch(e) { return 'sess_' + Date.now() + '_' + Math.random().toString(36).slice(2,10); }
+})();
+
+function getRole(){
+  try { return localStorage.getItem('hw_role') === 'teacher' ? 'teacher' : 'student'; } catch(e) { return 'student'; }
+}
+
+const SECTION_LABELS = { simple: 'Past Simple', cont: 'Past Continuous', perf: 'Past Perfect', perfcont: 'Past Perfect Continuous' };
+
+function trackEvent(topic, prefix, suffix, correctAnswer, studentAnswer, isCorrect){
+  if (!SUPABASE_URL || SUPABASE_URL.indexOf('__') === 0) return;
+  const role = getRole();
+  if (role === 'teacher') { console.log('[Supabase tracking] skipped -- teacher mode is on'); return; }
+  try {
+    fetch(SUPABASE_URL + '/rest/v1/activity_events', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({
+        session_id: SESSION_ID,
+        block: TRACK_BLOCK,
+        topic: topic,
+        prefix: prefix,
+        suffix: suffix,
+        correct_answer: correctAnswer,
+        student_answer: studentAnswer,
+        question_text: (prefix || '') + (correctAnswer || '') + (suffix || ''),
+        is_correct: isCorrect,
+        event_type: 'answer',
+        role: role
+      }),
+      keepalive: true
+    }).then(function(res){
+      if (!res.ok) {
+        res.text().then(function(t){ console.error("[Supabase tracking] insert failed:", res.status, t); });
+      } else {
+        console.log("[Supabase tracking] event saved OK");
+      }
+    }).catch(function(err){ console.error("[Supabase tracking] network error:", err); });
+  } catch(e) { console.error("[Supabase tracking] unexpected error:", e); }
+}
+
+function isTeacherMode(){ return getRole() === 'teacher'; }
+function renderTeacherBanner(){
+  document.getElementById('teacher-banner').style.display = isTeacherMode() ? 'flex' : 'none';
+}
+
+const DATA = {
+  simple: [
+    {b:"She ", h:"go", a:" to the cinema last night.", ans:["went"]},
+    {b:"We ", h:"visit", a:" our grandparents last summer.", ans:["visited"]},
+    {b:"He ", h:"not / finish", a:" his homework yesterday.", ans:["didn't finish","did not finish"]},
+    {b:"They ", h:"buy", a:" a new car last month.", ans:["bought"]},
+    {b:"I ", h:"see", a:" that film in 2019.", ans:["saw"]},
+    {b:"The train ", h:"arrive", a:" at 9 o'clock.", ans:["arrived"]},
+    {b:"She ", h:"not / like", a:" the food at the party.", ans:["didn't like","did not like"]},
+    {b:"We ", h:"play", a:" football yesterday afternoon.", ans:["played"]},
+    {b:"He ", h:"write", a:" a letter to his friend.", ans:["wrote"]},
+    {b:"They ", h:"not / come", a:" to the meeting.", ans:["didn't come","did not come"]},
+    {b:"I ", h:"study", a:" English for two years at school.", ans:["studied"]},
+    {b:"She ", h:"lose", a:" her keys last week.", ans:["lost"]},
+    {b:"We ", h:"not / have", a:" enough time to finish.", ans:["didn't have","did not have"]},
+    {b:"He ", h:"drive", a:" to London last weekend.", ans:["drove"]},
+    {b:"They ", h:"watch", a:" a documentary about space.", ans:["watched"]},
+    {b:"I ", h:"call", a:" you three times yesterday.", ans:["called"]},
+    {b:"She ", h:"leave", a:" the office at 6 pm.", ans:["left"]},
+    {b:"We ", h:"not / enjoy", a:" the concert very much.", ans:["didn't enjoy","did not enjoy"]},
+    {b:"He ", h:"take", a:" a lot of photos on holiday.", ans:["took"]},
+    {b:"They ", h:"start", a:" the new job on Monday.", ans:["started"]},
+    {b:"I ", h:"forget", a:" my umbrella at home.", ans:["forgot"]},
+    {b:"She ", h:"cook", a:" dinner for the whole family.", ans:["cooked"]},
+    {b:"We ", h:"not / understand", a:" the instructions.", ans:["didn't understand","did not understand"]},
+    {b:"He ", h:"win", a:" the competition last year.", ans:["won"]},
+    {b:"Did you ", h:"enjoy", a:" the party last night?", ans:["enjoy"]}
+  ],
+  cont: [
+    {b:"I ", h:"watch", a:" TV when the phone rang.", ans:["was watching"]},
+    {b:"They ", h:"play", a:" football when it started to rain.", ans:["were playing"]},
+    {b:"She ", h:"cook", a:" dinner while I was doing homework.", ans:["was cooking"]},
+    {b:"We ", h:"walk", a:" to school when we saw the accident.", ans:["were walking"]},
+    {b:"He ", h:"sleep", a:" when I called him.", ans:["was sleeping"]},
+    {b:"What ", h:"you / do", a:" at 8 pm last night?", ans:["were you doing"]},
+    {b:"I ", h:"not / listen", a:" to the teacher when she asked the question.", ans:["wasn't listening","was not listening"]},
+    {b:"They ", h:"have", a:" dinner when the lights went out.", ans:["were having"]},
+    {b:"She ", h:"read", a:" a book while her sister was watching TV.", ans:["was reading"]},
+    {b:"We ", h:"wait", a:" for the bus when it started to snow.", ans:["were waiting"]},
+    {b:"He ", h:"drive", a:" to work when he saw the accident.", ans:["was driving"]},
+    {b:"I ", h:"talk", a:" on the phone when you knocked on the door.", ans:["was talking"]},
+    {b:"They ", h:"not / pay", a:" attention during the lesson.", ans:["weren't paying","were not paying"]},
+    {b:"What ", h:"she / wear", a:" at the party last night?", ans:["was she wearing"]},
+    {b:"We ", h:"study", a:" for the exam all evening.", ans:["were studying"]},
+    {b:"He ", h:"work", a:" in the garden when it began to rain.", ans:["was working"]},
+    {b:"I ", h:"dream", a:" about the beach when my alarm went off.", ans:["was dreaming"]},
+    {b:"They ", h:"dance", a:" when the music suddenly stopped.", ans:["were dancing"]},
+    {b:"She ", h:"write", a:" an email when her computer crashed.", ans:["was writing"]},
+    {b:"We ", h:"not / sleep", a:" at midnight — we were still awake.", ans:["weren't sleeping","were not sleeping"]},
+    {b:"He ", h:"jog", a:" in the park when he twisted his ankle.", ans:["was jogging"]},
+    {b:"I ", h:"make", a:" breakfast when the doorbell rang.", ans:["was making"]},
+    {b:"They ", h:"travel", a:" around Europe all summer.", ans:["were travelling","were traveling"]},
+    {b:"What ", h:"you / think", a:" about during the meeting?", ans:["were you thinking"]},
+    {b:"She ", h:"shop", a:" online when her mother called.", ans:["was shopping"]}
+  ],
+  perf: [
+    {b:"By the time we arrived, the film ", h:"already / start", a:".", ans:["had already started"]},
+    {b:"She ", h:"finish", a:" her homework before dinner.", ans:["had finished"]},
+    {b:"When I got to the station, the train ", h:"leave", a:".", ans:["had left"]},
+    {b:"He ", h:"never / see", a:" snow before he moved to Canada.", ans:["had never seen"]},
+    {b:"We ", h:"not / eat", a:" anything before the meeting started.", ans:["hadn't eaten","had not eaten"]},
+    {b:"They ", h:"just / leave", a:" when I arrived.", ans:["had just left"]},
+    {b:"I ", h:"lose", a:" my keys before I realised it.", ans:["had lost"]},
+    {b:"By 2010, she ", h:"live", a:" in three different countries.", ans:["had lived"]},
+    {b:"He ", h:"already / finish", a:" work before his boss called.", ans:["had already finished"]},
+    {b:"We ", h:"never / visit", a:" Paris before that trip.", ans:["had never visited"]},
+    {b:"When the police arrived, the thief ", h:"disappear", a:".", ans:["had disappeared"]},
+    {b:"She ", h:"not / read", a:" the book before the exam.", ans:["hadn't read","had not read"]},
+    {b:"By the time he was 30, he ", h:"write", a:" five novels.", ans:["had written"]},
+    {b:"I ", h:"forget", a:" her name by the time we met again.", ans:["had forgotten"]},
+    {b:"They ", h:"already / eat", a:" dinner when we arrived.", ans:["had already eaten"]},
+    {b:"He ", h:"never / be", a:" abroad before that trip.", ans:["had never been"]},
+    {b:"We ", h:"finish", a:" the project before the deadline.", ans:["had finished"]},
+    {b:"She ", h:"not / see", a:" that film before we watched it together.", ans:["hadn't seen","had not seen"]},
+    {b:"By the time I woke up, everyone ", h:"leave", a:".", ans:["had left"]},
+    {b:"He ", h:"already / pay", a:" the bill before I offered to help.", ans:["had already paid"]},
+    {b:"They ", h:"not / meet", a:" before that party.", ans:["hadn't met","had not met"]},
+    {b:"When I checked my phone, she ", h:"send", a:" five messages.", ans:["had sent"]},
+    {b:"We ", h:"never / try", a:" sushi before that restaurant.", ans:["had never tried"]},
+    {b:"The plane ", h:"already / take off", a:" by the time we got to the airport.", ans:["had already taken off"]},
+    {b:"She ", h:"not / finish", a:" her degree before she started working.", ans:["hadn't finished","had not finished"]}
+  ],
+  perfcont: [
+    {b:"I ", h:"wait", a:" for an hour when the bus finally came.", ans:["had been waiting"]},
+    {b:"She ", h:"study", a:" for three hours before she took a break.", ans:["had been studying"]},
+    {b:"They ", h:"argue", a:" for a while before we arrived.", ans:["had been arguing"]},
+    {b:"He was tired because he ", h:"run", a:".", ans:["had been running"]},
+    {b:"We ", h:"live", a:" there for ten years before we moved.", ans:["had been living"]},
+    {b:"How long ", h:"you / learn", a:" English before you moved abroad?", ans:["had you been learning"]},
+    {b:"She ", h:"cry", a:" before I found her.", ans:["had been crying"]},
+    {b:"It ", h:"rain", a:" all night, so the streets were wet.", ans:["had been raining"]},
+    {b:"He ", h:"work", a:" at the company for five years before he got promoted.", ans:["had been working"]},
+    {b:"I ", h:"feel", a:" sick for days before I saw a doctor.", ans:["had been feeling"]},
+    {b:"They ", h:"play", a:" football for an hour when it started to rain.", ans:["had been playing"]},
+    {b:"She ", h:"not / sleep", a:" well before the exam.", ans:["hadn't been sleeping","had not been sleeping"]},
+    {b:"We ", h:"travel", a:" for six months when we ran out of money.", ans:["had been travelling","had been traveling"]},
+    {b:"He was out of breath because he ", h:"cycle", a:".", ans:["had been cycling"]},
+    {b:"How long ", h:"they / date", a:" before they got married?", ans:["had they been dating"]},
+    {b:"I ", h:"cook", a:" for two hours when the guests arrived.", ans:["had been cooking"]},
+    {b:"The children ", h:"play", a:" outside all afternoon before it got dark.", ans:["had been playing"]},
+    {b:"She ", h:"wait", a:" for the results for weeks before she finally got an answer.", ans:["had been waiting"]},
+    {b:"We ", h:"not / talk", a:" for months before we finally met again.", ans:["hadn't been talking","had not been talking"]},
+    {b:"He ", h:"drive", a:" for hours before he stopped for a break.", ans:["had been driving"]},
+    {b:"I ", h:"learn", a:" the piano for a year before I gave my first concert.", ans:["had been learning"]},
+    {b:"They ", h:"build", a:" the house for two years before it was finished.", ans:["had been building"]},
+    {b:"She ", h:"work", a:" on the report all week before she submitted it.", ans:["had been working"]},
+    {b:"How long ", h:"he / smoke", a:" before he decided to quit?", ans:["had he been smoking"]},
+    {b:"We ", h:"walk", a:" for hours before we finally found the hotel.", ans:["had been walking"]}
+  ]
+};
+
+// Flatten into a single array, tag each question with its tense, then shuffle.
+const FLAT = [];
+Object.keys(DATA).forEach(sectionKey=>{
+  DATA[sectionKey].forEach(item=>{
+    FLAT.push(Object.assign({section:sectionKey}, item));
+  });
+});
+for(let i = FLAT.length - 1; i > 0; i--){
+  const j = Math.floor(Math.random() * (i + 1));
+  [FLAT[i], FLAT[j]] = [FLAT[j], FLAT[i]];
+}
+
+function normalize(s){
+  return s
+    .toLowerCase()
+    .trim()
+    .replace(/[’‘]/g,"'")
+    .replace(/\s+/g," ")
+    .replace(/\.$/,"")
+    .replace(/'/g,"'");
+}
+function stripApost(s){ return s.replace(/'/g,""); }
+
+function isCorrect(userVal, answers){
+  const u = normalize(userVal);
+  const uNoApost = stripApost(u);
+  return answers.some(a=>{
+    const n = normalize(a);
+    return n === u || stripApost(n) === uNoApost;
+  });
+}
+
+function render(){
+  const ol = document.querySelector('ol.qlist[data-section="mixed"]');
+  FLAT.forEach((item, idx)=>{
+    const li = document.createElement("li");
+    li.className = "q";
+    li.dataset.index = idx;
+
+    const sentSpan = document.createElement("span");
+    sentSpan.className = "sent";
+    sentSpan.textContent = item.b;
+
+    const input = document.createElement("input");
+    input.type = "text";
+    input.className = "blank";
+    input.autocomplete = "off";
+    input.spellcheck = false;
+    input.dataset.index = idx;
+
+    const afterSpan = document.createElement("span");
+    afterSpan.className = "sent";
+    afterSpan.textContent = item.a;
+
+    const hint = document.createElement("span");
+    hint.className = "hint";
+    hint.textContent = `(${item.h})`;
+
+    const checkBtn = document.createElement("button");
+    checkBtn.type = "button";
+    checkBtn.className = "check-one";
+    checkBtn.dataset.index = idx;
+    checkBtn.textContent = "Проверить";
+
+    li.appendChild(sentSpan);
+    li.appendChild(input);
+    li.appendChild(afterSpan);
+    li.appendChild(hint);
+    li.appendChild(checkBtn);
+
+    const note = document.createElement("div");
+    note.className = "answer-note";
+    note.style.display = "none";
+    note.dataset.noteFor = idx;
+    li.appendChild(note);
+
+    ol.appendChild(li);
+  });
+}
+
+function checkOne(idx){
+  const item = FLAT[idx];
+  const input = document.querySelector(`input.blank[data-index="${idx}"]`);
+  const note = document.querySelector(`.answer-note[data-note-for="${idx}"]`);
+  const ok = isCorrect(input.value, item.ans);
+  input.classList.remove("correct","wrong");
+  if(ok){
+    input.classList.add("correct");
+    note.style.display = "none";
+  } else {
+    input.classList.add("wrong");
+    note.textContent = "Правильный ответ: " + item.ans[0];
+    note.style.display = "block";
+  }
+  trackEvent(SECTION_LABELS[item.section], item.b, item.a, item.ans[0], input.value, ok);
+  document.getElementById("breakdown").style.display = "block";
+  updateScore();
+}
+
+function updateScore(){
+  let totalCorrect = 0;
+  const secCorrect = {simple:0, cont:0, perf:0, perfcont:0};
+  FLAT.forEach((item, idx)=>{
+    const input = document.querySelector(`input.blank[data-index="${idx}"]`);
+    if(input.classList.contains("correct")){
+      secCorrect[item.section]++;
+      totalCorrect++;
+    }
+  });
+  Object.keys(secCorrect).forEach(key=>{
+    const count = DATA[key].length;
+    document.querySelectorAll(`[data-section-score="${key}"]`).forEach(el=>{
+      el.textContent = `${secCorrect[key]} / ${count}`;
+    });
+  });
+  document.getElementById("totalScore").textContent = `Верно: ${totalCorrect} / ${FLAT.length}`;
+}
+
+function checkAll(){
+  FLAT.forEach((item, idx)=>{
+    const input = document.querySelector(`input.blank[data-index="${idx}"]`);
+    const note = document.querySelector(`.answer-note[data-note-for="${idx}"]`);
+    const ok = isCorrect(input.value, item.ans);
+    input.classList.remove("correct","wrong");
+    if(ok){
+      input.classList.add("correct");
+      note.style.display = "none";
+    } else {
+      input.classList.add("wrong");
+      note.textContent = "Правильный ответ: " + item.ans[0];
+      note.style.display = "block";
+    }
+    trackEvent(SECTION_LABELS[item.section], item.b, item.a, item.ans[0], input.value, ok);
+  });
+  document.getElementById("breakdown").style.display = "block";
+  updateScore();
+}
+
+function revealAll(){
+  FLAT.forEach((item, idx)=>{
+    const input = document.querySelector(`input.blank[data-index="${idx}"]`);
+    input.value = item.ans[0];
+    input.classList.remove("wrong");
+    input.classList.add("correct");
+    const note = document.querySelector(`.answer-note[data-note-for="${idx}"]`);
+    note.style.display = "none";
+  });
+  document.getElementById("breakdown").style.display = "block";
+  updateScore();
+}
+
+function resetAll(){
+  document.querySelectorAll("input.blank").forEach(input=>{
+    input.value = "";
+    input.classList.remove("correct","wrong");
+  });
+  document.querySelectorAll(".answer-note").forEach(n=> n.style.display = "none");
+  document.querySelectorAll("[data-section-score]").forEach(el=>{
+    el.textContent = "0 / 25";
+  });
+  document.getElementById("breakdown").style.display = "none";
+  document.getElementById("totalScore").textContent = "Верно: 0 / 100";
+}
+
+render();
+renderTeacherBanner();
+document.getElementById('teacher-banner-off').addEventListener('click', () => {
+  try { localStorage.setItem('hw_role', 'student'); } catch(e) {}
+  renderTeacherBanner();
+});
+
+const qlistEl = document.querySelector('ol.qlist[data-section="mixed"]');
+qlistEl.addEventListener("click", (e)=>{
+  if(e.target.matches("button.check-one")){
+    checkOne(Number(e.target.dataset.index));
+  }
+});
+qlistEl.addEventListener("keydown", (e)=>{
+  if(e.key === "Enter" && e.target.matches("input.blank")){
+    e.preventDefault();
+    checkOne(Number(e.target.dataset.index));
+  }
+});
+
+document.getElementById("checkAllBtn").addEventListener("click", checkAll);
+document.getElementById("checkAllBtn2").addEventListener("click", checkAll);
+document.getElementById("revealBtn").addEventListener("click", revealAll);
+document.getElementById("revealBtn2").addEventListener("click", revealAll);
+document.getElementById("resetBtn").addEventListener("click", resetAll);
+document.getElementById("resetBtn2").addEventListener("click", resetAll);
+</script>
+</body>
+</html>
